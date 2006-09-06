@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BetterReader.Backend
 {
-    class FeedSubscription
+   public  class FeedSubscription
     {
         private string feedUrl;
 

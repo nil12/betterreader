@@ -40,7 +40,7 @@
     <Compile Include="Backend\FeedFolder.cs" />
     <Compile Include="Backend\FeedItem.cs" />
     <Compile Include="Backend\FeedSubscription.cs" />
-    <Compile Include="Backend\OPML.cs" />
+    <Compile Include="Backend\FeedSubscriptionCollection.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
