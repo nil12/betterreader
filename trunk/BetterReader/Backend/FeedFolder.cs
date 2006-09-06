@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BetterReader.Backend
 {
-    class FeedFolder
+    public class FeedFolder
     {
         private string name;
         private List<FeedFolder> childFolders;
@@ -23,13 +23,13 @@ namespace BetterReader.Backend
             set { name = value; }
         }
 
-        internal List<FeedFolder> ChildFolders
+        public List<FeedFolder> ChildFolders
         {
             get { return childFolders; }
             set { childFolders = value; }
         }
 
-        internal List<FeedSubscription> ChildSubscriptions
+        public List<FeedSubscription> ChildSubscriptions
         {
             get { return childSubscriptions; }
             set { childSubscriptions = value; }

@@ -5,7 +5,7 @@ using Rss;
 
 namespace BetterReader.Backend
 {
-    class Feed : RssFeed
+    public class Feed : RssFeed
     {
 
     }
