@@ -22,8 +22,11 @@ namespace BetterReader
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            importOPML(@"C:\Documents and Settings\skain\Desktop\rssowl.opml");
-            fsc.SaveAsFeedSubscriptionsFile("FeedSubscriptions.xml");
+            //importOPML(@"C:\Documents and Settings\skain\Desktop\rssowl.opml");
+            //fsc.SaveAsFeedSubscriptionsFile("FeedSubscriptions.xml");
+            fsc = FeedSubscriptionCollection.GetFromFeedSubscriptionsFile("FeedSubscriptions.xml");
+			fsc.ReadAllFeeds();
+            bindFSCToTreeView();
         }
 
         private void importOPMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -52,20 +55,22 @@ namespace BetterReader
         {
             feedsTV.SuspendLayout();
             treeNodesByTag = new Dictionary<object, TreeNode>();
-            TreeNode newNode = feedsTV.Nodes.Add(fsc.RootFolder.Name);
-            newNode.Tag = fsc.RootFolder;
-            treeNodesByTag.Add(fsc.RootFolder, newNode);
-
-            foreach (FeedFolder folder in fsc.RootFolder.ChildFolders)
-            {
-                bindFolderToTreeView(folder, newNode);
-            }
+            bindFolderToTreeView(fsc.RootFolder, null);
             feedsTV.ResumeLayout();
         }
 
         private void bindFolderToTreeView(FeedFolder folder, TreeNode parentNode)
         {
-            TreeNode newNode = feedsTV.Nodes.Add(folder.Name);
+            TreeNode newNode;
+            if (parentNode == null)
+            {
+                //this is the root
+                newNode = feedsTV.Nodes.Add(folder.Name);
+            }
+            else
+            {
+                newNode = parentNode.Nodes.Add(folder.Name);
+            }
             newNode.Tag = folder;
             treeNodesByTag.Add(folder, newNode);
             foreach (FeedFolder childFolder in folder.ChildFolders)
