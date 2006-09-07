@@ -4,13 +4,13 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace BetterReader.Backend
 {
     public class FeedSubscriptionCollection
     {
         private string filepath;
-        private FeedFolder currentWorkingFolder;
         private FeedFolder rootFolder;
 
         public FeedFolder RootFolder
@@ -50,11 +50,10 @@ namespace BetterReader.Backend
                 xmlDoc.Load(xr);
             }
 
-            currentWorkingFolder = null;
             rootFolder = null;
             foreach (XmlNode node in xmlDoc.ChildNodes)
             {
-                processOPMLNode(node);
+                processOPMLNode(node, null);
             }
         }
 
@@ -85,7 +84,7 @@ namespace BetterReader.Backend
             throw new Exception("Error.  ExportAsOPML not implemented yet.");
         }
 
-        private void processOPMLNode(XmlNode node)
+        private void processOPMLNode(XmlNode node, FeedFolder currentParentFolder)
         {
             if (node.Name == null && node.Name.Length < 1)
             {
@@ -99,18 +98,18 @@ namespace BetterReader.Backend
                 case "xml":
                     foreach (XmlNode childNode in node.ChildNodes)
                     {
-                        processOPMLNode(childNode);
+                        processOPMLNode(childNode, currentParentFolder);
                     }
                     break;
                 case "outline":
-                    processOPMLOutlineNode(node);
+                    processOPMLOutlineNode(node, currentParentFolder);
                     break;
                 case "head":
                     return;
             }
         }
 
-        private void processOPMLOutlineNode(XmlNode node)
+        private void processOPMLOutlineNode(XmlNode node, FeedFolder currentParentFolder)
         {
             XmlAttribute titleAttr = node.Attributes["title"];
             string title = "";
@@ -125,10 +124,11 @@ namespace BetterReader.Backend
                 FeedSubscription fs = new FeedSubscription();
                 fs.DisplayName = node.Attributes["text"].Value;
                 fs.FeedUrl = node.Attributes["xmlUrl"].Value;
-                fs.ParentFolder = currentWorkingFolder;
-                if (currentWorkingFolder != null)
+                fs.ParentFolder = currentParentFolder;
+
+                if (currentParentFolder != null)
                 {
-                    currentWorkingFolder.ChildSubscriptions.Add(fs);
+                    currentParentFolder.ChildSubscriptions.Add(fs);
                 }
                 else
                 {
@@ -142,7 +142,7 @@ namespace BetterReader.Backend
                 //this is a folder node
                 FeedFolder ff = new FeedFolder();
                 ff.Name = node.Attributes["text"].Value;
-                ff.ParentFolder = currentWorkingFolder;
+                ff.ParentFolder = currentParentFolder;
                 if (rootFolder == null)
                 {
                     //this must be the root folder
@@ -150,15 +150,33 @@ namespace BetterReader.Backend
                 }
                 else
                 {
-                    currentWorkingFolder.ChildFolders.Add(ff);
+                    currentParentFolder.ChildFolders.Add(ff);
                 }
 
-                currentWorkingFolder = ff;
+                currentParentFolder = ff;
                 foreach (XmlNode childNode in node.ChildNodes)
                 {
-                    processOPMLNode(childNode);
+                    processOPMLNode(childNode, currentParentFolder);
                 }
             }
         }
+
+		public void ReadAllFeeds()
+		{
+			recurseReadFeeds(rootFolder);
+		}
+
+		private void recurseReadFeeds(FeedFolder curFolder)
+		{
+			foreach(FeedFolder childFolder in curFolder.ChildFolders)
+			{
+				recurseReadFeeds(childFolder);
+			}
+
+			foreach (FeedSubscription fs in curFolder.ChildSubscriptions)
+			{
+				fs.ReadFeed();
+			}
+		}
     }
 }
