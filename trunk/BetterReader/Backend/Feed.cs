@@ -20,6 +20,10 @@ namespace BetterReader.Backend
 		private string managingEditor;
 		private string webMaster;
 		private List<FeedItem> feedItems;
+		private bool readSuccess;
+		private Exception readException;
+		private Dictionary<string, string> unsupportedFeedProperties;
+
 
 
 		public string FeedUrl
@@ -130,6 +134,22 @@ namespace BetterReader.Backend
 			}
 		}
 
+
+		public Exception ReadException
+		{
+			get { return readException; }
+			set { readException = value; }
+		}
+
+
+		public bool ReadSuccess
+		{
+			get { return readSuccess; }
+			set { readSuccess = value; }
+		}
+
+
+
 		public Feed(string lFeedUrl)
 		{
 			feedUrl = lFeedUrl;
@@ -138,6 +158,8 @@ namespace BetterReader.Backend
 
 		public void BeginRead(FeedReadCompleteDelegate callback)
 		{
+			readSuccess = false;
+			readException = null;
 			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
 
 			webRequestState state = new webRequestState();
@@ -156,11 +178,90 @@ namespace BetterReader.Backend
 			webRequestState state = (webRequestState)ar.AsyncState;
 			HttpWebResponse response = (HttpWebResponse)state.request.GetResponse();
 			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(response.GetResponseStream);
+			try
+			{
+				xmlDoc.Load(response.GetResponseStream());
+				response.Close();
+				loadFromXmlDoc(xmlDoc);
+				readException = null;
+				readSuccess = true;
+			}
+			catch (Exception e)
+			{
+				readException = e;
+				readSuccess = false;
+			}
+
+
+			state.callback(this);
+		}
+
+		private void loadFromXmlDoc(XmlDocument xmlDoc)
+		{
+			feedItems = new List<FeedItem>();
+			unsupportedFeedProperties = new Dictionary<string, string>();
+			foreach (XmlNode node in xmlDoc)
+			{
+				switch (node.Name)
+				{
+					case "rss":
+						foreach (XmlNode childNode in node.ChildNodes)
+						{
+							if (node.Name == "channel")
+							{
+								loadFromRssChannelNode(node);
+							}
+						}
+						break;
+				}
+			}
+		}
+
+		private void loadFromRssChannelNode(XmlNode node)
+		{
+			foreach (XmlNode childNode in node.ChildNodes)
+			{
+				string innerText = childNode.InnerText;
+				switch (childNode.Name)
+				{
+					case "title":
+						title = innerText;
+						break;
+					case "link":
+						linkUrl = innerText;
+						break;
+					case "description":
+						description = innerText;
+						break;
+					case "language":
+						language = innerText;
+						break;
+					case "item":
+						FeedItem fi = FeedItem.GetFromRssItemNode(childNode);
+						feedItems.Add(fi);
+						break;
+					default:
+						unsupportedFeedProperties.Add(childNode.Name, innerText);
+						break;
+				}
+			}
 		}
 
 		private void timeoutCallback(object state, bool timedOut)
 		{
+			webRequestState wrs = state as webRequestState;
+			if (wrs != null)
+			{
+				HttpWebResponse response = (HttpWebResponse)wrs.request.GetResponse();
+				if (response != null)
+				{
+					response.Close();
+				}
+			}
+
+			readSuccess = false;
+			readException = new Exception("Timeout occurred reading feed.");
+			wrs.callback(this);
 		}
 
 		private class webRequestState

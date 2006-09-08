@@ -36,7 +36,7 @@ namespace BetterReader
             this.feedsTV = new System.Windows.Forms.TreeView();
             this.feedItemsLV = new System.Windows.Forms.ListView();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importOPMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importOpmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.mainStatusStrip.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -125,17 +125,17 @@ namespace BetterReader
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importOPMLToolStripMenuItem});
+            this.importOpmlToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // importOPMLToolStripMenuItem
+            // importOpmlToolStripMenuItem
             // 
-            this.importOPMLToolStripMenuItem.Name = "importOPMLToolStripMenuItem";
-            this.importOPMLToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.importOPMLToolStripMenuItem.Text = "Import OPML . . .";
-            this.importOPMLToolStripMenuItem.Click += new System.EventHandler(this.importOPMLToolStripMenuItem_Click);
+            this.importOpmlToolStripMenuItem.Name = "importOpmlToolStripMenuItem";
+            this.importOpmlToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.importOpmlToolStripMenuItem.Text = "Import Opml . . .";
+            this.importOpmlToolStripMenuItem.Click += new System.EventHandler(this.importOpmlToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -173,7 +173,7 @@ namespace BetterReader
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ListView feedItemsLV;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importOPMLToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importOpmlToolStripMenuItem;
 
     }
 }
