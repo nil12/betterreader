@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 
 namespace BetterReader.Backend
 {
-    public class FeedFolder
+    public class FeedFolder : FeedSubTreeNodeBase
     {
         private string name;
-        private List<FeedFolder> childFolders;
-        private List<FeedSubscription> childSubscriptions;
+        private List<FeedSubTreeNodeBase> childNodes;
         private FeedFolder parentFolder;
 
         internal FeedFolder ParentFolder
@@ -23,22 +23,23 @@ namespace BetterReader.Backend
             set { name = value; }
         }
 
-        public List<FeedFolder> ChildFolders
+        public List<FeedSubTreeNodeBase> ChildNodes
         {
-            get { return childFolders; }
-            set { childFolders = value; }
+            get { return childNodes; }
+            set { childNodes = value; }
         }
 
-        public List<FeedSubscription> ChildSubscriptions
-        {
-            get { return childSubscriptions; }
-            set { childSubscriptions = value; }
-        }
 
         public FeedFolder()
         {
-            childFolders = new List<FeedFolder>();
-            childSubscriptions = new List<FeedSubscription>();
+			childNodes = new List<FeedSubTreeNodeBase>();
         }
+
+		public new static FeedFolder GetFromOpmlXmlNode(XmlNode node)
+		{
+			FeedFolder ff = new FeedFolder();
+			ff.Name = node.Attributes["text"].Value;
+			return ff;
+		}
     }
 }
