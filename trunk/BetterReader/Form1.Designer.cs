@@ -34,23 +34,31 @@ namespace BetterReader
 			this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
 			this.feedsTV = new System.Windows.Forms.TreeView();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
-			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.itemTitleLBL = new System.Windows.Forms.Label();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
+			this.feedTitleLBL = new System.Windows.Forms.Label();
+			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			this.splitContainer5.Panel2.SuspendLayout();
+			this.splitContainer5.SuspendLayout();
+			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
 			this.splitContainer3.Panel1.SuspendLayout();
 			this.splitContainer3.Panel2.SuspendLayout();
 			this.splitContainer3.SuspendLayout();
+			this.splitContainer4.Panel1.SuspendLayout();
 			this.splitContainer4.Panel2.SuspendLayout();
 			this.splitContainer4.SuspendLayout();
 			this.SuspendLayout();
@@ -104,7 +112,7 @@ namespace BetterReader
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.feedsTV);
+			this.splitContainer1.Panel1.Controls.Add(this.splitContainer5);
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -113,12 +121,30 @@ namespace BetterReader
 			this.splitContainer1.SplitterDistance = 310;
 			this.splitContainer1.TabIndex = 2;
 			// 
+			// splitContainer5
+			// 
+			this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer5.Name = "splitContainer5";
+			this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer5.Panel1
+			// 
+			this.splitContainer5.Panel1.BackColor = System.Drawing.SystemColors.Info;
+			// 
+			// splitContainer5.Panel2
+			// 
+			this.splitContainer5.Panel2.Controls.Add(this.feedsTV);
+			this.splitContainer5.Size = new System.Drawing.Size(310, 685);
+			this.splitContainer5.SplitterDistance = 37;
+			this.splitContainer5.TabIndex = 0;
+			// 
 			// feedsTV
 			// 
 			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedsTV.Location = new System.Drawing.Point(0, 0);
 			this.feedsTV.Name = "feedsTV";
-			this.feedsTV.Size = new System.Drawing.Size(310, 685);
+			this.feedsTV.Size = new System.Drawing.Size(310, 644);
 			this.feedsTV.TabIndex = 0;
 			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
 			// 
@@ -128,6 +154,12 @@ namespace BetterReader
 			this.splitContainer2.Location = new System.Drawing.Point(0, 0);
 			this.splitContainer2.Name = "splitContainer2";
 			this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer2.Panel1
+			// 
+			this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.Info;
+			this.splitContainer2.Panel1.Controls.Add(this.feedTitleLBL);
+			this.splitContainer2.Panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			// 
 			// splitContainer2.Panel2
 			// 
@@ -166,10 +198,6 @@ namespace BetterReader
 			this.feedItemsLV.View = System.Windows.Forms.View.Details;
 			this.feedItemsLV.SelectedIndexChanged += new System.EventHandler(this.feedItemsLV_SelectedIndexChanged);
 			// 
-			// feedReaderBGW
-			// 
-			this.feedReaderBGW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.feedReaderBGW_DoWork);
-			// 
 			// splitContainer4
 			// 
 			this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -177,12 +205,28 @@ namespace BetterReader
 			this.splitContainer4.Name = "splitContainer4";
 			this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
+			// splitContainer4.Panel1
+			// 
+			this.splitContainer4.Panel1.BackColor = System.Drawing.SystemColors.Info;
+			this.splitContainer4.Panel1.Controls.Add(this.itemLinkLBL);
+			this.splitContainer4.Panel1.Controls.Add(this.itemTitleLBL);
+			// 
 			// splitContainer4.Panel2
 			// 
 			this.splitContainer4.Panel2.Controls.Add(this.webBrowser1);
 			this.splitContainer4.Size = new System.Drawing.Size(619, 372);
 			this.splitContainer4.SplitterDistance = 49;
 			this.splitContainer4.TabIndex = 0;
+			// 
+			// itemTitleLBL
+			// 
+			this.itemTitleLBL.AutoSize = true;
+			this.itemTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.itemTitleLBL.Location = new System.Drawing.Point(4, 4);
+			this.itemTitleLBL.Name = "itemTitleLBL";
+			this.itemTitleLBL.Size = new System.Drawing.Size(15, 17);
+			this.itemTitleLBL.TabIndex = 0;
+			this.itemTitleLBL.Text = "x";
 			// 
 			// webBrowser1
 			// 
@@ -192,6 +236,32 @@ namespace BetterReader
 			this.webBrowser1.Name = "webBrowser1";
 			this.webBrowser1.Size = new System.Drawing.Size(619, 319);
 			this.webBrowser1.TabIndex = 0;
+			// 
+			// feedReaderBGW
+			// 
+			this.feedReaderBGW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.feedReaderBGW_DoWork);
+			// 
+			// feedTitleLBL
+			// 
+			this.feedTitleLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.feedTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.feedTitleLBL.Location = new System.Drawing.Point(2, 0);
+			this.feedTitleLBL.Name = "feedTitleLBL";
+			this.feedTitleLBL.Size = new System.Drawing.Size(617, 17);
+			this.feedTitleLBL.TabIndex = 0;
+			this.feedTitleLBL.Text = "x";
+			this.feedTitleLBL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// itemLinkLBL
+			// 
+			this.itemLinkLBL.AutoSize = true;
+			this.itemLinkLBL.Location = new System.Drawing.Point(3, 33);
+			this.itemLinkLBL.Name = "itemLinkLBL";
+			this.itemLinkLBL.Size = new System.Drawing.Size(12, 13);
+			this.itemLinkLBL.TabIndex = 1;
+			this.itemLinkLBL.TabStop = true;
+			this.itemLinkLBL.Text = "x";
+			this.itemLinkLBL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.itemLinkLBL_LinkClicked);
 			// 
 			// Form1
 			// 
@@ -212,11 +282,16 @@ namespace BetterReader
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
+			this.splitContainer5.Panel2.ResumeLayout(false);
+			this.splitContainer5.ResumeLayout(false);
+			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel2.ResumeLayout(false);
 			this.splitContainer2.ResumeLayout(false);
 			this.splitContainer3.Panel1.ResumeLayout(false);
 			this.splitContainer3.Panel2.ResumeLayout(false);
 			this.splitContainer3.ResumeLayout(false);
+			this.splitContainer4.Panel1.ResumeLayout(false);
+			this.splitContainer4.Panel1.PerformLayout();
 			this.splitContainer4.Panel2.ResumeLayout(false);
 			this.splitContainer4.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -239,6 +314,10 @@ namespace BetterReader
 		private System.Windows.Forms.ListView feedItemsLV;
 		private System.Windows.Forms.SplitContainer splitContainer4;
 		private System.Windows.Forms.WebBrowser webBrowser1;
+		private System.Windows.Forms.SplitContainer splitContainer5;
+		private System.Windows.Forms.Label itemTitleLBL;
+		private System.Windows.Forms.Label feedTitleLBL;
+		private System.Windows.Forms.LinkLabel itemLinkLBL;
 
     }
 }

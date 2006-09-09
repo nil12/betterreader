@@ -16,6 +16,20 @@ namespace BetterReader.Backend
 		private string description;
 		private Dictionary<string, string> unsupportedFeedItemProperties;
 		private string encodedContent;
+		private bool hasBeenRead;
+		private Feed parentFeed;
+
+		internal Feed ParentFeed
+		{
+			get { return parentFeed; }
+			set { parentFeed = value; }
+		}
+
+		public bool HasBeenRead
+		{
+			get { return hasBeenRead; }
+			set { hasBeenRead = value; }
+		}
 
 		public string EncodedContent
 		{
@@ -121,9 +135,10 @@ namespace BetterReader.Backend
 
 
 
-		public static FeedItem GetFromRssItemNode(XmlNode node)
+		public static FeedItem GetFromRssOrRdfItemNode(XmlNode node)
 		{
 			FeedItem fi = new FeedItem();
+			fi.hasBeenRead = false;
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
@@ -152,6 +167,57 @@ namespace BetterReader.Backend
 						break;
 					case "content:encoded":
 						fi.encodedContent = innerText;
+						break;
+					default:
+						if (fi.unsupportedFeedItemProperties.ContainsKey(childNode.Name))
+						{
+							fi.unsupportedFeedItemProperties[childNode.Name] += "|" + innerText;
+						}
+						else
+						{
+							fi.unsupportedFeedItemProperties.Add(childNode.Name, innerText);
+						}
+						break;
+				}
+			}
+			return fi;
+		}
+
+		internal static FeedItem GetFromAtomEntryNode(XmlNode node)
+		{
+			FeedItem fi = new FeedItem();
+			fi.hasBeenRead = false;
+			foreach (XmlNode childNode in node.ChildNodes)
+			{
+				string innerText = childNode.InnerText;
+				switch (childNode.Name.ToLower())
+				{
+					case "title":
+						fi.title = innerText;
+						break;
+					case "link":
+						fi.linkUrl = innerText;
+						break;
+					case "category":
+						fi.category = innerText;
+						break;
+					case "author":
+						foreach (XmlNode authorNode in childNode.ChildNodes)
+						{
+							if (authorNode.Name == "name")
+							{
+								fi.author = authorNode.InnerText;
+							}
+						}
+						break;
+					case "modified":
+						fi.pubDate = innerText;
+						break;
+					case "id":
+						fi.guid = innerText;
+						break;
+					case "content":
+						fi.description = innerText;
 						break;
 					default:
 						if (fi.unsupportedFeedItemProperties.ContainsKey(childNode.Name))
