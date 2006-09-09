@@ -6,14 +6,14 @@ using System.Xml;
 namespace BetterReader.Backend
 {
     public delegate void FeedSubscriptionReadDelegate(FeedSubscription fs);
-   public class FeedSubscription : FeedSubTreeNodeBase
+	public class FeedSubscription : FeedSubTreeNodeBase
     {
 		private string feedUrl;
 		private string displayName;
 		private FeedFolder parentFolder;
 		private int updateSeconds;
 		private Feed feed;
-	   private FeedSubscriptionReadDelegate callback;
+		private FeedSubscriptionReadDelegate callback;
 
 		public string FeedUrl
 		{
@@ -25,6 +25,7 @@ namespace BetterReader.Backend
 			{
 				feedUrl = value;
 				feed = new Feed(feedUrl);
+				feed.ParentSubscription = this;
 			}
 		}
 
@@ -53,29 +54,29 @@ namespace BetterReader.Backend
 			set { feed = value; }
 		}
 
-	   public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
-	   {
+		public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
+		{
 		   callback = lCallback;
-           feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
-	   }
+		   feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
+		}
 
-       public void feedReadCallback(Feed f)
-       {
+		public void feedReadCallback(Feed f)
+		{
 		   callback(this);
-       }
+		}
 
-	   public new static FeedSubscription GetFromOpmlXmlNode(XmlNode node)
-	   {
+		public new static FeedSubscription GetFromOpmlXmlNode(XmlNode node)
+		{
 		   FeedSubscription fs = new FeedSubscription();
 		   fs.DisplayName = node.Attributes["text"].Value;
 		   fs.FeedUrl = node.Attributes["xmlUrl"].Value;
 		   return fs;
-	   }
+		}
 
-       public override string ToString()
-       {
-           return displayName + "(" + feed.FeedItems.Count.ToString() + ")";
-       }
+		public override string ToString()
+		{
+		   return displayName + "(" + feed.UnreadItems.ToString() + "/" + feed.FeedItems.Count.ToString() + ")";
+		}
 
     }
 }

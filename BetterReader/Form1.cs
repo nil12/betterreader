@@ -18,6 +18,11 @@ namespace BetterReader
         private Dictionary<object, TreeNode> treeNodesByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
 		private readonly string feedSubsFilepath;
+		private Font feedsNormalFont;
+		private Font feedsBoldFont;
+		private Font feedItemsNormalFont;
+		private Font feedItemsBoldFont;
+		private Graphics formGraphics;
 
         public Form1()
         {
@@ -25,7 +30,7 @@ namespace BetterReader
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-			
+			formGraphics = this.CreateGraphics();
         }
 
 		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -41,6 +46,11 @@ namespace BetterReader
         private void Form1_Load(object sender, EventArgs e)
 		{
 			ensureDirectoryExists(settingsDirectory);
+			feedsNormalFont = feedsTV.Font;
+			feedsBoldFont = new Font(feedsNormalFont, FontStyle.Bold);
+			feedItemsNormalFont = feedItemsLV.Font;
+			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
+
 			if (File.Exists(feedSubsFilepath))
 			{
 				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
@@ -68,6 +78,14 @@ namespace BetterReader
 			if (fs.Feed.ReadSuccess)
 			{
 				text = fs.ToString();
+				if (fs.Feed.UnreadItems > 0)
+				{
+					node.NodeFont = feedsBoldFont;
+				}
+				else
+				{
+					node.NodeFont = feedsNormalFont;
+				}
 			}
 			else
 			{
@@ -78,7 +96,11 @@ namespace BetterReader
 			{
 				this.Invoke(new setNodeTextDelegate(setNodeText), new object[] { node, text });
 			}
-			catch { }
+			catch (InvalidOperationException) 
+			{
+				//this was most likely caused by a feed reading thread returning during shutdown
+				//so we'll ignore it
+			}
         }
 
 		private void setNodeText(TreeNode node, string text)
@@ -181,15 +203,29 @@ namespace BetterReader
 			feedItemsLV.SuspendLayout();
 			feedItemsLV.Clear();
 			webBrowser1.DocumentText = "";
+			feedTitleLBL.Text = feedSubscription.DisplayName;
+			feedTitleLBL.Width = splitContainer2.Panel1.Width;
 			if (feedSubscription.Feed.ReadSuccess)
 			{
 				bindFeedItemsToListView(feedSubscription.Feed.FeedItems);
+				feedItemsLV.Enabled = true;
 			}
 			else
 			{
-				feedItemsLV.Columns.Add("Error");
-				ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
-				feedItemsLV.Items.Add(lvi);
+				if (feedSubscription.Feed.ReadException == null)
+				{
+					feedItemsLV.Columns.Add("Title");
+					ListViewItem lvi = new ListViewItem("Loading");
+					feedItemsLV.Items.Add(lvi);
+					feedItemsLV.Enabled = false;
+				}
+				else
+				{
+					feedItemsLV.Columns.Add("Error");
+					ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
+					feedItemsLV.Items.Add(lvi);
+					feedItemsLV.Enabled = false;
+				}
 			}
 			feedItemsLV.ResumeLayout();
 		}
@@ -209,7 +245,28 @@ namespace BetterReader
 			{
 				ListViewItem lvi = new ListViewItem(fi.Title);
 				lvi.Tag = fi;
+				if (fi.HasBeenRead)
+				{
+					lvi.Font = feedItemsNormalFont;
+				}
+				else
+				{
+					lvi.Font = feedItemsBoldFont;
+				}
+
+				setColumnWidth(feedItemsLV.Columns[0], lvi);
 				feedItemsLV.Items.Add(lvi);
+			}
+		}
+
+		private void setColumnWidth(ColumnHeader column, ListViewItem lvi)
+		{
+			SizeF size = formGraphics.MeasureString(lvi.Text, lvi.Font);
+
+			int newWidth = (int)size.Width + 50;
+			if (column.Width < newWidth)
+			{
+				column.Width = newWidth;
 			}
 		}
 
@@ -219,26 +276,41 @@ namespace BetterReader
 			if (feedItemsLV.SelectedItems.Count > 0)
 			{
 				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
+				itemTitleLBL.Text = fi.Title;
+				itemLinkLBL.Text = fi.LinkUrl;
+				itemLinkLBL.Links[0].LinkData = fi.LinkUrl;
 				if (fi != null)
 				{
 					if (fi.EncodedContent != null && fi.EncodedContent.Length > 0)
 					{
 						webBrowser1.DocumentText = formatDescriptionHTML(fi.EncodedContent);
 					}
-					else
+					else if (fi.Description != null && fi.Description.Length > 0)
 					{
 						webBrowser1.DocumentText = formatDescriptionHTML(fi.Description);
 					}
+					else
+					{
+						webBrowser1.Navigate(fi.LinkUrl);
+					}
 				}
+				fi.HasBeenRead = true;
+				fi.ParentFeed.UnreadItems--;
+				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
+				TreeNode node = treeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
+				setNodeText(node, fi.ParentFeed.ParentSubscription.ToString());
 			}
+		}
+
+
+		private void visitLink(LinkLabel.Link link)
+		{
+			link.Visited = true;
+			System.Diagnostics.Process.Start(link.LinkData.ToString());
 		}
 
 		private string formatDescriptionHTML(string description)
 		{
-			if (description == null || description.Length < 1)
-			{
-				description = "BetterReader: No description found for this item.";
-			}
 			return "<html><body style='margin:8px; overflow:auto; font-family:Tahoma; font-size:9pt;'>" +
 				description + "</body></html>";
 		}
@@ -263,6 +335,12 @@ namespace BetterReader
 		{
 			displaySelectedFeedItem();
 		}
+
+		private void itemLinkLBL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			visitLink(e.Link);
+		}
+
 
 
 

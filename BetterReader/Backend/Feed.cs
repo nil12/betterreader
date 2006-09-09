@@ -23,6 +23,20 @@ namespace BetterReader.Backend
 		private bool readSuccess;
 		private Exception readException;
 		private Dictionary<string, string> unsupportedFeedProperties;
+		private int unreadItems;
+		private FeedSubscription parentSubscription;
+
+		internal FeedSubscription ParentSubscription
+		{
+			get { return parentSubscription; }
+			set { parentSubscription = value; }
+		}
+
+		public int UnreadItems
+		{
+			get { return unreadItems; }
+			set { unreadItems = value; }
+		}
 
 
 
@@ -160,11 +174,15 @@ namespace BetterReader.Backend
 		{
 			readSuccess = false;
 			readException = null;
+			unreadItems = 0;
 			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
 
 			webRequestState state = new webRequestState();
 			state.callback = callback;
 			state.request = hwr;
+			hwr.AllowAutoRedirect = true;
+			hwr.MaximumAutomaticRedirections = 10;
+			hwr.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.6) Gecko/20060728 Firefox/1.5.0.6";
 			IAsyncResult ar = hwr.BeginGetResponse(new AsyncCallback(readCallback), state);
 			// this line implements the timeout, if there is a timeout, the 
 			//callback fires and the request becomes aborted
@@ -214,6 +232,100 @@ namespace BetterReader.Backend
 							}
 						}
 						break;
+					case "rdf:RDF":
+						loadFromRdfNode(node);
+						break;
+					case "feed":
+						loadFromAtomFeedNode(node);
+						break;
+				}
+			}
+		}
+
+		private void loadFromAtomFeedNode(XmlNode node)
+		{
+			foreach (XmlNode childNode in node.ChildNodes)
+			{
+				string innerText = childNode.InnerText;
+				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
+				switch (childNode.Name)
+				{
+					case "title":
+						title = innerText;
+						break;
+					case "link":
+						linkUrl = innerText;
+						break;
+					case "info":
+						description = innerText;
+						break;
+					case "entry":
+						FeedItem fi = FeedItem.GetFromAtomEntryNode(childNode);
+						fi.ParentFeed = this;
+						feedItems.Add(fi);
+						if (fi.HasBeenRead == false)
+						{
+							unreadItems++;
+						}
+						break;
+				}
+			}
+		}
+
+		private void loadFromRdfNode(XmlNode node)
+		{
+			foreach (XmlNode childNode in node.ChildNodes)
+			{
+				string innerText = childNode.InnerText;
+				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
+				switch (childNode.Name)
+				{
+					case "channel":
+						loadFeedInfoFromRdfChannelNode(childNode);
+						break;
+					case "item":
+						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
+						fi.ParentFeed = this;
+						feedItems.Add(fi);
+						if (fi.HasBeenRead == false)
+						{
+							unreadItems++;
+						}
+						break;
+					default:
+						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
+						{
+							unsupportedFeedProperties[childNode.Name] += "|" + innerText;
+						}
+						else
+						{
+							unsupportedFeedProperties.Add(childNode.Name, innerText);
+						}
+						break;
+				}
+			}
+		}
+
+		private void loadFeedInfoFromRdfChannelNode(XmlNode node)
+		{
+			foreach (XmlNode childNode in node.ChildNodes)
+			{
+				string innerText = childNode.InnerText;
+				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
+				switch (childNode.Name)
+				{
+					case "title":
+						title = innerText;
+						break;
+					case "link":
+						linkUrl = innerText;
+						break;
+					case "description":
+						description = innerText;
+						break;
+					case "dc:language":
+						language = innerText;
+						break;
 				}
 			}
 		}
@@ -239,8 +351,13 @@ namespace BetterReader.Backend
 						language = innerText;
 						break;
 					case "item":
-						FeedItem fi = FeedItem.GetFromRssItemNode(childNode);
+						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
+						fi.ParentFeed = this;
 						feedItems.Add(fi);
+						if (fi.HasBeenRead == false)
+						{
+							unreadItems++;
+						}
 						break;
 					default:
 						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
