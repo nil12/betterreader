@@ -12,6 +12,8 @@ namespace BetterReader
 {
     public partial class Form1 : Form
     {
+		
+		private delegate void setNodeTextDelegate(TreeNode node, string text);
         private FeedSubscriptionTree fst;
         private Dictionary<object, TreeNode> treeNodesByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
@@ -21,7 +23,20 @@ namespace BetterReader
         {
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
+			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			
         }
+
+		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			throw e.ExceptionObject as Exception;
+		}
+
+		void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+		{
+			throw e.Exception;
+		}
 
         private void Form1_Load(object sender, EventArgs e)
 		{
@@ -29,8 +44,8 @@ namespace BetterReader
 			if (File.Exists(feedSubsFilepath))
 			{
 				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
-				bindFSTToTreeView();
-				fst.ReadAllFeeds();
+				bindFSTAndBeginReads();
+				//feedReaderBGW.RunWorkerAsync();
 			}
             //importOpml(@"C:\Documents and Settings\skain\Desktop\rssowl.opml");
             //fsc.SaveAsFeedSubscriptionsFile("FeedSubscriptions.xml");
@@ -38,6 +53,38 @@ namespace BetterReader
 			////fst.ReadAllFeeds();
 			//bindFSTToTreeView();
         }
+
+		private void bindFSTAndBeginReads()
+		{
+			bindFSTToTreeView();
+			fst.BeginReadAllFeeds(new FeedSubscriptionReadDelegate(feedSubReadCallback));
+		}
+
+        private void feedSubReadCallback(FeedSubscription fs)
+        {
+			TreeNode node = treeNodesByTag[fs];
+			string text;
+
+			if (fs.Feed.ReadSuccess)
+			{
+				text = fs.ToString();
+			}
+			else
+			{
+				//throw fs.Feed.ReadException;
+				text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+			}
+			try
+			{
+				this.Invoke(new setNodeTextDelegate(setNodeText), new object[] { node, text });
+			}
+			catch { }
+        }
+
+		private void setNodeText(TreeNode node, string text)
+		{
+			node.Text = text;
+		}
 
 		private void ensureDirectoryExists(string path)
 		{
@@ -67,7 +114,7 @@ namespace BetterReader
             fst = new FeedSubscriptionTree();
             fst.LoadFromOpml(filepath);
 			fst.SaveAsFeedSubscriptionsFile(settingsDirectory + "FeedSubscriptions.xml");
-            bindFSTToTreeView();
+			feedReaderBGW.RunWorkerAsync();
         }
 
         private void bindFSTToTreeView()
@@ -100,6 +147,7 @@ namespace BetterReader
 					}
 
 					newNode.Tag = fs;
+					treeNodesByTag.Add(fs, newNode);
 				}
 				else if (nodeType == typeof(FeedFolder))
 				{
@@ -116,6 +164,7 @@ namespace BetterReader
 					}
 
 					newNode.Tag = ff;
+					treeNodesByTag.Add(ff, newNode);
 
 					bindNodeListToTreeView(ff.ChildNodes, newNode);
 				}
@@ -126,31 +175,97 @@ namespace BetterReader
 			}
 		}
 
-		//private void bindFolderToTreeView(FeedFolder folder, TreeNode parentNode)
-		//{
-		//    //TreeNode newNode;
-		//    //if (parentNode == null)
-		//    //{
-		//    //    //this is the root
-		//    //    newNode = feedsTV.Nodes.Add(folder.Name);
-		//    //}
-		//    //else
-		//    //{
-		//    //    newNode = parentNode.Nodes.Add(folder.Name);
-		//    //}
-		//    //newNode.Tag = folder;
-		//    //treeNodesByTag.Add(folder, newNode);
-		//    //foreach (FeedFolder childFolder in folder.ChildNodes)
-		//    //{
-		//    //    bindFolderToTreeView(childFolder, newNode);
-		//    //}
 
-		//    //foreach (FeedSubscription sub in folder.ChildSubscriptions)
-		//    //{
-		//    //    TreeNode subNode = newNode.Nodes.Add(sub.DisplayName);
-		//    //    subNode.Tag = sub;
-		//    //    treeNodesByTag.Add(sub, subNode);
-		//    //}
-		//}
+		private void displayFeedItems(FeedSubscription feedSubscription)
+		{
+			feedItemsLV.SuspendLayout();
+			feedItemsLV.Clear();
+			webBrowser1.DocumentText = "";
+			if (feedSubscription.Feed.ReadSuccess)
+			{
+				bindFeedItemsToListView(feedSubscription.Feed.FeedItems);
+			}
+			else
+			{
+				feedItemsLV.Columns.Add("Error");
+				ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
+				feedItemsLV.Items.Add(lvi);
+			}
+			feedItemsLV.ResumeLayout();
+		}
+
+		private void bindFeedItemsToListView(List<FeedItem> feedItems)
+		{
+			feedItemsLV.Columns.Add("Title");
+			if (feedItems.Count < 1)
+			{
+				feedItemsLV.Items.Add(new ListViewItem("No items found."));
+				feedItemsLV.Enabled = false;
+				return;
+			}
+
+			feedItemsLV.Enabled = true;
+			foreach (FeedItem fi in feedItems)
+			{
+				ListViewItem lvi = new ListViewItem(fi.Title);
+				lvi.Tag = fi;
+				feedItemsLV.Items.Add(lvi);
+			}
+		}
+
+
+		private void displaySelectedFeedItem()
+		{
+			if (feedItemsLV.SelectedItems.Count > 0)
+			{
+				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
+				if (fi != null)
+				{
+					if (fi.EncodedContent != null && fi.EncodedContent.Length > 0)
+					{
+						webBrowser1.DocumentText = formatDescriptionHTML(fi.EncodedContent);
+					}
+					else
+					{
+						webBrowser1.DocumentText = formatDescriptionHTML(fi.Description);
+					}
+				}
+			}
+		}
+
+		private string formatDescriptionHTML(string description)
+		{
+			if (description == null || description.Length < 1)
+			{
+				description = "BetterReader: No description found for this item.";
+			}
+			return "<html><body style='margin:8px; overflow:auto; font-family:Tahoma; font-size:9pt;'>" +
+				description + "</body></html>";
+		}
+
+
+		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
+		{
+			bindFSTAndBeginReads();
+		}
+
+		private void feedsTV_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			object tag = e.Node.Tag;
+			Type t = tag.GetType();
+			if (t == typeof(FeedSubscription))
+			{
+				displayFeedItems(tag as FeedSubscription);
+			}
+		}
+
+		private void feedItemsLV_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			displaySelectedFeedItem();
+		}
+
+
+
+	
     }
 }

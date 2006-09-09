@@ -15,6 +15,13 @@ namespace BetterReader.Backend
 		private string guid;
 		private string description;
 		private Dictionary<string, string> unsupportedFeedItemProperties;
+		private string encodedContent;
+
+		public string EncodedContent
+		{
+			get { return encodedContent; }
+			set { encodedContent = value; }
+		}
 
 		public Dictionary<string, string> UnsupportedFeedItemProperties
 		{
@@ -143,8 +150,18 @@ namespace BetterReader.Backend
 					case "description":
 						fi.description = innerText;
 						break;
+					case "content:encoded":
+						fi.encodedContent = innerText;
+						break;
 					default:
-						fi.unsupportedFeedItemProperties.Add(childNode.Name, innerText);
+						if (fi.unsupportedFeedItemProperties.ContainsKey(childNode.Name))
+						{
+							fi.unsupportedFeedItemProperties[childNode.Name] += "|" + innerText;
+						}
+						else
+						{
+							fi.unsupportedFeedItemProperties.Add(childNode.Name, innerText);
+						}
 						break;
 				}
 			}

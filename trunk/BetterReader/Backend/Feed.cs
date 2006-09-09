@@ -153,7 +153,7 @@ namespace BetterReader.Backend
 		public Feed(string lFeedUrl)
 		{
 			feedUrl = lFeedUrl;
-			feedItems = null;
+			feedItems = new List<FeedItem>();
 		}
 
 		public void BeginRead(FeedReadCompleteDelegate callback)
@@ -166,22 +166,22 @@ namespace BetterReader.Backend
 			state.callback = callback;
 			state.request = hwr;
 			IAsyncResult ar = hwr.BeginGetResponse(new AsyncCallback(readCallback), state);
-			// this line implements the timeout, if there is a timeout, the callback fires and the request becomes aborted
-			ThreadPool.RegisterWaitForSingleObject(ar.AsyncWaitHandle, new WaitOrTimerCallback(timeoutCallback), callback, TimeSpan.FromSeconds(30), true);
-
-
+			// this line implements the timeout, if there is a timeout, the 
+			//callback fires and the request becomes aborted
+			ThreadPool.RegisterWaitForSingleObject(ar.AsyncWaitHandle, 
+				new WaitOrTimerCallback(timeoutCallback), state, TimeSpan.FromSeconds(30), true);
 
 		}
 
 		private void readCallback(IAsyncResult ar)
 		{
 			webRequestState state = (webRequestState)ar.AsyncState;
-			HttpWebResponse response = (HttpWebResponse)state.request.GetResponse();
 			XmlDocument xmlDoc = new XmlDocument();
 			try
 			{
+				HttpWebResponse response = (HttpWebResponse)state.request.GetResponse();
 				xmlDoc.Load(response.GetResponseStream());
-				response.Close();
+				//response.Close();
 				loadFromXmlDoc(xmlDoc);
 				readException = null;
 				readSuccess = true;
@@ -190,6 +190,7 @@ namespace BetterReader.Backend
 			{
 				readException = e;
 				readSuccess = false;
+				//System.Diagnostics.Debug.WriteLine("Error reading feed: " + e.ToString());
 			}
 
 
@@ -207,9 +208,9 @@ namespace BetterReader.Backend
 					case "rss":
 						foreach (XmlNode childNode in node.ChildNodes)
 						{
-							if (node.Name == "channel")
+							if (childNode.Name == "channel")
 							{
-								loadFromRssChannelNode(node);
+								loadFromRssChannelNode(childNode);
 							}
 						}
 						break;
@@ -222,6 +223,7 @@ namespace BetterReader.Backend
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
+				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
 				switch (childNode.Name)
 				{
 					case "title":
@@ -241,7 +243,14 @@ namespace BetterReader.Backend
 						feedItems.Add(fi);
 						break;
 					default:
-						unsupportedFeedProperties.Add(childNode.Name, innerText);
+						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
+						{
+							unsupportedFeedProperties[childNode.Name] += "|" + innerText;
+						}
+						else
+						{
+							unsupportedFeedProperties.Add(childNode.Name, innerText);
+						}
 						break;
 				}
 			}
@@ -249,19 +258,26 @@ namespace BetterReader.Backend
 
 		private void timeoutCallback(object state, bool timedOut)
 		{
-			webRequestState wrs = state as webRequestState;
-			if (wrs != null)
+			if (timedOut)
 			{
-				HttpWebResponse response = (HttpWebResponse)wrs.request.GetResponse();
-				if (response != null)
+				webRequestState wrs = state as webRequestState;
+				if (wrs != null)
 				{
-					response.Close();
+					try
+					{
+						HttpWebResponse response = (HttpWebResponse)wrs.request.GetResponse();
+						if (response != null)
+						{
+							response.Close();
+						}
+					}
+					catch { }
 				}
-			}
 
-			readSuccess = false;
-			readException = new Exception("Timeout occurred reading feed.");
-			wrs.callback(this);
+				readSuccess = false;
+				readException = new Exception("Timeout occurred reading feed.");
+				wrs.callback(this);
+			}
 		}
 
 		private class webRequestState
