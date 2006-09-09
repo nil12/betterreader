@@ -5,6 +5,7 @@ using System.Xml;
 
 namespace BetterReader.Backend
 {
+    public delegate void FeedSubscriptionReadDelegate(FeedSubscription fs);
    public class FeedSubscription : FeedSubTreeNodeBase
     {
 		private string feedUrl;
@@ -12,6 +13,7 @@ namespace BetterReader.Backend
 		private FeedFolder parentFolder;
 		private int updateSeconds;
 		private Feed feed;
+	   private FeedSubscriptionReadDelegate callback;
 
 		public string FeedUrl
 		{
@@ -51,10 +53,16 @@ namespace BetterReader.Backend
 			set { feed = value; }
 		}
 
-	   public void ReadFeed()
+	   public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
 	   {
-		   //feed.Read();
+		   callback = lCallback;
+           feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
 	   }
+
+       public void feedReadCallback(Feed f)
+       {
+		   callback(this);
+       }
 
 	   public new static FeedSubscription GetFromOpmlXmlNode(XmlNode node)
 	   {
@@ -63,6 +71,11 @@ namespace BetterReader.Backend
 		   fs.FeedUrl = node.Attributes["xmlUrl"].Value;
 		   return fs;
 	   }
+
+       public override string ToString()
+       {
+           return displayName + "(" + feed.FeedItems.Count.ToString() + ")";
+       }
 
     }
 }

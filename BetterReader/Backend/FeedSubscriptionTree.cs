@@ -137,7 +137,7 @@ namespace BetterReader.Backend
 				{
 					currentParentFolder.ChildNodes.Add(fs);
 				}
-				Debug.WriteLine("Processed Sub Node: " + fs.DisplayName + ":" + currentParentFolder == null ? "root" : currentParentFolder.Name);
+				//Debug.WriteLine("Processed Sub Node: " + fs.DisplayName + ":" + currentParentFolder == null ? "root" : currentParentFolder.Name);
 			}
 			else if (nodeType == typeof(FeedFolder))
 			{
@@ -163,76 +163,28 @@ namespace BetterReader.Backend
 			{
 				throw new Exception("FeedSubscriptionTree.processOpmlOutlineNode error: Unrecognized node type: " + nodeType.ToString());
 			}
-			//XmlAttribute titleAttr = node.Attributes["title"];
-			//string title = "";
-			//if (titleAttr != null)
-			//{
-			//    title = titleAttr.Value;
-			//}
-
-			//if (title.Length > 0)
-			//{
-			//    //this is a feed sub node
-			//    FeedSubscription fs = new FeedSubscription();
-			//    fs.DisplayName = node.Attributes["text"].Value;
-			//    fs.FeedUrl = node.Attributes["xmlUrl"].Value;
-			//    fs.ParentFolder = currentParentFolder;
-
-			//    if (currentParentFolder != null)
-			//    {
-			//        currentParentFolder.ChildSubscriptions.Add(fs);
-			//    }
-			//    else
-			//    {
-			//        throw new ApplicationException("Error.  No root folder defined in Opml file.");
-			//    }
-
-			//    return;
-			//}
-			//else
-			//{
-			//    //this is a folder node
-			//    FeedFolder ff = new FeedFolder();
-			//    ff.Name = node.Attributes["text"].Value;
-			//    ff.ParentFolder = currentParentFolder;
-			//    if (rootFolder == null)
-			//    {
-			//        //this must be the root folder
-			//        rootFolder = ff;
-			//    }
-			//    else
-			//    {
-			//        currentParentFolder.ChildFolders.Add(ff);
-			//    }
-
-			//    currentParentFolder = ff;
-			//    foreach (XmlNode childNode in node.ChildNodes)
-			//    {
-			//        processOpmlNode(childNode, currentParentFolder);
-			//    }
-			//}
+		
         }
 
-		public void ReadAllFeeds()
+		public void BeginReadAllFeeds(FeedSubscriptionReadDelegate callback)
 		{
-			//recurseReadFeeds(rootFolder);
-			readAllFeedsInNodeList(rootLevelNodes);
+			readAllFeedsInNodeList(rootLevelNodes, callback);
 		}
 
-		private void readAllFeedsInNodeList(List<FeedSubTreeNodeBase> nodeList)
+		private void readAllFeedsInNodeList(List<FeedSubTreeNodeBase> nodeList, FeedSubscriptionReadDelegate callback)
 		{
-			foreach (FeedSubTreeNodeBase fstnb in rootLevelNodes)
+			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
 				Type t = fstnb.GetType();
 				if (t == typeof(FeedSubscription))
 				{
 					FeedSubscription fs = fstnb as FeedSubscription;
-					fs.ReadFeed();
+					fs.BeginReadFeed(callback);
 				}
 				else if (t == typeof(FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
-					readAllFeedsInNodeList(ff.ChildNodes);
+					readAllFeedsInNodeList(ff.ChildNodes, callback);
 				}
 				else
 				{
@@ -241,17 +193,5 @@ namespace BetterReader.Backend
 			}
 		}
 
-		private void recurseReadFeeds(FeedFolder curFolder)
-		{
-			//foreach(FeedFolder childFolder in curFolder.ChildNodes)
-			//{
-			//    recurseReadFeeds(childFolder);
-			//}
-
-			//foreach (FeedSubscription fs in curFolder.ChildSubscriptions)
-			//{
-			//    fs.ReadFeed();
-			//}
-		}
     }
 }
