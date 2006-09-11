@@ -46,8 +46,23 @@ namespace BetterReader.Backend
                 fsc = xs.Deserialize(tr) as FeedSubscriptionTree;
             }
 
+			fsc.setParentFolderOnNodesInList(fsc.rootLevelNodes, null);
             return fsc;
         }
+
+		private void setParentFolderOnNodesInList(List<FeedSubTreeNodeBase> nodeList, FeedFolder curParent)
+		{
+			foreach (FeedSubTreeNodeBase fstnb in nodeList)
+			{
+				fstnb.ParentFolder = curParent;
+				if (fstnb.GetType() == typeof(FeedFolder))
+				{
+					FeedFolder ff = fstnb as FeedFolder;
+					setParentFolderOnNodesInList(ff.ChildNodes, ff);
+				}
+			}
+		}
+
 		      
 		public void BeginReadAllFeeds(FeedSubscriptionReadDelegate callback)
 		{
@@ -161,16 +176,20 @@ namespace BetterReader.Backend
 			}
 			Type t = destNode.GetType();
 
+			FeedFolder ff = null;
+
 			if (t == typeof(FeedFolder))
 			{
-				FeedFolder ff = (FeedFolder)destNode;
+				ff = (FeedFolder)destNode;
 				ff.ChildNodes.Add(movedNode);
 			}
 			else if (t == typeof(FeedSubscription))
 			{
-				FeedFolder ff = destNode.ParentFolder;
+				ff = destNode.ParentFolder;
 				ff.ChildNodes.Insert(ff.ChildNodes.IndexOf(destNode), movedNode);
 			}
+
+			movedNode.ParentFolder = ff;
 		}
 	}
 }

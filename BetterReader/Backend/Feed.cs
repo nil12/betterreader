@@ -196,13 +196,21 @@ namespace BetterReader.Backend
 
 		private void loadArchivedFeedItems()
 		{
-			if (File.Exists(archiveFilepath))
+			try
 			{
-				using (TextReader tr = new StreamReader(archiveFilepath))
+				if (File.Exists(archiveFilepath))
 				{
-					XmlSerializer xs = new XmlSerializer(typeof(List<FeedItem>));
-					feedItems = (List<FeedItem>)xs.Deserialize(tr);
+					using (TextReader tr = new StreamReader(archiveFilepath))
+					{
+						XmlSerializer xs = new XmlSerializer(typeof(List<FeedItem>));
+						feedItems = (List<FeedItem>)xs.Deserialize(tr);
+					}
 				}
+			}
+			catch
+			{
+				//error reading archive, no big deal
+				return;
 			}
 
 			foreach (FeedItem fi in feedItems)

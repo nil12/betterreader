@@ -119,6 +119,14 @@ namespace BetterReader
 			try
 			{
 				this.Invoke(new setNodeTextDelegate(setNodeText), new object[] { node, text });
+				this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
+	new object[] { node, fs });
+
+				if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
+				{
+					//the app is minimized and new items were found so set the notifyIcon to alert status
+					notifyIcon1.Icon = redLightIcon;
+				}
 			}
 			catch (InvalidOperationException) 
 			{
@@ -126,14 +134,7 @@ namespace BetterReader
 				//so we'll ignore it
 			}
 
-			this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected), 
-				new object[] {node, fs});
 
-			if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
-			{
-				//the app is minimized and new items were found so set the notifyIcon to alert status
-				notifyIcon1.Icon = redLightIcon;
-			}
         }
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
