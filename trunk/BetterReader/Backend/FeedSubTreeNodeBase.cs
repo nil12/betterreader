@@ -8,6 +8,15 @@ namespace BetterReader.Backend
 	public abstract class FeedSubTreeNodeBase
 	{
 
+		private FeedFolder parentFolder;
+
+		internal FeedFolder ParentFolder
+		{
+			get { return parentFolder; }
+			set { parentFolder = value; }
+		}
+
+
 		public static FeedSubTreeNodeBase GetFromOpmlXmlNode(XmlNode node)
 		{
 			if (node.Name != "outline")

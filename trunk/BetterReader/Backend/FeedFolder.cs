@@ -9,13 +9,6 @@ namespace BetterReader.Backend
     {
         private string name;
         private List<FeedSubTreeNodeBase> childNodes;
-        private FeedFolder parentFolder;
-
-        internal FeedFolder ParentFolder
-        {
-            get { return parentFolder; }
-            set { parentFolder = value; }
-        }
 
         public string Name
         {

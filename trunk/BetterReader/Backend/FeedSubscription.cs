@@ -11,11 +11,24 @@ namespace BetterReader.Backend
     {
 		private string feedUrl;
 		private string displayName;
-		private FeedFolder parentFolder;
 		private int updateSeconds;
 		private Feed feed;
 		private FeedSubscriptionReadDelegate callback;
 		private Timer updateTimer;
+		private Guid guid;
+		private int daysToArchive;
+
+		public int DaysToArchive
+		{
+			get { return daysToArchive; }
+			set { daysToArchive = value; }
+		}
+
+		public Guid Guid
+		{
+			get { return guid; }
+			set { guid = value; }
+		}
 
 		public string FeedUrl
 		{
@@ -26,7 +39,7 @@ namespace BetterReader.Backend
 			set 
 			{
 				feedUrl = value;
-				feed = new Feed(feedUrl);
+				feed = new Feed(guid, feedUrl);
 				feed.ParentSubscription = this;
 			}
 		}
@@ -37,11 +50,6 @@ namespace BetterReader.Backend
 			set { displayName = value; }
 		}
 
-		internal FeedFolder ParentFolder
-		{
-			get { return parentFolder; }
-			set { parentFolder = value; }
-		}
 
 		public int UpdateSeconds
 		{
@@ -54,6 +62,13 @@ namespace BetterReader.Backend
 		{
 			get { return feed; }
 			set { feed = value; }
+		}
+
+		public FeedSubscription()
+		{
+			guid = Guid.NewGuid();
+			daysToArchive = 14;
+			updateSeconds = 15 * 60;
 		}
 
 		public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)

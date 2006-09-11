@@ -10,7 +10,7 @@ using BetterReader.Backend;
 
 namespace BetterReader
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 		
 		private delegate void setNodeTextDelegate(TreeNode node, string text);
@@ -20,19 +20,34 @@ namespace BetterReader
 		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
 		private readonly string feedSubsFilepath;
+		private static string archiveDirectory;
+		private readonly string graphicsDirectory = System.Environment.CurrentDirectory + "\\Graphics\\";
 		private Font feedsNormalFont;
 		private Font feedsBoldFont;
 		private Font feedItemsNormalFont;
 		private Font feedItemsBoldFont;
 		private Graphics formGraphics;
+		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
 
-        public Form1()
+		internal static string ArchiveDirectory
+		{
+			get
+			{
+				return archiveDirectory;
+			}
+		}
+
+        public MainForm()
         {
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
+			archiveDirectory = settingsDirectory + "ArchivedItems\\";
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 			formGraphics = this.CreateGraphics();
+			redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
+			yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
+			greenLightIcon = new Icon(graphicsDirectory + "greenlight.ico");
         }
 
 		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -48,6 +63,7 @@ namespace BetterReader
         private void Form1_Load(object sender, EventArgs e)
 		{
 			ensureDirectoryExists(settingsDirectory);
+			ensureDirectoryExists(archiveDirectory);
 			feedsNormalFont = feedsTV.Font;
 			feedsBoldFont = new Font(feedsNormalFont, FontStyle.Bold);
 			feedItemsNormalFont = feedItemsLV.Font;
@@ -56,8 +72,9 @@ namespace BetterReader
 			if (File.Exists(feedSubsFilepath))
 			{
 				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
-				bindFSTAndBeginReads();
-				//feedReaderBGW.RunWorkerAsync();
+				bindFSTToTreeView();
+				//beginReads();
+				feedReaderBGW.RunWorkerAsync();
 			}
             //importOpml(@"C:\Documents and Settings\skain\Desktop\rssowl.opml");
             //fsc.SaveAsFeedSubscriptionsFile("FeedSubscriptions.xml");
@@ -66,9 +83,8 @@ namespace BetterReader
 			//bindFSTToTreeView();
         }
 
-		private void bindFSTAndBeginReads()
+		private void beginReads()
 		{
-			bindFSTToTreeView();
 			fst.BeginReadAllFeeds(new FeedSubscriptionReadDelegate(feedSubReadCallback));
 		}
 
@@ -91,8 +107,14 @@ namespace BetterReader
 			}
 			else
 			{
-				//throw fs.Feed.ReadException;
-				text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+				if (fs.Feed.ReadException != null)
+				{
+					text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+				}
+				else
+				{
+					text = "Loading . . .";
+				}
 			}
 			try
 			{
@@ -106,6 +128,12 @@ namespace BetterReader
 
 			this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected), 
 				new object[] {node, fs});
+
+			if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
+			{
+				//the app is minimized and new items were found so set the notifyIcon to alert status
+				notifyIcon1.Icon = redLightIcon;
+			}
         }
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
@@ -146,9 +174,9 @@ namespace BetterReader
 
         private void importOpml(string filepath)
         {
-            fst = new FeedSubscriptionTree();
-            fst.LoadFromOpml(filepath);
+            fst = Opml.GetFeedSubscriptionTreeFromOpmlFile(filepath);
 			fst.SaveAsFeedSubscriptionsFile(settingsDirectory + "FeedSubscriptions.xml");
+			bindFSTToTreeView();
 			feedReaderBGW.RunWorkerAsync();
         }
 
@@ -331,9 +359,32 @@ namespace BetterReader
 		}
 
 
+		private void hideFormShowNotifyIcon()
+		{
+			if (fst.GetUnreadItemCount() > 0)
+			{
+				notifyIcon1.Icon = yellowLightIcon;
+			}
+			else
+			{
+				notifyIcon1.Icon = greenLightIcon;
+			}
+
+			this.Hide();
+			notifyIcon1.Visible = true;
+		}
+
+		private void showFormHideNotifyIcon()
+		{
+			notifyIcon1.Visible = false;
+			this.Show();
+			this.WindowState = FormWindowState.Normal;
+		}
+
+
 		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
 		{
-			bindFSTAndBeginReads();
+			beginReads();
 		}
 
 		private void feedsTV_AfterSelect(object sender, TreeViewEventArgs e)
@@ -363,6 +414,47 @@ namespace BetterReader
 				fst.Dispose();
 			}
 		}
+
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized)
+			{
+				hideFormShowNotifyIcon();
+			}
+		}
+
+		private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+		{
+			showFormHideNotifyIcon();
+		}
+
+		private void feedsTV_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			DoDragDrop(e.Item, DragDropEffects.Move);
+		}
+
+		private void feedsTV_DragEnter(object sender, DragEventArgs e)
+		{
+			e.Effect = DragDropEffects.Move;
+		}
+
+		private void feedsTV_DragDrop(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+			{
+				Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+				TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
+				TreeNode movedNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+				moveTreeNode(movedNode, destinationNode);
+			}
+		}
+
+		private void moveTreeNode(TreeNode movedNode, TreeNode destinationNode)
+		{
+			fst.MoveNode((FeedSubTreeNodeBase)movedNode.Tag, (FeedSubTreeNodeBase)destinationNode.Tag);
+			bindFSTToTreeView();
+		}
+
 
 
 
