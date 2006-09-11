@@ -14,8 +14,10 @@ namespace BetterReader
     {
 		
 		private delegate void setNodeTextDelegate(TreeNode node, string text);
+		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
         private FeedSubscriptionTree fst;
         private Dictionary<object, TreeNode> treeNodesByTag;
+		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
 		private readonly string feedSubsFilepath;
 		private Font feedsNormalFont;
@@ -101,7 +103,18 @@ namespace BetterReader
 				//this was most likely caused by a feed reading thread returning during shutdown
 				//so we'll ignore it
 			}
+
+			this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected), 
+				new object[] {node, fs});
         }
+
+		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
+		{
+			if (node.IsSelected)
+			{
+				displayFeedItems(fs);
+			}
+		}
 
 		private void setNodeText(TreeNode node, string text)
 		{
@@ -200,6 +213,7 @@ namespace BetterReader
 
 		private void displayFeedItems(FeedSubscription feedSubscription)
 		{
+			listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
 			feedItemsLV.SuspendLayout();
 			feedItemsLV.Clear();
 			webBrowser1.DocumentText = "";
@@ -256,6 +270,7 @@ namespace BetterReader
 
 				setColumnWidth(feedItemsLV.Columns[0], lvi);
 				feedItemsLV.Items.Add(lvi);
+				listViewItemsByTag.Add(fi, lvi);
 			}
 		}
 
@@ -339,6 +354,14 @@ namespace BetterReader
 		private void itemLinkLBL_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			visitLink(e.Link);
+		}
+
+		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (fst != null)
+			{
+				fst.Dispose();
+			}
 		}
 
 

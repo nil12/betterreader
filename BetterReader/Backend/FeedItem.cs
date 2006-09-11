@@ -133,8 +133,6 @@ namespace BetterReader.Backend
 			unsupportedFeedItemProperties = new Dictionary<string, string>();
 		}
 
-
-
 		public static FeedItem GetFromRssOrRdfItemNode(XmlNode node)
 		{
 			FeedItem fi = new FeedItem();
@@ -180,10 +178,22 @@ namespace BetterReader.Backend
 						break;
 				}
 			}
+			fi.SetGuid();
 			return fi;
 		}
 
-		internal static FeedItem GetFromAtomEntryNode(XmlNode node)
+		private void SetGuid()
+		{
+			if (guid == null || guid.Length < 1)
+			{
+				//no guid provided by source so calculate our own
+				string allProps = this.author + this.category + this.description + this.encodedContent +
+					this.linkUrl + this.pubDate + this.title;
+				this.guid = allProps.GetHashCode().ToString();
+			}
+		}
+
+		public static FeedItem GetFromAtomEntryNode(XmlNode node)
 		{
 			FeedItem fi = new FeedItem();
 			fi.hasBeenRead = false;
@@ -231,6 +241,7 @@ namespace BetterReader.Backend
 						break;
 				}
 			}
+			fi.SetGuid();
 			return fi;
 		}
 	}

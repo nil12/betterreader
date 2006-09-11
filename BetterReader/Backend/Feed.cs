@@ -25,12 +25,14 @@ namespace BetterReader.Backend
 		private Dictionary<string, string> unsupportedFeedProperties;
 		private int unreadItems;
 		private FeedSubscription parentSubscription;
+		private Dictionary<string, FeedItem> feedItemsByGuid;
 
 		internal FeedSubscription ParentSubscription
 		{
 			get { return parentSubscription; }
 			set { parentSubscription = value; }
 		}
+
 
 		public int UnreadItems
 		{
@@ -168,13 +170,14 @@ namespace BetterReader.Backend
 		{
 			feedUrl = lFeedUrl;
 			feedItems = new List<FeedItem>();
+			feedItemsByGuid = new Dictionary<string, FeedItem>();
+			unreadItems = 0;
 		}
 
 		public void BeginRead(FeedReadCompleteDelegate callback)
 		{
 			readSuccess = false;
 			readException = null;
-			unreadItems = 0;
 			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
 
 			webRequestState state = new webRequestState();
@@ -211,13 +214,12 @@ namespace BetterReader.Backend
 				//System.Diagnostics.Debug.WriteLine("Error reading feed: " + e.ToString());
 			}
 
-
 			state.callback(this);
 		}
 
 		private void loadFromXmlDoc(XmlDocument xmlDoc)
 		{
-			feedItems = new List<FeedItem>();
+			//feedItems = new List<FeedItem>();
 			unsupportedFeedProperties = new Dictionary<string, string>();
 			foreach (XmlNode node in xmlDoc)
 			{
@@ -261,15 +263,33 @@ namespace BetterReader.Backend
 						break;
 					case "entry":
 						FeedItem fi = FeedItem.GetFromAtomEntryNode(childNode);
-						fi.ParentFeed = this;
-						feedItems.Add(fi);
-						if (fi.HasBeenRead == false)
-						{
-							unreadItems++;
-						}
+						addOrUpdateFeedItemsCollection(fi);
 						break;
 				}
 			}
+		}
+
+		private void addOrUpdateFeedItemsCollection(FeedItem fi)
+		{
+
+			if (feedItemsByGuid.ContainsKey(fi.Guid))
+			{
+				FeedItem oldFI = feedItemsByGuid[fi.Guid];
+				fi.HasBeenRead = oldFI.HasBeenRead;
+				feedItems.Remove(oldFI);
+				feedItemsByGuid.Remove(fi.Guid);
+			}
+			else
+			{
+				if (fi.HasBeenRead == false)
+				{
+					unreadItems++;
+				}
+			}
+
+			feedItemsByGuid.Add(fi.Guid, fi);
+			fi.ParentFeed = this;
+			feedItems.Add(fi);
 		}
 
 		private void loadFromRdfNode(XmlNode node)
@@ -285,12 +305,7 @@ namespace BetterReader.Backend
 						break;
 					case "item":
 						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
-						fi.ParentFeed = this;
-						feedItems.Add(fi);
-						if (fi.HasBeenRead == false)
-						{
-							unreadItems++;
-						}
+						addOrUpdateFeedItemsCollection(fi);
 						break;
 					default:
 						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
@@ -352,12 +367,7 @@ namespace BetterReader.Backend
 						break;
 					case "item":
 						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
-						fi.ParentFeed = this;
-						feedItems.Add(fi);
-						if (fi.HasBeenRead == false)
-						{
-							unreadItems++;
-						}
+						addOrUpdateFeedItemsCollection(fi);
 						break;
 					default:
 						if (unsupportedFeedProperties.ContainsKey(childNode.Name))

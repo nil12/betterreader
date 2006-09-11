@@ -11,31 +11,15 @@ namespace BetterReader.Backend
 
 	[XmlInclude(typeof(FeedFolder))]
 	[XmlInclude(typeof(FeedSubscription))]
-    public class FeedSubscriptionTree
+    public class FeedSubscriptionTree : IDisposable
     {
 		private List<FeedSubTreeNodeBase> rootLevelNodes;
-		public string x = "xxx";
 
 		public List<FeedSubTreeNodeBase> RootLevelNodes
 		{
 			get { return rootLevelNodes; }
 			set { rootLevelNodes = value; }
 		}
-		//private string filepath;
-		//private FeedFolder rootFolder;
-
-		//public FeedFolder RootFolder
-		//{
-		//    get { return rootFolder; }
-		//    set { rootFolder = value; }
-		//}
-
-		//public string Filepath
-		//{
-		//    get { return filepath; }
-		//    set { filepath = value; }
-		//}
-
 
 		public void LoadFromOpml(string filepath)
         {
@@ -193,5 +177,35 @@ namespace BetterReader.Backend
 			}
 		}
 
-    }
+		private void disposeAllFeedsInNodeList(List<FeedSubTreeNodeBase> nodeList)
+		{
+			foreach (FeedSubTreeNodeBase fstnb in nodeList)
+			{
+				Type t = fstnb.GetType();
+				if (t == typeof(FeedSubscription))
+				{
+					FeedSubscription fs = fstnb as FeedSubscription;
+					if (fs != null)
+					{
+						fs.Dispose();
+					}
+				}
+				else if (t == typeof(FeedFolder))
+				{
+					FeedFolder ff = fstnb as FeedFolder;
+					disposeAllFeedsInNodeList(ff.ChildNodes);
+				}
+			}
+		}
+
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			disposeAllFeedsInNodeList(rootLevelNodes);
+		}
+
+		#endregion
+	}
 }

@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Threading;
 
 namespace BetterReader.Backend
 {
     public delegate void FeedSubscriptionReadDelegate(FeedSubscription fs);
-	public class FeedSubscription : FeedSubTreeNodeBase
+	public class FeedSubscription : FeedSubTreeNodeBase, IDisposable
     {
 		private string feedUrl;
 		private string displayName;
@@ -14,6 +15,7 @@ namespace BetterReader.Backend
 		private int updateSeconds;
 		private Feed feed;
 		private FeedSubscriptionReadDelegate callback;
+		private Timer updateTimer;
 
 		public string FeedUrl
 		{
@@ -60,9 +62,32 @@ namespace BetterReader.Backend
 		   feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
 		}
 
-		public void feedReadCallback(Feed f)
+		private void feedReadCallback(Feed f)
 		{
-		   callback(this);
+			startUpdateTimer();
+			callback(this);
+		}
+
+		public void ResetUpdateTimer()
+		{
+			startUpdateTimer();
+		}
+
+		private void startUpdateTimer()
+		{
+			if (updateTimer != null)
+			{
+				updateTimer.Dispose();
+			}
+
+			updateTimer = new Timer(new TimerCallback(timerCallback), null, updateSeconds * 1000, 
+				Timeout.Infinite);
+
+		}
+
+		private void timerCallback(object state)
+		{
+			BeginReadFeed(callback);
 		}
 
 		public new static FeedSubscription GetFromOpmlXmlNode(XmlNode node)
@@ -78,5 +103,17 @@ namespace BetterReader.Backend
 		   return displayName + "(" + feed.UnreadItems.ToString() + "/" + feed.FeedItems.Count.ToString() + ")";
 		}
 
-    }
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (updateTimer != null)
+			{
+				updateTimer.Dispose();
+			}
+		}
+
+		#endregion
+	}
 }
