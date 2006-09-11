@@ -34,5 +34,10 @@ namespace BetterReader.Backend
 			ff.Name = node.Attributes["text"].Value;
 			return ff;
 		}
+
+		public override string ToString()
+		{
+			return name;
+		}
     }
 }
