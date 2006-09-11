@@ -1,6 +1,6 @@
 namespace BetterReader
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,6 +28,7 @@ namespace BetterReader
         /// </summary>
         private void InitializeComponent()
         {
+			this.components = new System.ComponentModel.Container();
 			this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.importOpmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,14 +38,15 @@ namespace BetterReader
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
 			this.feedsTV = new System.Windows.Forms.TreeView();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.itemTitleLBL = new System.Windows.Forms.Label();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
 			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
-			this.feedTitleLBL = new System.Windows.Forms.Label();
-			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
+			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -141,12 +143,16 @@ namespace BetterReader
 			// 
 			// feedsTV
 			// 
+			this.feedsTV.AllowDrop = true;
 			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedsTV.Location = new System.Drawing.Point(0, 0);
 			this.feedsTV.Name = "feedsTV";
 			this.feedsTV.Size = new System.Drawing.Size(310, 644);
 			this.feedsTV.TabIndex = 0;
+			this.feedsTV.DragDrop += new System.Windows.Forms.DragEventHandler(this.feedsTV_DragDrop);
 			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
+			this.feedsTV.DragEnter += new System.Windows.Forms.DragEventHandler(this.feedsTV_DragEnter);
+			this.feedsTV.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.feedsTV_ItemDrag);
 			// 
 			// splitContainer2
 			// 
@@ -167,6 +173,17 @@ namespace BetterReader
 			this.splitContainer2.Size = new System.Drawing.Size(619, 685);
 			this.splitContainer2.SplitterDistance = 37;
 			this.splitContainer2.TabIndex = 0;
+			// 
+			// feedTitleLBL
+			// 
+			this.feedTitleLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.feedTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.feedTitleLBL.Location = new System.Drawing.Point(2, 0);
+			this.feedTitleLBL.Name = "feedTitleLBL";
+			this.feedTitleLBL.Size = new System.Drawing.Size(617, 17);
+			this.feedTitleLBL.TabIndex = 0;
+			this.feedTitleLBL.Text = "x";
+			this.feedTitleLBL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// splitContainer3
 			// 
@@ -218,6 +235,17 @@ namespace BetterReader
 			this.splitContainer4.SplitterDistance = 49;
 			this.splitContainer4.TabIndex = 0;
 			// 
+			// itemLinkLBL
+			// 
+			this.itemLinkLBL.AutoSize = true;
+			this.itemLinkLBL.Location = new System.Drawing.Point(3, 33);
+			this.itemLinkLBL.Name = "itemLinkLBL";
+			this.itemLinkLBL.Size = new System.Drawing.Size(12, 13);
+			this.itemLinkLBL.TabIndex = 1;
+			this.itemLinkLBL.TabStop = true;
+			this.itemLinkLBL.Text = "x";
+			this.itemLinkLBL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.itemLinkLBL_LinkClicked);
+			// 
 			// itemTitleLBL
 			// 
 			this.itemTitleLBL.AutoSize = true;
@@ -241,29 +269,12 @@ namespace BetterReader
 			// 
 			this.feedReaderBGW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.feedReaderBGW_DoWork);
 			// 
-			// feedTitleLBL
+			// notifyIcon1
 			// 
-			this.feedTitleLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.feedTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.feedTitleLBL.Location = new System.Drawing.Point(2, 0);
-			this.feedTitleLBL.Name = "feedTitleLBL";
-			this.feedTitleLBL.Size = new System.Drawing.Size(617, 17);
-			this.feedTitleLBL.TabIndex = 0;
-			this.feedTitleLBL.Text = "x";
-			this.feedTitleLBL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.notifyIcon1.Text = "notifyIcon1";
+			this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
 			// 
-			// itemLinkLBL
-			// 
-			this.itemLinkLBL.AutoSize = true;
-			this.itemLinkLBL.Location = new System.Drawing.Point(3, 33);
-			this.itemLinkLBL.Name = "itemLinkLBL";
-			this.itemLinkLBL.Size = new System.Drawing.Size(12, 13);
-			this.itemLinkLBL.TabIndex = 1;
-			this.itemLinkLBL.TabStop = true;
-			this.itemLinkLBL.Text = "x";
-			this.itemLinkLBL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.itemLinkLBL_LinkClicked);
-			// 
-			// Form1
+			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -272,8 +283,9 @@ namespace BetterReader
 			this.Controls.Add(this.mainStatusStrip);
 			this.Controls.Add(this.mainMenuStrip);
 			this.MainMenuStrip = this.mainMenuStrip;
-			this.Name = "Form1";
+			this.Name = "MainForm";
 			this.Text = "Form1";
+			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.mainMenuStrip.ResumeLayout(false);
@@ -319,6 +331,7 @@ namespace BetterReader
 		private System.Windows.Forms.Label itemTitleLBL;
 		private System.Windows.Forms.Label feedTitleLBL;
 		private System.Windows.Forms.LinkLabel itemLinkLBL;
+		private System.Windows.Forms.NotifyIcon notifyIcon1;
 
     }
 }

@@ -18,6 +18,13 @@ namespace BetterReader.Backend
 		private string encodedContent;
 		private bool hasBeenRead;
 		private Feed parentFeed;
+		private DateTime downloadDate;
+
+		public DateTime DownloadDate
+		{
+			get { return downloadDate; }
+			set { downloadDate = value; }
+		}
 
 		internal Feed ParentFeed
 		{
@@ -37,7 +44,7 @@ namespace BetterReader.Backend
 			set { encodedContent = value; }
 		}
 
-		public Dictionary<string, string> UnsupportedFeedItemProperties
+		internal Dictionary<string, string> UnsupportedFeedItemProperties
 		{
 			get { return unsupportedFeedItemProperties; }
 			set { unsupportedFeedItemProperties = value; }
@@ -179,6 +186,7 @@ namespace BetterReader.Backend
 				}
 			}
 			fi.SetGuid();
+			fi.downloadDate = DateTime.Now;
 			return fi;
 		}
 
@@ -242,6 +250,7 @@ namespace BetterReader.Backend
 				}
 			}
 			fi.SetGuid();
+			fi.downloadDate = DateTime.Now;
 			return fi;
 		}
 	}

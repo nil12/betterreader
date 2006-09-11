@@ -21,32 +21,10 @@ namespace BetterReader.Backend
 			set { rootLevelNodes = value; }
 		}
 
-		public void LoadFromOpml(string filepath)
-        {
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.ConformanceLevel = ConformanceLevel.Auto;
-            settings.CloseInput = true;
-            settings.IgnoreComments = true;
-            settings.IgnoreProcessingInstructions = true;
-            settings.IgnoreWhitespace = true;
-            settings.ValidationType = ValidationType.None;
-
-            XmlDocument xmlDoc = null;
-            using (TextReader tr = new StreamReader(filepath))
-            {
-                XmlReader xr = XmlReader.Create(tr, settings);
-
-                xmlDoc = new XmlDocument();
-                xmlDoc.Load(xr);
-            }
-
+		public FeedSubscriptionTree()
+		{
 			rootLevelNodes = new List<FeedSubTreeNodeBase>();
-
-            foreach (XmlNode node in xmlDoc.ChildNodes)
-            {
-                processOpmlNode(node, null);
-            }
-        }
+		}
 
         public void SaveAsFeedSubscriptionsFile(string filepath)
         {
@@ -70,92 +48,13 @@ namespace BetterReader.Backend
 
             return fsc;
         }
-
-
-        public void ExportAsOpml(string filepath)
-        {
-            throw new Exception("Error.  ExportAsOpml not implemented yet.");
-        }
-
-        private void processOpmlNode(XmlNode node, FeedFolder currentParentFolder)
-        {
-            if (node.Name == null && node.Name.Length < 1)
-            {
-                return;
-            }
-
-            switch (node.Name.ToLower())
-            {
-                case "body":
-                case "opml":
-                case "xml":
-                    foreach (XmlNode childNode in node.ChildNodes)
-                    {
-                        processOpmlNode(childNode, currentParentFolder);
-                    }
-                    break;
-                case "outline":
-                    processOpmlOutlineNode(node, currentParentFolder);
-                    break;
-                case "head":
-                    return;
-            }
-        }
-
-        private void processOpmlOutlineNode(XmlNode node, FeedFolder currentParentFolder)
-        {
-			FeedSubTreeNodeBase fstnb = FeedSubTreeNodeBase.GetFromOpmlXmlNode(node);
-
-			Type nodeType = fstnb.GetType();
-
-			if (nodeType == typeof(FeedSubscription))
-			{
-				FeedSubscription fs = fstnb as FeedSubscription;
-				fs.ParentFolder = currentParentFolder;
-				if (currentParentFolder == null)
-				{
-					//this feed sub is at the root level of the tree
-					this.rootLevelNodes.Add(fs);
-				}
-				else
-				{
-					currentParentFolder.ChildNodes.Add(fs);
-				}
-				//Debug.WriteLine("Processed Sub Node: " + fs.DisplayName + ":" + currentParentFolder == null ? "root" : currentParentFolder.Name);
-			}
-			else if (nodeType == typeof(FeedFolder))
-			{
-				FeedFolder ff = fstnb as FeedFolder;
-				ff.ParentFolder = currentParentFolder;
-				if (currentParentFolder == null)
-				{
-					//this feed folder is at the root level of the tree
-					this.rootLevelNodes.Add(ff);
-				}
-				else
-				{
-					currentParentFolder.ChildNodes.Add(ff);
-				}
-
-
-				foreach (XmlNode childNode in node.ChildNodes)
-				{
-					processOpmlNode(childNode, ff);
-				}
-			}
-			else
-			{
-				throw new Exception("FeedSubscriptionTree.processOpmlOutlineNode error: Unrecognized node type: " + nodeType.ToString());
-			}
-		
-        }
-
+		      
 		public void BeginReadAllFeeds(FeedSubscriptionReadDelegate callback)
 		{
-			readAllFeedsInNodeList(rootLevelNodes, callback);
+			beginReadAllFeedsInNodeList(rootLevelNodes, callback);
 		}
 
-		private void readAllFeedsInNodeList(List<FeedSubTreeNodeBase> nodeList, FeedSubscriptionReadDelegate callback)
+		private void beginReadAllFeedsInNodeList(List<FeedSubTreeNodeBase> nodeList, FeedSubscriptionReadDelegate callback)
 		{
 			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
@@ -168,7 +67,7 @@ namespace BetterReader.Backend
 				else if (t == typeof(FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
-					readAllFeedsInNodeList(ff.ChildNodes, callback);
+					beginReadAllFeedsInNodeList(ff.ChildNodes, callback);
 				}
 				else
 				{
@@ -198,6 +97,48 @@ namespace BetterReader.Backend
 			}
 		}
 
+		public int GetUnreadItemCount()
+		{
+			return getUnreadItemCountFromNodeList(rootLevelNodes, 0);
+		}
+
+		private int getUnreadItemCountFromNodeList(List<FeedSubTreeNodeBase> nodeList, int curCount)
+		{
+			foreach (FeedSubTreeNodeBase fstnb in nodeList)
+			{
+				Type t = fstnb.GetType();
+				if (t == typeof(FeedSubscription))
+				{
+					FeedSubscription fs = fstnb as FeedSubscription;
+					if (fs != null && fs.Feed != null && fs.Feed.FeedItems != null)
+					{
+						foreach (FeedItem fi in fs.Feed.FeedItems)
+						{
+							if (fi.HasBeenRead == false)
+							{
+								curCount++;
+							}
+						}
+					}
+				}
+				else if (t == typeof(FeedFolder))
+				{
+					FeedFolder ff = fstnb as FeedFolder;
+					if (ff.ChildNodes != null)
+					{
+						curCount += getUnreadItemCountFromNodeList(ff.ChildNodes, curCount);
+					}
+				}
+				else
+				{
+					throw new Exception("FeedSubscriptionTree.getUnreadItemCountFromNodeList error: Unsupported type: " +
+						t.ToString());
+				}
+			}
+
+			return curCount;
+		}
+
 
 		#region IDisposable Members
 
@@ -207,5 +148,29 @@ namespace BetterReader.Backend
 		}
 
 		#endregion
+
+		public void MoveNode(FeedSubTreeNodeBase movedNode, FeedSubTreeNodeBase destNode)
+		{
+			if (movedNode.ParentFolder == null)
+			{
+				rootLevelNodes.Remove(movedNode);
+			}
+			else
+			{
+				movedNode.ParentFolder.ChildNodes.Remove(movedNode);
+			}
+			Type t = destNode.GetType();
+
+			if (t == typeof(FeedFolder))
+			{
+				FeedFolder ff = (FeedFolder)destNode;
+				ff.ChildNodes.Add(movedNode);
+			}
+			else if (t == typeof(FeedSubscription))
+			{
+				FeedFolder ff = destNode.ParentFolder;
+				ff.ChildNodes.Insert(ff.ChildNodes.IndexOf(destNode), movedNode);
+			}
+		}
 	}
 }
