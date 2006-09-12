@@ -9,6 +9,13 @@ namespace BetterReader.Backend
     {
         private string name;
         private List<FeedSubTreeNodeBase> childNodes;
+		private bool isExpandedInUI = false;
+
+		public bool IsExpandedInUI
+		{
+			get { return isExpandedInUI; }
+			set { isExpandedInUI = value; }
+		}
 
         public string Name
         {

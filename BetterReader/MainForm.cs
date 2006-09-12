@@ -15,6 +15,7 @@ namespace BetterReader
 		
 		private delegate void setNodeTextDelegate(TreeNode node, string text);
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
+		private delegate void noArgsDelegate();
         private FeedSubscriptionTree fst;
         private Dictionary<object, TreeNode> treeNodesByTag;
 		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
@@ -93,6 +94,7 @@ namespace BetterReader
 			TreeNode node = treeNodesByTag[fs];
 			string text;
 
+			this.Invoke(new noArgsDelegate(feedsTV.BeginUpdate));
 			if (fs.Feed.ReadSuccess)
 			{
 				text = fs.ToString();
@@ -134,7 +136,7 @@ namespace BetterReader
 				//so we'll ignore it
 			}
 
-
+			this.Invoke(new noArgsDelegate(feedsTV.EndUpdate));
         }
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
@@ -183,12 +185,14 @@ namespace BetterReader
 
         private void bindFSTToTreeView()
         {
-            feedsTV.SuspendLayout();
+			//feedsTV.SuspendLayout();
+			feedsTV.BeginUpdate();
 			feedsTV.Nodes.Clear();
             treeNodesByTag = new Dictionary<object, TreeNode>();
 			//bindFolderToTreeView(fsc.RootFolder, null);
 			bindNodeListToTreeView(fst.RootLevelNodes, null);
-            feedsTV.ResumeLayout();
+			feedsTV.EndUpdate();
+			//feedsTV.ResumeLayout();
         }
 
 		private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
@@ -228,8 +232,13 @@ namespace BetterReader
 					}
 
 					newNode.Tag = ff;
+					
 					treeNodesByTag.Add(ff, newNode);
-
+					if (ff.IsExpandedInUI)
+					{
+						newNode.Expand();
+						bool expanded = newNode.IsExpanded;
+					}
 					bindNodeListToTreeView(ff.ChildNodes, newNode);
 				}
 				else
@@ -383,6 +392,14 @@ namespace BetterReader
 		}
 
 
+		private void moveTreeNode(TreeNode movedNode, TreeNode destinationNode)
+		{
+			fst.MoveNode((FeedSubTreeNodeBase)movedNode.Tag, (FeedSubTreeNodeBase)destinationNode.Tag);
+			bindFSTToTreeView();
+		}
+
+		//event handlers below
+
 		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
 		{
 			beginReads();
@@ -450,11 +467,6 @@ namespace BetterReader
 			}
 		}
 
-		private void moveTreeNode(TreeNode movedNode, TreeNode destinationNode)
-		{
-			fst.MoveNode((FeedSubTreeNodeBase)movedNode.Tag, (FeedSubTreeNodeBase)destinationNode.Tag);
-			bindFSTToTreeView();
-		}
 
 
 
