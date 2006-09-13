@@ -36,7 +36,8 @@ namespace BetterReader
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-			this.feedsTV = new System.Windows.Forms.TreeView();
+			//this.feedsTV = new System.Windows.Forms.TreeView();
+			this.feedsTV = new Sloppycode.UI.TreeViewDragDrop();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -318,7 +319,8 @@ namespace BetterReader
         private System.Windows.Forms.StatusStrip mainStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView feedsTV;
+		//private System.Windows.Forms.TreeView feedsTV;
+		private Sloppycode.UI.TreeViewDragDrop feedsTV;
 		private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importOpmlToolStripMenuItem;

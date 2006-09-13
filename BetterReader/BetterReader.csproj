@@ -79,6 +79,12 @@
     <Content Include="Graphics\redlight.ico" />
     <Content Include="Graphics\yellowlight.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OtherPeoplesSource\DragDropTreeview\DragDropTreeView\DragDropTreeView.csproj">
+      <Project>{002D9A9D-F18B-4DF1-AAD5-87012AE48372}</Project>
+      <Name>DragDropTreeView</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
