@@ -15,7 +15,6 @@ namespace BetterReader
 		
 		private delegate void setNodeTextDelegate(TreeNode node, string text);
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
-		private delegate void noArgsDelegate();
         private FeedSubscriptionTree fst;
         private Dictionary<object, TreeNode> treeNodesByTag;
 		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
@@ -49,6 +48,8 @@ namespace BetterReader
 			redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
 			yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
 			greenLightIcon = new Icon(graphicsDirectory + "greenlight.ico");
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
 
 		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -94,7 +95,7 @@ namespace BetterReader
 			TreeNode node = treeNodesByTag[fs];
 			string text;
 
-			this.Invoke(new noArgsDelegate(feedsTV.BeginUpdate));
+			this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
 			if (fs.Feed.ReadSuccess)
 			{
 				text = fs.ToString();
@@ -136,7 +137,7 @@ namespace BetterReader
 				//so we'll ignore it
 			}
 
-			this.Invoke(new noArgsDelegate(feedsTV.EndUpdate));
+			this.Invoke(new MethodInvoker(feedsTV.EndUpdate));
         }
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
@@ -448,23 +449,23 @@ namespace BetterReader
 
 		private void feedsTV_ItemDrag(object sender, ItemDragEventArgs e)
 		{
-			DoDragDrop(e.Item, DragDropEffects.Move);
+			//DoDragDrop(e.Item, DragDropEffects.Move);
 		}
 
 		private void feedsTV_DragEnter(object sender, DragEventArgs e)
 		{
-			e.Effect = DragDropEffects.Move;
+			//e.Effect = DragDropEffects.Move;
 		}
 
 		private void feedsTV_DragDrop(object sender, DragEventArgs e)
 		{
-			if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
-			{
-				Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
-				TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
-				TreeNode movedNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
-				moveTreeNode(movedNode, destinationNode);
-			}
+			//if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
+			//{
+			//    Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+			//    TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
+			//    TreeNode movedNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+			//    moveTreeNode(movedNode, destinationNode);
+			//}
 		}
 
 
