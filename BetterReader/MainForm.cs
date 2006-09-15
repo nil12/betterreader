@@ -28,6 +28,7 @@ namespace BetterReader
 		private Font feedItemsBoldFont;
 		private Graphics formGraphics;
 		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
+		private TreeNode rightClickedNode;
 
 		internal static string ArchiveDirectory
 		{
@@ -399,6 +400,104 @@ namespace BetterReader
 			bindFSTToTreeView();
 		}
 
+
+		private void doDragComplete()
+		{
+			fst.ReloadFromTreeView(feedsTV);
+			saveFeedSubTree();
+		}
+
+		private void saveFeedSubTree()
+		{
+			fst.SaveAsFeedSubscriptionsFile(feedSubsFilepath);
+		}
+
+
+		private bool showUnsubscribeConfirmation()
+		{
+			if (MessageBox.Show("Unsubscribe from this feed?", "Unsubscribe?") == DialogResult.OK)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
+
+		private void addNewFolder(TreeNode parentNode)
+		{
+			FeedFolder parentFolder = (FeedFolder)parentNode.Tag;
+			FeedFolder newFolder = new FeedFolder();
+			newFolder.Name = "New Folder";
+			newFolder.ParentFolder = parentFolder;
+			parentFolder.ChildNodes.Add(newFolder);
+
+			TreeNode newNode = parentNode.Nodes.Add(newFolder.Name);
+			newNode.Tag = newFolder;
+			saveFeedSubTree();
+		}
+
+
+		private void deleteFolder(TreeNode rightClickedNode)
+		{
+			FeedFolder ff = (FeedFolder)rightClickedNode.Tag;
+			ff.ParentFolder.ChildNodes.Remove(ff);
+
+			rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
+			saveFeedSubTree();
+		}
+
+		private bool showDeleteFolderConfirmation()
+		{
+			if (MessageBox.Show("Delete Folder and all children?", "Delete Folder") == DialogResult.OK)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
+		private void showNewSubscriptionForm(TreeNode rightClickedNode)
+		{
+
+			FeedFolder parentFolder = null;
+			if (rightClickedNode != null)
+			{
+				if (rightClickedNode.Tag.GetType() == typeof(FeedFolder))
+				{
+					parentFolder = (FeedFolder)rightClickedNode.Tag;
+				}
+				else if (rightClickedNode.Tag.GetType() == typeof(FeedSubscription))
+				{
+					parentFolder = ((FeedSubscription)rightClickedNode.Tag).ParentFolder;
+				}
+			}
+
+			NewSubscriptionForm nsf = new NewSubscriptionForm(fst, parentFolder);
+
+			if (nsf.ShowDialog() == DialogResult.OK)
+			{
+				FeedSubscription fs = new FeedSubscription();
+				fs.FeedUrl = nsf.FeedUrl;
+				fs.DisplayName = nsf.FeedTitle;
+				fs.UpdateSeconds = nsf.UpdateSeconds;
+				parentFolder = nsf.CreateInFolder;
+				parentFolder.ChildNodes.Add(fs);
+				TreeNode parentNode = treeNodesByTag[parentFolder];
+				TreeNode newNode = parentNode.Nodes.Add(fs.ToString());
+				newNode.Tag = fs;
+				treeNodesByTag.Add(fs, newNode);
+				saveFeedSubTree();
+				fs.BeginReadFeed(feedSubReadCallback);
+			}
+		}
+
 		//event handlers below
 
 		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
@@ -447,26 +546,112 @@ namespace BetterReader
 			showFormHideNotifyIcon();
 		}
 
-		private void feedsTV_ItemDrag(object sender, ItemDragEventArgs e)
+		private void feedsTV_DragComplete(object sender, Sloppycode.UI.DragCompleteEventArgs e)
 		{
-			//DoDragDrop(e.Item, DragDropEffects.Move);
+			doDragComplete();
 		}
 
-		private void feedsTV_DragEnter(object sender, DragEventArgs e)
+		private void newSubscriptionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			//e.Effect = DragDropEffects.Move;
+			showNewSubscriptionForm(rightClickedNode);
 		}
 
-		private void feedsTV_DragDrop(object sender, DragEventArgs e)
+
+		private void renameToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			//if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
-			//{
-			//    Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
-			//    TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
-			//    TreeNode movedNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
-			//    moveTreeNode(movedNode, destinationNode);
-			//}
+			feedsTV.LabelEdit = true;
+			Type t = rightClickedNode.Tag.GetType();
+
+			if (t == typeof(FeedSubscription))
+			{
+				rightClickedNode.Text = ((FeedSubscription)rightClickedNode.Tag).DisplayName;
+
+			}
+			rightClickedNode.BeginEdit();
 		}
+
+		private void unsubscribeToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (showUnsubscribeConfirmation())
+			{
+				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
+				FeedSubTreeNodeBase fstnb = (FeedSubTreeNodeBase)rightClickedNode.Tag;
+				fstnb.ParentFolder.ChildNodes.Remove(fstnb);
+				saveFeedSubTree();
+			}
+		}
+
+
+		private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void feedsTV_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+		{
+			Type t = e.Node.Tag.GetType();
+
+			if (t == typeof(FeedSubscription))
+			{
+				FeedSubscription fs = (FeedSubscription)e.Node.Tag;
+				fs.DisplayName = e.Label;
+				e.Node.Text = fs.ToString();
+				e.CancelEdit = true;
+			}
+			else
+			{
+				FeedFolder ff = (FeedFolder)e.Node.Tag;
+				ff.Name = e.Label;
+			}
+
+			feedsTV.LabelEdit = false;
+			saveFeedSubTree();
+		}
+
+
+		private void feedsTV_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (e.Button.CompareTo(MouseButtons.Right) == 0)
+			{
+				rightClickedNode = feedsTV.GetNodeAt(e.X, e.Y);
+				if (rightClickedNode != null)
+				{
+					if (rightClickedNode.Tag.GetType() == typeof(FeedSubscription))
+					{
+						feedSubContextMenuStrip.Show(feedsTV, e.X, e.Y);
+					}
+
+					if (rightClickedNode.Tag.GetType() == typeof(FeedFolder))
+					{
+						folderContextMenuStrip.Show(feedsTV, e.X, e.Y);
+					}
+				}
+			}
+		}
+
+
+		private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			addNewFolder(rightClickedNode);
+		}
+
+		private void feedSubNewFolderContextMenuStripItem_Click(object sender, EventArgs e)
+		{
+			addNewFolder(rightClickedNode.Parent);
+		}
+
+		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (showDeleteFolderConfirmation())
+			{
+				deleteFolder(rightClickedNode);
+			}
+		}
+
+
+
+
+
 
 
 

@@ -32,12 +32,11 @@ namespace BetterReader
 			this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.importOpmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newFeedSubscriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-			//this.feedsTV = new System.Windows.Forms.TreeView();
-			this.feedsTV = new Sloppycode.UI.TreeViewDragDrop();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -46,8 +45,21 @@ namespace BetterReader
 			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.itemTitleLBL = new System.Windows.Forms.Label();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+			this.feedSubContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newSubscriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.unsubscribeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.feedSubNewFolderContextMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.markFeedReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.folderContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -64,6 +76,8 @@ namespace BetterReader
 			this.splitContainer4.Panel1.SuspendLayout();
 			this.splitContainer4.Panel2.SuspendLayout();
 			this.splitContainer4.SuspendLayout();
+			this.feedSubContextMenuStrip.SuspendLayout();
+			this.folderContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainMenuStrip
@@ -79,7 +93,8 @@ namespace BetterReader
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importOpmlToolStripMenuItem});
+            this.importOpmlToolStripMenuItem,
+            this.newFeedSubscriptionToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
 			this.fileToolStripMenuItem.Text = "File";
@@ -87,9 +102,15 @@ namespace BetterReader
 			// importOpmlToolStripMenuItem
 			// 
 			this.importOpmlToolStripMenuItem.Name = "importOpmlToolStripMenuItem";
-			this.importOpmlToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			this.importOpmlToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
 			this.importOpmlToolStripMenuItem.Text = "Import Opml . . .";
 			this.importOpmlToolStripMenuItem.Click += new System.EventHandler(this.importOpmlToolStripMenuItem_Click);
+			// 
+			// newFeedSubscriptionToolStripMenuItem
+			// 
+			this.newFeedSubscriptionToolStripMenuItem.Name = "newFeedSubscriptionToolStripMenuItem";
+			this.newFeedSubscriptionToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+			this.newFeedSubscriptionToolStripMenuItem.Text = "New Feed Subscription . . .";
 			// 
 			// mainStatusStrip
 			// 
@@ -142,19 +163,6 @@ namespace BetterReader
 			this.splitContainer5.SplitterDistance = 37;
 			this.splitContainer5.TabIndex = 0;
 			// 
-			// feedsTV
-			// 
-			this.feedsTV.AllowDrop = true;
-			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.feedsTV.Location = new System.Drawing.Point(0, 0);
-			this.feedsTV.Name = "feedsTV";
-			this.feedsTV.Size = new System.Drawing.Size(310, 644);
-			this.feedsTV.TabIndex = 0;
-			this.feedsTV.DragDrop += new System.Windows.Forms.DragEventHandler(this.feedsTV_DragDrop);
-			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
-			this.feedsTV.DragEnter += new System.Windows.Forms.DragEventHandler(this.feedsTV_DragEnter);
-			this.feedsTV.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.feedsTV_ItemDrag);
-			// 
 			// splitContainer2
 			// 
 			this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -183,7 +191,7 @@ namespace BetterReader
 			this.feedTitleLBL.Name = "feedTitleLBL";
 			this.feedTitleLBL.Size = new System.Drawing.Size(617, 17);
 			this.feedTitleLBL.TabIndex = 0;
-			this.feedTitleLBL.Text = "x";
+			this.feedTitleLBL.Text = "BetterReader";
 			this.feedTitleLBL.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// splitContainer3
@@ -241,10 +249,8 @@ namespace BetterReader
 			this.itemLinkLBL.AutoSize = true;
 			this.itemLinkLBL.Location = new System.Drawing.Point(3, 33);
 			this.itemLinkLBL.Name = "itemLinkLBL";
-			this.itemLinkLBL.Size = new System.Drawing.Size(12, 13);
+			this.itemLinkLBL.Size = new System.Drawing.Size(0, 13);
 			this.itemLinkLBL.TabIndex = 1;
-			this.itemLinkLBL.TabStop = true;
-			this.itemLinkLBL.Text = "x";
 			this.itemLinkLBL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.itemLinkLBL_LinkClicked);
 			// 
 			// itemTitleLBL
@@ -253,9 +259,8 @@ namespace BetterReader
 			this.itemTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.itemTitleLBL.Location = new System.Drawing.Point(4, 4);
 			this.itemTitleLBL.Name = "itemTitleLBL";
-			this.itemTitleLBL.Size = new System.Drawing.Size(15, 17);
+			this.itemTitleLBL.Size = new System.Drawing.Size(0, 17);
 			this.itemTitleLBL.TabIndex = 0;
-			this.itemTitleLBL.Text = "x";
 			// 
 			// webBrowser1
 			// 
@@ -266,6 +271,59 @@ namespace BetterReader
 			this.webBrowser1.Size = new System.Drawing.Size(619, 319);
 			this.webBrowser1.TabIndex = 0;
 			// 
+			// feedSubContextMenuStrip
+			// 
+			this.feedSubContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newSubscriptionToolStripMenuItem,
+            this.renameToolStripMenuItem,
+            this.unsubscribeToolStripMenuItem,
+            this.propertiesToolStripMenuItem,
+            this.feedSubNewFolderContextMenuStripItem,
+            this.markFeedReadToolStripMenuItem});
+			this.feedSubContextMenuStrip.Name = "feedsContextMenuStrip";
+			this.feedSubContextMenuStrip.Size = new System.Drawing.Size(189, 136);
+			// 
+			// newSubscriptionToolStripMenuItem
+			// 
+			this.newSubscriptionToolStripMenuItem.Name = "newSubscriptionToolStripMenuItem";
+			this.newSubscriptionToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.newSubscriptionToolStripMenuItem.Text = "New Subscription . . .";
+			this.newSubscriptionToolStripMenuItem.Click += new System.EventHandler(this.newSubscriptionToolStripMenuItem_Click);
+			// 
+			// renameToolStripMenuItem
+			// 
+			this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+			this.renameToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.renameToolStripMenuItem.Text = "Rename";
+			this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+			// 
+			// unsubscribeToolStripMenuItem
+			// 
+			this.unsubscribeToolStripMenuItem.Name = "unsubscribeToolStripMenuItem";
+			this.unsubscribeToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.unsubscribeToolStripMenuItem.Text = "Unsubscribe";
+			this.unsubscribeToolStripMenuItem.Click += new System.EventHandler(this.unsubscribeToolStripMenuItem_Click);
+			// 
+			// propertiesToolStripMenuItem
+			// 
+			this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
+			this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.propertiesToolStripMenuItem.Text = "Properties . . .";
+			this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
+			// 
+			// feedSubNewFolderContextMenuStripItem
+			// 
+			this.feedSubNewFolderContextMenuStripItem.Name = "feedSubNewFolderContextMenuStripItem";
+			this.feedSubNewFolderContextMenuStripItem.Size = new System.Drawing.Size(188, 22);
+			this.feedSubNewFolderContextMenuStripItem.Text = "New Folder";
+			this.feedSubNewFolderContextMenuStripItem.Click += new System.EventHandler(this.feedSubNewFolderContextMenuStripItem_Click);
+			// 
+			// markFeedReadToolStripMenuItem
+			// 
+			this.markFeedReadToolStripMenuItem.Name = "markFeedReadToolStripMenuItem";
+			this.markFeedReadToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.markFeedReadToolStripMenuItem.Text = "Mark Feed Read";
+			// 
 			// feedReaderBGW
 			// 
 			this.feedReaderBGW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.feedReaderBGW_DoWork);
@@ -274,6 +332,64 @@ namespace BetterReader
 			// 
 			this.notifyIcon1.Text = "notifyIcon1";
 			this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+			// 
+			// folderContextMenuStrip
+			// 
+			this.folderContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newFolderToolStripMenuItem,
+            this.renameToolStripMenuItem1,
+            this.deleteToolStripMenuItem,
+            this.markAllReadToolStripMenuItem});
+			this.folderContextMenuStrip.Name = "folderContextMenuStrip";
+			this.folderContextMenuStrip.Size = new System.Drawing.Size(153, 114);
+			// 
+			// newFolderToolStripMenuItem
+			// 
+			this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
+			this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.newFolderToolStripMenuItem.Text = "New Folder";
+			this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderToolStripMenuItem_Click);
+			// 
+			// renameToolStripMenuItem1
+			// 
+			this.renameToolStripMenuItem1.Name = "renameToolStripMenuItem1";
+			this.renameToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+			this.renameToolStripMenuItem1.Text = "Rename";
+			// 
+			// deleteToolStripMenuItem
+			// 
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.deleteToolStripMenuItem.Text = "Delete";
+			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+			// 
+			// markAllReadToolStripMenuItem
+			// 
+			this.markAllReadToolStripMenuItem.Name = "markAllReadToolStripMenuItem";
+			this.markAllReadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
+			// 
+			// feedsTV
+			// 
+			this.feedsTV.AllowDrop = true;
+			this.feedsTV.Cursor = System.Windows.Forms.Cursors.Default;
+			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.feedsTV.DragCursor = null;
+			this.feedsTV.DragCursorType = Sloppycode.UI.DragCursorType.None;
+			this.feedsTV.DragImageIndex = 0;
+			this.feedsTV.DragMode = System.Windows.Forms.DragDropEffects.Move;
+			this.feedsTV.DragNodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.feedsTV.DragNodeOpacity = 0.3;
+			this.feedsTV.DragOverNodeBackColor = System.Drawing.SystemColors.Highlight;
+			this.feedsTV.DragOverNodeForeColor = System.Drawing.SystemColors.HighlightText;
+			this.feedsTV.Location = new System.Drawing.Point(0, 0);
+			this.feedsTV.Name = "feedsTV";
+			this.feedsTV.Size = new System.Drawing.Size(310, 644);
+			this.feedsTV.TabIndex = 0;
+			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
+			this.feedsTV.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.feedsTV_AfterLabelEdit);
+			this.feedsTV.DragComplete += new Sloppycode.UI.DragCompleteEventHandler(this.feedsTV_DragComplete);
+			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
 			// 
 			// MainForm
 			// 
@@ -285,7 +401,7 @@ namespace BetterReader
 			this.Controls.Add(this.mainMenuStrip);
 			this.MainMenuStrip = this.mainMenuStrip;
 			this.Name = "MainForm";
-			this.Text = "Form1";
+			this.Text = "BetterReader";
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);
@@ -308,6 +424,8 @@ namespace BetterReader
 			this.splitContainer4.Panel1.PerformLayout();
 			this.splitContainer4.Panel2.ResumeLayout(false);
 			this.splitContainer4.ResumeLayout(false);
+			this.feedSubContextMenuStrip.ResumeLayout(false);
+			this.folderContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -320,7 +438,7 @@ namespace BetterReader
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
 		//private System.Windows.Forms.TreeView feedsTV;
-		private Sloppycode.UI.TreeViewDragDrop feedsTV;
+		private FeedsTreeView feedsTV;
 		private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importOpmlToolStripMenuItem;
@@ -334,6 +452,19 @@ namespace BetterReader
 		private System.Windows.Forms.Label feedTitleLBL;
 		private System.Windows.Forms.LinkLabel itemLinkLBL;
 		private System.Windows.Forms.NotifyIcon notifyIcon1;
+		private System.Windows.Forms.ContextMenuStrip feedSubContextMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem newSubscriptionToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem unsubscribeToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
+		private System.Windows.Forms.ContextMenuStrip folderContextMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem1;
+		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem markAllReadToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem feedSubNewFolderContextMenuStripItem;
+		private System.Windows.Forms.ToolStripMenuItem newFeedSubscriptionToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem markFeedReadToolStripMenuItem;
 
     }
 }
