@@ -37,6 +37,43 @@ namespace BetterReader.Backend
             }
         }
 
+		public void ReloadFromTreeView(System.Windows.Forms.TreeView treeView)
+		{
+			rootLevelNodes.Clear();
+			loadNodesFromTreeNodeCollection(treeView.Nodes, rootLevelNodes);
+		}
+
+		private void loadNodesFromTreeNodeCollection(System.Windows.Forms.TreeNodeCollection treeNodes, List<FeedSubTreeNodeBase> feedSubNodes)
+		{
+			foreach (System.Windows.Forms.TreeNode treeNode in treeNodes)
+			{
+				FeedSubTreeNodeBase fstnb = treeNode.Tag as FeedSubTreeNodeBase;
+				if (fstnb == null)
+				{
+					throw new Exception("Error loading node: " + treeNode.Text + 
+						".  Tag is null or not a FeedSubTreeNodeBase.");
+				}
+
+				feedSubNodes.Add(fstnb);
+
+
+				if (fstnb.GetType() == typeof(FeedFolder))
+				{
+					FeedFolder ff = (FeedFolder)fstnb;
+					ff.ChildNodes.Clear();
+					if (treeNode.Nodes.Count > 0)
+					{
+						loadNodesFromTreeNodeCollection(treeNode.Nodes, ff.ChildNodes);
+					}
+					else
+					{
+						throw new Exception("Error loading node: " + treeNode.Text +
+							".  Tag is not a FeedFolder node but TreeNode has child nodes.");
+					}
+				}
+			}
+		}
+
         public static FeedSubscriptionTree GetFromFeedSubscriptionsFile(string filepath)
         {
             FeedSubscriptionTree fsc = null;
