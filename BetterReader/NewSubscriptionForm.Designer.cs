@@ -49,10 +49,12 @@ namespace BetterReader
 			// feedFoldersTV
 			// 
 			this.feedFoldersTV.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.feedFoldersTV.HideSelection = false;
 			this.feedFoldersTV.Location = new System.Drawing.Point(3, 16);
 			this.feedFoldersTV.Name = "feedFoldersTV";
 			this.feedFoldersTV.Size = new System.Drawing.Size(447, 149);
 			this.feedFoldersTV.TabIndex = 0;
+			this.feedFoldersTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedFoldersTV_AfterSelect);
 			// 
 			// okBTN
 			// 

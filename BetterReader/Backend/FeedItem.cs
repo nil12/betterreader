@@ -5,22 +5,41 @@ using System.Xml;
 
 namespace BetterReader.Backend
 {
+	[Flags]
+	public enum FeedItemProperties
+	{
+		Title = 1,
+		Category = 2,
+		Author = 4,
+		PubDate = 8,
+		DownloadDate = 16,
+		HasBeenRead = 32,
+		All = Title | Category | Author | PubDate | DownloadDate | HasBeenRead
+	}
+
 	public class FeedItem
 	{
 		private string title;
 		private string linkUrl;
 		private string category;
 		private string author;
-		private string pubDate;
+		private DateTime? pubDate;
 		private string guid;
 		private string description;
 		private Dictionary<string, string> unsupportedFeedItemProperties;
 		private string encodedContent;
 		private bool hasBeenRead;
 		private Feed parentFeed;
-		private DateTime downloadDate;
+		private DateTime? downloadDate;
+		private FeedItemProperties includedProperties;
 
-		public DateTime DownloadDate
+		public FeedItemProperties IncludedProperties
+		{
+			get { return includedProperties; }
+			set { includedProperties = value; }
+		}
+
+		public DateTime? DownloadDate
 		{
 			get { return downloadDate; }
 			set { downloadDate = value; }
@@ -99,7 +118,7 @@ namespace BetterReader.Backend
 			}
 		}
 
-		public string PubDate
+		public DateTime? PubDate
 		{
 			get
 			{
@@ -138,6 +157,42 @@ namespace BetterReader.Backend
 		public FeedItem()
 		{
 			unsupportedFeedItemProperties = new Dictionary<string, string>();
+			this.author = "";
+			this.category = "";
+			this.description = "";
+			this.downloadDate = null;
+			this.encodedContent = "";
+			this.guid = "";
+			this.hasBeenRead = false;
+			this.linkUrl = "";
+			this.parentFeed = null;
+			this.pubDate = null;
+			this.title = "";
+		}
+
+		private void setIncludedProperties()
+		{
+			if (title.Length > 0)
+			{
+				includedProperties = includedProperties | FeedItemProperties.Title;
+			}
+
+			if (author.Length > 0)
+			{
+				includedProperties = includedProperties | FeedItemProperties.Author;
+			}
+
+			if (category.Length > 0)
+			{
+				includedProperties = includedProperties | FeedItemProperties.Category;
+			}
+
+			if (pubDate != null)
+			{
+				includedProperties = includedProperties | FeedItemProperties.PubDate;
+			}
+
+			includedProperties = includedProperties | FeedItemProperties.HasBeenRead | FeedItemProperties.DownloadDate;
 		}
 
 		public static FeedItem GetFromRssOrRdfItemNode(XmlNode node)
@@ -162,7 +217,7 @@ namespace BetterReader.Backend
 						fi.author = innerText;
 						break;
 					case "pubdate":
-						fi.pubDate = innerText;
+						fi.pubDate = getDateTimeFromString(innerText);
 						break;
 					case "guid":
 						fi.guid = innerText;
@@ -187,7 +242,22 @@ namespace BetterReader.Backend
 			}
 			fi.SetGuid();
 			fi.downloadDate = DateTime.Now;
+			fi.setIncludedProperties();
 			return fi;
+		}
+
+		private static DateTime? getDateTimeFromString(string text)
+		{
+			DateTime tmp;
+			if (DateTime.TryParse(text, out tmp))
+			{
+				return (DateTime?)tmp;
+			}
+			else
+			{
+				System.Diagnostics.Debug.WriteLine(text);
+				return null;
+			}
 		}
 
 		private void SetGuid()
@@ -229,7 +299,7 @@ namespace BetterReader.Backend
 						}
 						break;
 					case "modified":
-						fi.pubDate = innerText;
+						fi.pubDate = getDateTimeFromString(innerText);
 						break;
 					case "id":
 						fi.guid = innerText;
@@ -251,6 +321,7 @@ namespace BetterReader.Backend
 			}
 			fi.SetGuid();
 			fi.downloadDate = DateTime.Now;
+			fi.setIncludedProperties();
 			return fi;
 		}
 	}
