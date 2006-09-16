@@ -47,6 +47,7 @@
     <Compile Include="Backend\FeedSubscriptionTree.cs" />
     <Compile Include="Backend\FeedSubTreeNodeBase.cs" />
     <Compile Include="Backend\Opml.cs" />
+    <Compile Include="FeedItemsListViewColumnSorter.cs" />
     <Compile Include="FeedsTreeView.cs">
       <SubType>Component</SubType>
     </Compile>

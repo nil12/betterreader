@@ -12,6 +12,7 @@ namespace BetterReader
 	public partial class NewSubscriptionForm : Form
 	{
 		private FeedFolder createInFolder = null;
+		private FeedSubscriptionTree fst;
 
 		public FeedFolder CreateInFolder
 		{
@@ -61,15 +62,20 @@ namespace BetterReader
 		}
 
 
-		public NewSubscriptionForm(FeedSubscriptionTree fst, FeedFolder lDefaultFolder) : this()
+		public NewSubscriptionForm(FeedSubscriptionTree lFst, FeedFolder lDefaultFolder) : this()
 		{
 			createInFolder = lDefaultFolder;
-			SetFeedSubscriptionTree(fst);
+			fst = lFst;
 		}
 
 		private void NewSubscriptionForm_Load(object sender, EventArgs e)
 		{
-			
+			if (fst != null)
+			{
+				SetFeedSubscriptionTree(fst);
+				feedFoldersTV.Invalidate();
+			}
+
 		}
 
 		public void SetFeedSubscriptionTree(FeedSubscriptionTree fst)
@@ -107,6 +113,11 @@ namespace BetterReader
 		{
 			this.DialogResult = DialogResult.OK;
 			this.Close();
+		}
+
+		private void feedFoldersTV_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			createInFolder = (FeedFolder)e.Node.Tag;
 		}
 
 	}

@@ -9,6 +9,7 @@ using System.IO;
 
 namespace BetterReader.Backend
 {
+
 	public delegate void FeedReadCompleteDelegate(Feed f);
 
 	public class Feed
@@ -32,10 +33,19 @@ namespace BetterReader.Backend
 		private string archiveFilepath;
 		private int itemCountBeforeRead;
 		private bool hasNewItemsFromLastRead;
+		private FeedItemProperties includedFeedItemProperties;
+
 
 
 
 		#region properties
+
+		internal FeedItemProperties IncludedFeedItemProperties
+		{
+			get { return includedFeedItemProperties; }
+			set { includedFeedItemProperties = value; }
+		}
+
 		public bool HasNewItemsFromLastRead
 		{
 			get { return hasNewItemsFromLastRead; }
@@ -218,6 +228,7 @@ namespace BetterReader.Backend
 				if (feedItemsByGuid.ContainsKey(fi.Guid) == false)
 				{
 					feedItemsByGuid.Add(fi.Guid, fi);
+					includedFeedItemProperties |= fi.IncludedProperties;
 					if (fi.HasBeenRead == false)
 					{
 						unreadItems++;
@@ -233,7 +244,7 @@ namespace BetterReader.Backend
 			{
 				foreach (FeedItem fi in feedItems)
 				{
-					TimeSpan age = DateTime.Now - fi.DownloadDate;
+					TimeSpan age = ((TimeSpan)(DateTime.Now - fi.DownloadDate));
 					if ((int)age.TotalDays > parentSubscription.DaysToArchive)
 					{
 						feedItems.Remove(fi);
@@ -374,6 +385,7 @@ namespace BetterReader.Backend
 			feedItemsByGuid.Add(fi.Guid, fi);
 			fi.ParentFeed = this;
 			feedItems.Add(fi);
+			includedFeedItemProperties |= fi.IncludedProperties;
 		}
 
 		private void loadFromRdfNode(XmlNode node)
@@ -489,6 +501,17 @@ namespace BetterReader.Backend
 				readException = new Exception("Timeout occurred reading feed.");
 				wrs.callback(this);
 			}
+		}
+
+		public void MarkAllItemsRead()
+		{
+			foreach (FeedItem fi in feedItems)
+			{
+				fi.HasBeenRead = true;
+			}
+
+			unreadItems = 0;
+			ArchiveFeedItems();
 		}
 
 		private class webRequestState

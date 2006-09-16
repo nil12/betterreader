@@ -17,6 +17,13 @@ namespace BetterReader.Backend
 		private Timer updateTimer;
 		private Guid guid;
 		private int daysToArchive;
+		private FeedItemsListViewColumnSorter columnSorter;
+
+		public FeedItemsListViewColumnSorter ColumnSorter
+		{
+			get { return columnSorter; }
+			set { columnSorter = value; }
+		}
 
 		public int DaysToArchive
 		{
@@ -69,6 +76,7 @@ namespace BetterReader.Backend
 			guid = Guid.NewGuid();
 			daysToArchive = 14;
 			updateSeconds = 15 * 60;
+			columnSorter = new FeedItemsListViewColumnSorter();
 		}
 
 		public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
@@ -116,6 +124,11 @@ namespace BetterReader.Backend
 		public override string ToString()
 		{
 		   return displayName + "(" + feed.UnreadItems.ToString() + "/" + feed.FeedItems.Count.ToString() + ")";
+		}
+
+		public void MarkAllItemsRead()
+		{
+			feed.MarkAllItemsRead();
 		}
 
 
