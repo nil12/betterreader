@@ -107,8 +107,25 @@ namespace BetterReader
 			}
 
 			// Compare the two items
-			compareResult = objectCompare.Compare(listViewX.SubItems[columnToSort].Text, listViewY.SubItems[columnToSort].Text);
-
+			if (listViewX.ListView.Columns.Count < columnToSort + 1)
+			{
+				columnToSort = 0;
+			}
+			string colName = listViewX.ListView.Columns[columnToSort].Text;
+			switch (colName.ToLower())
+			{
+				case "downloaddate":
+					compareResult = compareByDownloadDate(listViewX, listViewY);
+					break;
+				case "pubdate":
+					compareResult = compareByPubDate(listViewX, listViewY);
+					break;
+				default:
+					compareResult = objectCompare.Compare(listViewX.SubItems[columnToSort].Text, 
+						listViewY.SubItems[columnToSort].Text);
+					break;
+			}
+		
 			// Calculate correct return value based on object comparison
 			if (orderOfSort == SortOrder.Ascending)
 			{
@@ -127,6 +144,56 @@ namespace BetterReader
 			}
 		}
 
+		private int compareByPubDate(ListViewItem listViewX, ListViewItem listViewY)
+		{
+			FeedItem fiX, fiY;
+			fiX = listViewX.Tag as FeedItem;
+			fiY = listViewY.Tag as FeedItem;
+
+			return compareDateTimes(fiX.PubDate, fiY.PubDate);
+		}
+
+		private int compareByDownloadDate(ListViewItem listViewX, ListViewItem listViewY)
+		{
+			FeedItem fiX, fiY;
+			fiX = listViewX.Tag as FeedItem;
+			fiY = listViewY.Tag as FeedItem;
+
+			return compareDateTimes(fiX.DownloadDate, fiY.DownloadDate);
+		}
+
+		private int compareDateTimes(DateTime? dtX, DateTime? dtY)
+		{
+			int retVal = 0;
+
+			if (dtX == null)
+			{
+				retVal = -1;
+			}
+
+			if (dtY == null)
+			{
+				retVal = 1;
+			}
+
+			if (dtX == dtY)
+			{
+				retVal = 0;
+			}
+
+			if (dtX > dtY)
+			{
+				retVal = 1;
+			}
+
+			if (dtX < dtY)
+			{
+				retVal = -1;
+			}
+
+			return retVal;
+		}
+
 		private int smartSort(FeedItem feedItemX, FeedItem feedItemY)
 		{
 			int result = 0;
@@ -143,47 +210,47 @@ namespace BetterReader
 				}
 			}
 
-			if (result == 0)
-			{
-			    if (feedItemX.PubDate != feedItemY.PubDate)
-			    {
-					if (feedItemX.PubDate == null)
-					{
-						result = -1;
-					}
-					else if (feedItemY.PubDate == null)
-					{
-						result = 1;
-					}
-					else
-					{
-						if (feedItemX.PubDate > feedItemY.PubDate)
-						{
-							result = -1;
-						}
-						else
-						{
-							result = 1;
-						}
-					}
+			//if (result == 0)
+			//{
+			//    if (feedItemX.PubDate != feedItemY.PubDate)
+			//    {
+			//        if (feedItemX.PubDate == null)
+			//        {
+			//            result = -1;
+			//        }
+			//        else if (feedItemY.PubDate == null)
+			//        {
+			//            result = 1;
+			//        }
+			//        else
+			//        {
+			//            if (feedItemX.PubDate > feedItemY.PubDate)
+			//            {
+			//                result = -1;
+			//            }
+			//            else
+			//            {
+			//                result = 1;
+			//            }
+			//        }
 
-				}
+			//    }
 
-				if (result == 0)
-				{
-					if (feedItemX.DownloadDate != feedItemY.DownloadDate)
-					{
-						if (feedItemX.DownloadDate > feedItemY.DownloadDate)
-						{
-							result = -1;
-						}
-						else
-						{
-							result = 1;
-						}
-					}
-				}
-			}
+			//    if (result == 0)
+			//    {
+			//        if (feedItemX.DownloadDate != feedItemY.DownloadDate)
+			//        {
+			//            if (feedItemX.DownloadDate > feedItemY.DownloadDate)
+			//            {
+			//                result = -1;
+			//            }
+			//            else
+			//            {
+			//                result = 1;
+			//            }
+			//        }
+			//    }
+			//}
 			return result;
 		}
 

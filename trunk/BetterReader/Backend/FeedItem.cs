@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Globalization;
 
 namespace BetterReader.Backend
 {
@@ -217,7 +218,8 @@ namespace BetterReader.Backend
 						fi.author = innerText;
 						break;
 					case "pubdate":
-						fi.pubDate = getDateTimeFromString(innerText);
+					case "dc:date":
+						fi.pubDate = fi.safeDateTimeParse(innerText);
 						break;
 					case "guid":
 						fi.guid = innerText;
@@ -246,19 +248,19 @@ namespace BetterReader.Backend
 			return fi;
 		}
 
-		private static DateTime? getDateTimeFromString(string text)
-		{
-			DateTime tmp;
-			if (DateTime.TryParse(text, out tmp))
-			{
-				return (DateTime?)tmp;
-			}
-			else
-			{
-				System.Diagnostics.Debug.WriteLine(text);
-				return null;
-			}
-		}
+		//private static DateTime? getDateTimeFromString(string text)
+		//{
+		//    DateTime tmp;
+		//    if (DateTime.TryParse(text, out tmp))
+		//    {
+		//        return (DateTime?)tmp;
+		//    }
+		//    else
+		//    {
+		//        System.Diagnostics.Debug.WriteLine(text);
+		//        return null;
+		//    }
+		//}
 
 		private void SetGuid()
 		{
@@ -299,7 +301,7 @@ namespace BetterReader.Backend
 						}
 						break;
 					case "modified":
-						fi.pubDate = getDateTimeFromString(innerText);
+						fi.pubDate = fi.safeDateTimeParse(innerText);
 						break;
 					case "id":
 						fi.guid = innerText;
@@ -324,5 +326,90 @@ namespace BetterReader.Backend
 			fi.setIncludedProperties();
 			return fi;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj.GetType() == this.GetType())
+			{
+				FeedItem other = (FeedItem)obj;
+				return this.guid.Equals(other.guid);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override int GetHashCode()
+		{
+			return this.guid.GetHashCode();
+		}
+
+		#region datetime parsing
+		private DateTime? safeDateTimeParse(string dt)
+		{
+			DateTime? retVal = null;
+
+			try
+			{
+				retVal = DateTime.Parse(dt);
+			}
+			catch
+			{
+				//parse failed so we leave it at null
+			}
+
+			if (retVal == null)
+			{
+				try
+				{
+					retVal = DateTimeExt.Parse(dt);
+				}
+				catch
+				{
+					retVal = null;
+				}
+			}
+
+			if (retVal == null)
+			{
+				string[] formats = getDateTimeFormats();
+
+				try
+				{
+					retVal = DateTime.ParseExact(dt, formats, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+				}
+				catch
+				{
+					//failed so leave it at null
+				}
+			}
+
+
+			return retVal;
+		}
+
+		private string[] getDateTimeFormats()
+		{
+			//'CRAIGSLIST = 2005-03-24T23:37-08:00
+			string dfCraigslist = "yyyy-MM-ddTHH:mmzzz";
+			//'CRAIGSLIST II = 2005-04-11T11:20:22-05:00
+			string dfCraigslistII = "yyyy-MM-ddTHH:mm:ss-zzz";
+			////CRAISGLIST III = 2006-09-17T11:29:39-05:00
+			//string dfCraigslistIII = "yyyy-MM-ddTHH:mm
+			//'BLOGMAVERICK = 2005-03-30T02:18Z
+			string dfBlogMaverick = "yyyy-MM-ddTHH:mmZ";
+			//'TOPIX.NET = Thu, 07 Apr 2005 11:28 GMT
+			string dfTopix = "ddd, dd MMM yyyy HH:mm Z";
+			//'NEWS.COM.COM = Wed, 06 Apr, 2005 12:28:00 PDT
+			string dfNewsCom = "ddd, dd MMM, yyyy HH:mm:ss z";
+			//'NEWS.COM.COM = Thu, 02 Jun, 2005 4:16:00 PDT
+			string dfNewsCom2 = "ddd, dd MMM, yyyy h:mm:ss z";
+			//'dateFormats = New String() {"r", "s", "u", "yyyy-MM-ddTHH:mmzzz", "yyyy-MM-ddTHH:mm:sszzz", "yyyyMMddTHHmmss", "ddd, dd MMM yyyy HH:mm Z", "ddd, dd MMM, yyyy HH:mm:ss Z"}
+			string[] dateFormats = { "r", "s", "u", dfCraigslist, dfCraigslistII, dfBlogMaverick, dfTopix, dfNewsCom, dfNewsCom2, "ddd, dd MMM yyyy HH:mm:ss z", "ddd, dd MMM yyyy HH:mm:ss zzzz", "ddd, dd MMM yyyy HH:mm:ss -zzzz", "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss -zzz", "ddd, dd MMM yyyy HH:mm:ss Z" };
+			
+			return dateFormats;
+		}
+		#endregion
 	}
 }

@@ -6,6 +6,7 @@ using System.Xml;
 using System.Threading;
 using System.Xml.Serialization;
 using System.IO;
+using System.Web;
 
 namespace BetterReader.Backend
 {
@@ -34,11 +35,20 @@ namespace BetterReader.Backend
 		private int itemCountBeforeRead;
 		private bool hasNewItemsFromLastRead;
 		private FeedItemProperties includedFeedItemProperties;
+		private DateTime lastDownloadAttempt;
+
+
 
 
 
 
 		#region properties
+
+		public DateTime LastDownloadAttempt
+		{
+			get { return lastDownloadAttempt; }
+			set { lastDownloadAttempt = value; }
+		}
 
 		internal FeedItemProperties IncludedFeedItemProperties
 		{
@@ -233,6 +243,7 @@ namespace BetterReader.Backend
 					{
 						unreadItems++;
 					}
+					fi.ParentFeed = this;
 				}
 			}
 			purgeOldArchivedItems();
@@ -282,6 +293,7 @@ namespace BetterReader.Backend
 			ThreadPool.RegisterWaitForSingleObject(ar.AsyncWaitHandle, 
 				new WaitOrTimerCallback(timeoutCallback), state, TimeSpan.FromSeconds(30), true);
 
+			lastDownloadAttempt = DateTime.Now;
 		}
 
 		private void readCallback(IAsyncResult ar)
@@ -310,6 +322,11 @@ namespace BetterReader.Backend
 				//new items have been downloaded
 				hasNewItemsFromLastRead = true;
 			}
+			else
+			{
+				hasNewItemsFromLastRead = false;
+			}
+
 			state.callback(this);
 		}
 
@@ -349,7 +366,7 @@ namespace BetterReader.Backend
 				switch (childNode.Name)
 				{
 					case "title":
-						title = innerText;
+						title =  htmlDecode(innerText);
 						break;
 					case "link":
 						linkUrl = innerText;
@@ -363,6 +380,12 @@ namespace BetterReader.Backend
 						break;
 				}
 			}
+		}
+
+		private string htmlDecode(string innerText)
+		{
+			return HttpUtility.HtmlDecode(innerText);
+
 		}
 
 		private void addOrUpdateFeedItemsCollection(FeedItem fi)
@@ -426,7 +449,7 @@ namespace BetterReader.Backend
 				switch (childNode.Name)
 				{
 					case "title":
-						title = innerText;
+						title = htmlDecode(innerText);
 						break;
 					case "link":
 						linkUrl = innerText;
