@@ -469,7 +469,7 @@ namespace BetterReader
 					}
 					else
 					{
-						if (webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
+						if (webBrowser1.Url == null || webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
 						{
 							webBrowser1.Navigate(fi.LinkUrl);
 						}
