@@ -36,10 +36,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\DateTimeExt.cs" />
     <Compile Include="Backend\Feed.cs" />
     <Compile Include="Backend\FeedFolder.cs" />
     <Compile Include="Backend\FeedItem.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainFormState.cs" />
     <Compile Include="NewSubscriptionForm.cs">
       <SubType>Form</SubType>
     </Compile>

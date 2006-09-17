@@ -13,6 +13,11 @@ namespace BetterReader
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+			if (webBrowser1 != null)
+			{
+				webBrowser1.Dispose();
+			}
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -38,6 +43,8 @@ namespace BetterReader
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+			this.lastDownloadLBL = new System.Windows.Forms.Label();
+			this.smartSortCB = new System.Windows.Forms.CheckBox();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
@@ -54,12 +61,13 @@ namespace BetterReader
 			this.markFeedReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this.notifyIconContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.folderContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.smartSortCB = new System.Windows.Forms.CheckBox();
 			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
@@ -78,6 +86,7 @@ namespace BetterReader
 			this.splitContainer4.Panel2.SuspendLayout();
 			this.splitContainer4.SuspendLayout();
 			this.feedSubContextMenuStrip.SuspendLayout();
+			this.notifyIconContextMenuStrip.SuspendLayout();
 			this.folderContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -90,6 +99,7 @@ namespace BetterReader
 			this.mainMenuStrip.Size = new System.Drawing.Size(933, 24);
 			this.mainMenuStrip.TabIndex = 0;
 			this.mainMenuStrip.Text = "menuStrip1";
+			this.mainMenuStrip.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// fileToolStripMenuItem
 			// 
@@ -145,6 +155,8 @@ namespace BetterReader
 			this.splitContainer1.Size = new System.Drawing.Size(933, 685);
 			this.splitContainer1.SplitterDistance = 310;
 			this.splitContainer1.TabIndex = 2;
+			this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
+			this.splitContainer1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// splitContainer5
 			// 
@@ -163,6 +175,8 @@ namespace BetterReader
 			this.splitContainer5.Size = new System.Drawing.Size(310, 685);
 			this.splitContainer5.SplitterDistance = 37;
 			this.splitContainer5.TabIndex = 0;
+			this.splitContainer5.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
+			this.splitContainer5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// splitContainer2
 			// 
@@ -174,6 +188,7 @@ namespace BetterReader
 			// splitContainer2.Panel1
 			// 
 			this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.Info;
+			this.splitContainer2.Panel1.Controls.Add(this.lastDownloadLBL);
 			this.splitContainer2.Panel1.Controls.Add(this.smartSortCB);
 			this.splitContainer2.Panel1.Controls.Add(this.feedTitleLBL);
 			this.splitContainer2.Panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -184,6 +199,37 @@ namespace BetterReader
 			this.splitContainer2.Size = new System.Drawing.Size(619, 685);
 			this.splitContainer2.SplitterDistance = 37;
 			this.splitContainer2.TabIndex = 0;
+			this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
+			this.splitContainer2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			// 
+			// lastDownloadLBL
+			// 
+			this.lastDownloadLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.lastDownloadLBL.AutoSize = true;
+			this.lastDownloadLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lastDownloadLBL.Location = new System.Drawing.Point(3, 21);
+			this.lastDownloadLBL.Name = "lastDownloadLBL";
+			this.lastDownloadLBL.Size = new System.Drawing.Size(96, 13);
+			this.lastDownloadLBL.TabIndex = 2;
+			this.lastDownloadLBL.Text = "Last Downloaded: ";
+			this.lastDownloadLBL.Visible = false;
+			// 
+			// smartSortCB
+			// 
+			this.smartSortCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.smartSortCB.AutoSize = true;
+			this.smartSortCB.Checked = true;
+			this.smartSortCB.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.smartSortCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.smartSortCB.Location = new System.Drawing.Point(544, 18);
+			this.smartSortCB.Name = "smartSortCB";
+			this.smartSortCB.Size = new System.Drawing.Size(72, 17);
+			this.smartSortCB.TabIndex = 1;
+			this.smartSortCB.Text = "SmartSort";
+			this.smartSortCB.UseVisualStyleBackColor = true;
+			this.smartSortCB.Visible = false;
+			this.smartSortCB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			this.smartSortCB.CheckedChanged += new System.EventHandler(this.smartSortCB_CheckedChanged);
 			// 
 			// feedTitleLBL
 			// 
@@ -211,18 +257,21 @@ namespace BetterReader
 			// 
 			this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
 			this.splitContainer3.Size = new System.Drawing.Size(619, 644);
-			this.splitContainer3.SplitterDistance = 268;
+			this.splitContainer3.SplitterDistance = 350;
 			this.splitContainer3.TabIndex = 0;
+			this.splitContainer3.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
+			this.splitContainer3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// feedItemsLV
 			// 
 			this.feedItemsLV.AllowColumnReorder = true;
 			this.feedItemsLV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedItemsLV.FullRowSelect = true;
+			this.feedItemsLV.HideSelection = false;
 			this.feedItemsLV.Location = new System.Drawing.Point(0, 0);
 			this.feedItemsLV.MultiSelect = false;
 			this.feedItemsLV.Name = "feedItemsLV";
-			this.feedItemsLV.Size = new System.Drawing.Size(619, 268);
+			this.feedItemsLV.Size = new System.Drawing.Size(619, 350);
 			this.feedItemsLV.TabIndex = 0;
 			this.feedItemsLV.UseCompatibleStateImageBehavior = false;
 			this.feedItemsLV.View = System.Windows.Forms.View.Details;
@@ -246,14 +295,17 @@ namespace BetterReader
 			// splitContainer4.Panel2
 			// 
 			this.splitContainer4.Panel2.Controls.Add(this.webBrowser1);
-			this.splitContainer4.Size = new System.Drawing.Size(619, 372);
-			this.splitContainer4.SplitterDistance = 49;
+			this.splitContainer4.Size = new System.Drawing.Size(619, 290);
+			this.splitContainer4.SplitterDistance = 38;
 			this.splitContainer4.TabIndex = 0;
+			this.splitContainer4.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
+			this.splitContainer4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// itemLinkLBL
 			// 
+			this.itemLinkLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.itemLinkLBL.AutoSize = true;
-			this.itemLinkLBL.Location = new System.Drawing.Point(3, 33);
+			this.itemLinkLBL.Location = new System.Drawing.Point(3, 22);
 			this.itemLinkLBL.Name = "itemLinkLBL";
 			this.itemLinkLBL.Size = new System.Drawing.Size(0, 13);
 			this.itemLinkLBL.TabIndex = 1;
@@ -274,7 +326,7 @@ namespace BetterReader
 			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowser1.Name = "webBrowser1";
-			this.webBrowser1.Size = new System.Drawing.Size(619, 319);
+			this.webBrowser1.Size = new System.Drawing.Size(619, 248);
 			this.webBrowser1.TabIndex = 0;
 			// 
 			// feedSubContextMenuStrip
@@ -337,8 +389,23 @@ namespace BetterReader
 			// 
 			// notifyIcon1
 			// 
+			this.notifyIcon1.ContextMenuStrip = this.notifyIconContextMenuStrip;
 			this.notifyIcon1.Text = "notifyIcon1";
 			this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+			// 
+			// notifyIconContextMenuStrip
+			// 
+			this.notifyIconContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+			this.notifyIconContextMenuStrip.Name = "notifyIconContextMenuStrip";
+			this.notifyIconContextMenuStrip.Size = new System.Drawing.Size(104, 26);
+			// 
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.exitToolStripMenuItem.Text = "Exit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
 			// folderContextMenuStrip
 			// 
@@ -377,21 +444,6 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
 			// 
-			// smartSortCB
-			// 
-			this.smartSortCB.AutoSize = true;
-			this.smartSortCB.Checked = true;
-			this.smartSortCB.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.smartSortCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.smartSortCB.Location = new System.Drawing.Point(544, 18);
-			this.smartSortCB.Name = "smartSortCB";
-			this.smartSortCB.Size = new System.Drawing.Size(72, 17);
-			this.smartSortCB.TabIndex = 1;
-			this.smartSortCB.Text = "SmartSort";
-			this.smartSortCB.UseVisualStyleBackColor = true;
-			this.smartSortCB.Visible = false;
-			this.smartSortCB.CheckedChanged += new System.EventHandler(this.smartSortCB_CheckedChanged);
-			// 
 			// feedsTV
 			// 
 			this.feedsTV.AllowDrop = true;
@@ -429,8 +481,8 @@ namespace BetterReader
 			this.Text = "BetterReader";
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-			this.Load += new System.EventHandler(this.Form1_Load);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.mainMenuStrip.ResumeLayout(false);
 			this.mainMenuStrip.PerformLayout();
 			this.mainStatusStrip.ResumeLayout(false);
@@ -452,6 +504,7 @@ namespace BetterReader
 			this.splitContainer4.Panel2.ResumeLayout(false);
 			this.splitContainer4.ResumeLayout(false);
 			this.feedSubContextMenuStrip.ResumeLayout(false);
+			this.notifyIconContextMenuStrip.ResumeLayout(false);
 			this.folderContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -493,6 +546,9 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStripMenuItem newFeedSubscriptionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem markFeedReadToolStripMenuItem;
 		private System.Windows.Forms.CheckBox smartSortCB;
+		private System.Windows.Forms.Label lastDownloadLBL;
+		private System.Windows.Forms.ContextMenuStrip notifyIconContextMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 
     }
 }

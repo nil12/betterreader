@@ -13,7 +13,7 @@ namespace BetterReader
     public partial class MainForm : Form
     {
 		
-		private delegate void setNodeTextDelegate(TreeNode node, string text);
+		private delegate void setFeedSubNodeTextDelegate(TreeNode node, FeedSubscription fs);
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
         private FeedSubscriptionTree fst;
         private Dictionary<object, TreeNode> treeNodesByTag;
@@ -30,6 +30,9 @@ namespace BetterReader
 		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
 		private TreeNode rightClickedNode;
 		private FeedSubscription currentlyDisplayedFeedSubscription;
+		private MainFormState formState;
+		private readonly string formStateFilepath;
+		private string currentlyDisplayedFeedItemGuid;
 
 		internal static string ArchiveDirectory
 		{
@@ -41,11 +44,16 @@ namespace BetterReader
 
         public MainForm()
         {
+			currentlyDisplayedFeedItemGuid = "";
+			currentlyDisplayedFeedSubscription = null;
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			archiveDirectory = settingsDirectory + "ArchivedItems\\";
+			formStateFilepath = settingsDirectory + "MainFormState.xml";
+
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
 			formGraphics = this.CreateGraphics();
 			redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
 			yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
@@ -56,15 +64,19 @@ namespace BetterReader
 
 		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			throw e.ExceptionObject as Exception;
+			Exception ex = e.ExceptionObject as Exception;
+			if (ex != null)
+			{
+				MessageBox.Show(ex.ToString(), "Error encountered");
+			}
 		}
 
 		void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			throw e.Exception;
+			MessageBox.Show(e.Exception.ToString(), "Error encoutnered");
 		}
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
 		{
 			ensureDirectoryExists(settingsDirectory);
 			ensureDirectoryExists(archiveDirectory);
@@ -73,6 +85,7 @@ namespace BetterReader
 			feedItemsNormalFont = feedItemsLV.Font;
 			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
 
+			restoreFormState();
 			if (File.Exists(feedSubsFilepath))
 			{
 				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
@@ -94,40 +107,26 @@ namespace BetterReader
 
 		private void setNodePropertiesFromFeedSubscription(FeedSubscription fs, TreeNode node)
 		{
-			string text;
+			//string text;
 
-			if (this.IsDisposed)
+			if (this.IsDisposed && this.Disposing == false)
 			{
 				return;
 			}
 
-			this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
-			if (fs.Feed.ReadSuccess)
-			{
-				text = fs.ToString();
-				if (fs.Feed.UnreadItems > 0)
-				{
-					node.NodeFont = feedsBoldFont;
-				}
-				else
-				{
-					node.NodeFont = feedsNormalFont;
-				}
-			}
-			else
-			{
-				if (fs.Feed.ReadException != null)
-				{
-					text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
-				}
-				else
-				{
-					text = "Loading . . .";
-				}
-			}
 			try
 			{
-				this.Invoke(new setNodeTextDelegate(setNodeText), new object[] { node, text });
+				this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
+			}
+			catch (ObjectDisposedException)
+			{
+				//thread came back after user closed window so ditch the request
+				return;
+			}
+
+			try
+			{
+				this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
 				this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
 	new object[] { node, fs });
 
@@ -154,8 +153,34 @@ namespace BetterReader
 			}
 		}
 
-		private void setNodeText(TreeNode node, string text)
+		private void setFeedSubNodeText(TreeNode node, FeedSubscription fs)
 		{
+			string text;
+
+			if (fs.Feed.ReadSuccess)
+			{
+				text = fs.ToString();
+				if (fs.Feed.UnreadItems > 0)
+				{
+					node.NodeFont = feedsBoldFont;
+				}
+				else
+				{
+					node.NodeFont = feedsNormalFont;
+				}
+			}
+			else
+			{
+				if (fs.Feed.ReadException != null)
+				{
+					text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+				}
+				else
+				{
+					text = "Loading . . .";
+				}
+			}
+
 			node.Text = text;
 		}
 
@@ -263,11 +288,16 @@ namespace BetterReader
 			feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
 			smartSortCB.Visible = true;
 			smartSortCB.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
+			lastDownloadLBL.Visible = true;
+			lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
 
 			listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
-			feedItemsLV.SuspendLayout();
+			feedItemsLV.BeginUpdate();
 			feedItemsLV.Clear();
-			webBrowser1.DocumentText = "";
+			if (webBrowser1.DocumentText.Length > 0)
+			{
+				webBrowser1.DocumentText = "";
+			}
 			feedTitleLBL.Text = feedSubscription.DisplayName;
 			feedTitleLBL.Width = splitContainer2.Panel1.Width;
 			if (feedSubscription.Feed.ReadSuccess)
@@ -293,11 +323,12 @@ namespace BetterReader
 				}
 			}
 			feedItemsLV.Sort();
-			feedItemsLV.ResumeLayout();
+			feedItemsLV.EndUpdate();
 		}
 
 		private void bindFeedItemsToListView(List<FeedItem> feedItems)
 		{
+			feedItemsLV.SuspendLayout();
 			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 			if (feedItems.Count < 1)
 			{
@@ -321,11 +352,17 @@ namespace BetterReader
 					lvi.Font = feedItemsBoldFont;
 				}
 
+				if (fi.Guid == currentlyDisplayedFeedItemGuid)
+				{
+					lvi.Selected = true;
+				}
+				
 				feedItemsLV.Items.Add(lvi);
 				listViewItemsByTag.Add(fi, lvi);
 			}
 
 			setFeedItemColumnWidths();
+			feedItemsLV.ResumeLayout();
 		}
 
 		private void setFeedItemColumnWidths()
@@ -380,8 +417,10 @@ namespace BetterReader
 				feedItemsLV.Columns.Add("Read");
 			}
 
-			if ((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate)
+			if (((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate) &&
+				((itemProps & FeedItemProperties.PubDate) != FeedItemProperties.PubDate))
 			{
+				//only show downloadDate if pubDate is unavailable
 				feedItemsLV.Columns.Add("DownloadDate");
 			}
 
@@ -404,29 +443,46 @@ namespace BetterReader
 			if (feedItemsLV.SelectedItems.Count > 0)
 			{
 				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
+				currentlyDisplayedFeedItemGuid = fi.Guid;
 				itemTitleLBL.Text = fi.Title;
 				itemLinkLBL.Text = fi.LinkUrl;
 				itemLinkLBL.Links[0].LinkData = fi.LinkUrl;
+				itemLinkLBL.LinkVisited = false;
 				if (fi != null)
 				{
+					string docText = "";
 					if (fi.EncodedContent != null && fi.EncodedContent.Length > 0)
 					{
-						webBrowser1.DocumentText = formatDescriptionHTML(fi.EncodedContent);
+						docText = formatDescriptionHTML(fi.EncodedContent);
 					}
 					else if (fi.Description != null && fi.Description.Length > 0)
 					{
-						webBrowser1.DocumentText = formatDescriptionHTML(fi.Description);
+						docText = formatDescriptionHTML(fi.Description);
+					}
+
+					if (docText != "")
+					{
+						if (webBrowser1.DocumentText.Length != docText.Length)
+						{
+							webBrowser1.DocumentText = docText;
+						}
 					}
 					else
 					{
-						webBrowser1.Navigate(fi.LinkUrl);
+						if (webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
+						{
+							webBrowser1.Navigate(fi.LinkUrl);
+						}
 					}
 				}
-				fi.HasBeenRead = true;
-				fi.ParentFeed.UnreadItems--;
+				if (fi.HasBeenRead == false)
+				{
+					fi.ParentFeed.UnreadItems--;
+					fi.HasBeenRead = true;
+				}
 				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
 				TreeNode node = treeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
-				setNodeText(node, fi.ParentFeed.ParentSubscription.ToString());
+				setFeedSubNodeText(node, fi.ParentFeed.ParentSubscription);
 			}
 		}
 
@@ -464,6 +520,7 @@ namespace BetterReader
 			notifyIcon1.Visible = false;
 			this.Show();
 			this.WindowState = FormWindowState.Normal;
+			restoreFormState();
 		}
 
 
@@ -587,6 +644,7 @@ namespace BetterReader
 			{
 				displayFeedItems(fs);
 			}
+			fs.ResetUpdateTimer();
 		}
 
 
@@ -650,8 +708,56 @@ namespace BetterReader
 			feedItemsLV.Sort();
 		}
 
-		//event handlers below
+		private void storeFormState()
+		{
+			formState.WindowLocation = this.Location;
+			formState.SplitContainer1SplitterDistance = splitContainer1.SplitterDistance;
+			formState.SplitContainer2SplitterDistance = splitContainer2.SplitterDistance;
+			formState.SplitContainer3SplitterDistance = splitContainer3.SplitterDistance;
+			formState.SplitContainer4SplitterDistance = splitContainer4.SplitterDistance;
+			formState.SplitContainer5SplitterDistance = splitContainer5.SplitterDistance;
+			formState.WindowSize = this.Size;
+			formState.WindowState = this.WindowState;
+		}
 
+		private void restoreFormState()
+		{
+			if (formState == null)
+			{
+				loadFormStateFromDisk();
+			}
+
+			this.Location = formState.WindowLocation;
+			//this.WindowState = formState.WindowState;
+			this.Size = formState.WindowSize;
+			splitContainer1.SplitterDistance = formState.SplitContainer1SplitterDistance;
+			splitContainer2.SplitterDistance = formState.SplitContainer2SplitterDistance;
+			splitContainer3.SplitterDistance = formState.SplitContainer3SplitterDistance;
+			splitContainer4.SplitterDistance = formState.SplitContainer4SplitterDistance;
+			splitContainer5.SplitterDistance = formState.SplitContainer5SplitterDistance;
+		}
+
+		private void loadFormStateFromDisk()
+		{
+			formState = MainFormState.Load(formStateFilepath);
+		}
+
+		private void saveFormStateToDisk()
+		{
+			formState.Save(formStateFilepath);
+		}
+
+
+
+
+
+		//
+		//
+		//
+		//event handlers below
+		//
+		//
+		//
 		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
 		{
 			beginReads();
@@ -677,8 +783,9 @@ namespace BetterReader
 			visitLink(e.Link);
 		}
 
-		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			saveFormStateToDisk();
 			if (fst != null)
 			{
 				fst.Dispose();
@@ -691,6 +798,12 @@ namespace BetterReader
 			{
 				hideFormShowNotifyIcon();
 			}
+			else
+			{
+				storeFormState();
+			}
+
+			formState.WindowState = this.WindowState;
 		}
 
 		private void notifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -834,6 +947,17 @@ namespace BetterReader
 			feedItemsLV.Sort();
 			saveFeedSubTree();
 		}
+
+		private void allSplitContainers_SplitterMoved(object sender, SplitterEventArgs e)
+		{
+			storeFormState();
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			this.Close();
+		}
+
 
 
 
