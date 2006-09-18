@@ -33,6 +33,9 @@ namespace BetterReader
 		private MainFormState formState;
 		private readonly string formStateFilepath;
 		private string currentlyDisplayedFeedItemGuid;
+		private const string newUnreadItemsMessage = "You have new, unread items.";
+		private const string oldUnreadItemsMessage = "You have unread items.";
+		private const string noUnreadItemsMessage = "You have no unread items.";
 
 		internal static string ArchiveDirectory
 		{
@@ -145,6 +148,7 @@ namespace BetterReader
 				{
 					//the app is minimized and new items were found so set the notifyIcon to alert status
 					notifyIcon1.Icon = redLightIcon;
+					notifyIcon1.Text = newUnreadItemsMessage;
 				}
 			}
 			catch (InvalidOperationException)
@@ -295,6 +299,7 @@ namespace BetterReader
 		private void displayFeedItems(FeedSubscription feedSubscription)
 		{
 			currentlyDisplayedFeedSubscription = feedSubscription;
+			currentlyDisplayedFeedItemGuid = "";
 			feedSubscription.ResetUpdateTimer();
 			feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
 			smartSortCB.Visible = true;
@@ -516,10 +521,12 @@ namespace BetterReader
 			if (fst.GetUnreadItemCount() > 0)
 			{
 				notifyIcon1.Icon = yellowLightIcon;
+				notifyIcon1.Text = oldUnreadItemsMessage;
 			}
 			else
 			{
 				notifyIcon1.Icon = greenLightIcon;
+				notifyIcon1.Text = noUnreadItemsMessage;
 			}
 
 			this.Hide();
@@ -570,13 +577,29 @@ namespace BetterReader
 
 		private void addNewFolder(TreeNode parentNode)
 		{
-			FeedFolder parentFolder = (FeedFolder)parentNode.Tag;
-			FeedFolder newFolder = new FeedFolder();
-			newFolder.Name = "New Folder";
-			newFolder.ParentFolder = parentFolder;
-			parentFolder.ChildNodes.Add(newFolder);
+			FeedFolder parentFolder = null;
+			TreeNode newNode = null;
 
-			TreeNode newNode = parentNode.Nodes.Add(newFolder.Name);
+			FeedFolder newFolder = new FeedFolder();
+
+			newFolder.Name = "New Folder";
+
+			if (parentNode == null)
+			{
+				newFolder.ParentFolder = null;
+				fst.RootLevelNodes.Add(newFolder);
+				newNode = feedsTV.Nodes.Add(newFolder.Name);
+			}
+			else
+			{
+				parentFolder = (FeedFolder)parentNode.Tag;
+
+				newFolder.ParentFolder = parentFolder;
+				parentFolder.ChildNodes.Add(newFolder);
+
+				newNode = parentNode.Nodes.Add(newFolder.Name);
+			}
+
 			newNode.Tag = newFolder;
 			saveFeedSubTree();
 		}
@@ -637,10 +660,35 @@ namespace BetterReader
 
 		private void addFeedSubscriptionToFolder(FeedFolder parentFolder, FeedSubscription fs)
 		{
-			parentFolder.ChildNodes.Add(fs);
-			TreeNode parentNode = treeNodesByTag[parentFolder];
-			TreeNode newNode = parentNode.Nodes.Add(fs.ToString());
+			if (parentFolder == null)
+			{
+				if (fst == null)
+				{
+					fst = new FeedSubscriptionTree();
+				}
+				fst.RootLevelNodes.Add(fs);
+			}
+			else
+			{
+				parentFolder.ChildNodes.Add(fs);
+			}
+
+			TreeNode newNode = null;
+			if (treeNodesByTag != null && parentFolder != null && treeNodesByTag.ContainsKey(parentFolder))
+			{
+				TreeNode parentNode = treeNodesByTag[parentFolder];
+				newNode = parentNode.Nodes.Add(fs.ToString());
+			}
+			else
+			{
+				newNode = feedsTV.Nodes.Add(fs.ToString());
+			}
 			newNode.Tag = fs;
+
+			if (treeNodesByTag == null)
+			{
+				treeNodesByTag = new Dictionary<object, TreeNode>();
+			}
 			treeNodesByTag.Add(fs, newNode);
 			saveFeedSubTree();
 		}
@@ -970,6 +1018,16 @@ namespace BetterReader
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			this.Close();
+		}
+
+		private void newFeedSubscriptionToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			showNewSubscriptionForm(null);
+		}
+
+		private void newFolderToolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			addNewFolder(null);
 		}
 
 
