@@ -206,16 +206,16 @@ namespace BetterReader.Backend
 				switch (childNode.Name.ToLower())
 				{
 					case "title":
-						fi.title = innerText;
+						fi.title = Feed.HtmlDecode(innerText);
 						break;
 					case "link":
 						fi.linkUrl = innerText;
 						break;
 					case "category":
-						fi.category = innerText;
+						fi.category = Feed.HtmlDecode(innerText);
 						break;
 					case "author":
-						fi.author = innerText;
+						fi.author = Feed.HtmlDecode(innerText);
 						break;
 					case "pubdate":
 					case "dc:date":
@@ -283,20 +283,20 @@ namespace BetterReader.Backend
 				switch (childNode.Name.ToLower())
 				{
 					case "title":
-						fi.title = innerText;
+						fi.title = Feed.HtmlDecode(innerText);
 						break;
 					case "link":
 						fi.linkUrl = innerText;
 						break;
 					case "category":
-						fi.category = innerText;
+						fi.category = Feed.HtmlDecode(innerText);
 						break;
 					case "author":
 						foreach (XmlNode authorNode in childNode.ChildNodes)
 						{
 							if (authorNode.Name == "name")
 							{
-								fi.author = authorNode.InnerText;
+								fi.author = Feed.HtmlDecode(authorNode.InnerText);
 							}
 						}
 						break;
