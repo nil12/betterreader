@@ -162,7 +162,7 @@ namespace BetterReader.Backend
 				if (t == typeof(FeedSubscription))
 				{
 					FeedSubscription fs = fstnb as FeedSubscription;
-					if (fs != null && fs.Feed != null && fs.Feed.FeedItems != null)
+					if (fs != null && fs.Feed != null && fs.Feed.FeedItems != null && fs.Feed.ReadSuccess == true)
 					{
 						foreach (FeedItem fi in fs.Feed.FeedItems)
 						{
