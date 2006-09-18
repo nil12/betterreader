@@ -300,6 +300,8 @@ namespace BetterReader
 		{
 			currentlyDisplayedFeedSubscription = feedSubscription;
 			currentlyDisplayedFeedItemGuid = "";
+			itemLinkLBL.Visible = false;
+			itemTitleLBL.Visible = false;
 			feedSubscription.ResetUpdateTimer();
 			feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
 			smartSortCB.Visible = true;
@@ -461,6 +463,8 @@ namespace BetterReader
 				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
 				currentlyDisplayedFeedItemGuid = fi.Guid;
 				itemTitleLBL.Text = fi.Title;
+				itemTitleLBL.Visible = true;
+				itemLinkLBL.Visible = true;
 				itemLinkLBL.Text = fi.LinkUrl;
 				itemLinkLBL.Links[0].LinkData = fi.LinkUrl;
 				itemLinkLBL.LinkVisited = false;
