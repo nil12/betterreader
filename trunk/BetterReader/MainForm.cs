@@ -52,7 +52,7 @@ namespace BetterReader
 			formStateFilepath = settingsDirectory + "MainFormState.xml";
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			//AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			formGraphics = this.CreateGraphics();
 			redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
