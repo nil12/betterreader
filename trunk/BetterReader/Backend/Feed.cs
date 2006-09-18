@@ -366,7 +366,7 @@ namespace BetterReader.Backend
 				switch (childNode.Name)
 				{
 					case "title":
-						title =  htmlDecode(innerText);
+						title =  HtmlDecode(innerText);
 						break;
 					case "link":
 						linkUrl = innerText;
@@ -382,9 +382,9 @@ namespace BetterReader.Backend
 			}
 		}
 
-		private string htmlDecode(string innerText)
+		internal static string HtmlDecode(string innerText)
 		{
-			return HttpUtility.HtmlDecode(innerText);
+			return HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(innerText));
 
 		}
 
@@ -449,7 +449,7 @@ namespace BetterReader.Backend
 				switch (childNode.Name)
 				{
 					case "title":
-						title = htmlDecode(innerText);
+						title = HtmlDecode(innerText);
 						break;
 					case "link":
 						linkUrl = innerText;
