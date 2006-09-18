@@ -55,9 +55,20 @@ namespace BetterReader
 			//AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			formGraphics = this.CreateGraphics();
-			redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
-			yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
-			greenLightIcon = new Icon(graphicsDirectory + "greenlight.ico");
+			try
+			{
+				redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
+				yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
+				greenLightIcon = new Icon(graphicsDirectory + "greenlight.ico");
+			}
+			catch (DirectoryNotFoundException)
+			{
+				throw new DirectoryNotFoundException("Error.  Could not find Graphics directory.  This directory should be in the same folder as the BetterReader.exe file.");
+			}
+			catch (FileNotFoundException)
+			{
+				throw new FileNotFoundException("Error.  Could not find one or more of the required icon files in the Graphics directory.");
+			}
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
@@ -744,7 +755,10 @@ namespace BetterReader
 
 		private void saveFormStateToDisk()
 		{
-			formState.Save(formStateFilepath);
+			if (formState != null)
+			{
+				formState.Save(formStateFilepath);
+			}
 		}
 
 
