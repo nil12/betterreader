@@ -1030,6 +1030,12 @@ namespace BetterReader
 			addNewFolder(null);
 		}
 
+		private void copyLinkLocationToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FeedSubscription fs = (FeedSubscription)rightClickedNode.Tag;
+			Clipboard.SetText(fs.FeedUrl);
+		}
+
 
 
 
