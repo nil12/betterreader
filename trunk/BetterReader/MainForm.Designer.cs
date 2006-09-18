@@ -245,11 +245,11 @@ namespace BetterReader
 			this.smartSortCB.Checked = true;
 			this.smartSortCB.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.smartSortCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.smartSortCB.Location = new System.Drawing.Point(544, 18);
+			this.smartSortCB.Location = new System.Drawing.Point(503, 18);
 			this.smartSortCB.Name = "smartSortCB";
-			this.smartSortCB.Size = new System.Drawing.Size(72, 17);
+			this.smartSortCB.Size = new System.Drawing.Size(113, 17);
 			this.smartSortCB.TabIndex = 1;
-			this.smartSortCB.Text = "SmartSort";
+			this.smartSortCB.Text = "Show Unread First";
 			this.smartSortCB.UseVisualStyleBackColor = true;
 			this.smartSortCB.Visible = false;
 			this.smartSortCB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
