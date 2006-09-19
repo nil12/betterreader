@@ -253,17 +253,20 @@ namespace BetterReader.Backend
 
 		private void purgeOldArchivedItems()
 		{
+			List<FeedItem> newFeedItems = new List<FeedItem>();
 			if (feedItems != null && feedItems.Count > 0)
 			{
 				foreach (FeedItem fi in feedItems)
 				{
 					TimeSpan age = ((TimeSpan)(DateTime.Now - fi.DownloadDate));
-					if ((int)age.TotalDays > parentSubscription.DaysToArchive)
+					if ((int)age.TotalDays <= parentSubscription.DaysToArchive)
 					{
-						feedItems.Remove(fi);
+						newFeedItems.Add(fi);
 					}
 				}
 			}
+
+			feedItems = newFeedItems;
 		}
 
 		public void ArchiveFeedItems()
