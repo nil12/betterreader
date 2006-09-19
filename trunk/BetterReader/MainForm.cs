@@ -341,6 +341,10 @@ namespace BetterReader
 				}
 			}
 			feedItemsLV.Sort();
+
+			clearColumnHeaderIcons();
+			feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex = 
+				getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
 			feedItemsLV.EndUpdate();
 		}
 
@@ -489,6 +493,7 @@ namespace BetterReader
 					}
 					else
 					{
+						webBrowser1.DocumentText = formatDescriptionHTML("Loading page . . .");
 						if (webBrowser1.Url == null || webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
 						{
 							webBrowser1.Navigate(fi.LinkUrl);
@@ -747,6 +752,9 @@ namespace BetterReader
 		{
 			FeedItemsListViewColumnSorter lvwColumnSorter = (FeedItemsListViewColumnSorter)feedItemsLV.ListViewItemSorter;
 
+			clearColumnHeaderIcons();
+
+
 			// Determine if clicked column is already the column that is being sorted.
 			if (columnIndex == lvwColumnSorter.SortColumn)
 			{
@@ -754,6 +762,7 @@ namespace BetterReader
 				if (lvwColumnSorter.Order == SortOrder.Ascending)
 				{
 					lvwColumnSorter.Order = SortOrder.Descending;
+
 				}
 				else
 				{
@@ -767,8 +776,34 @@ namespace BetterReader
 				lvwColumnSorter.Order = SortOrder.Ascending;
 			}
 
+			int arrowImageIndex = getArrowImageIndexForSortColumn(lvwColumnSorter);
+
+			feedItemsLV.Columns[columnIndex].ImageIndex = arrowImageIndex;
+
 			// Perform the sort with these new sort options.
 			feedItemsLV.Sort();
+		}
+
+		private void clearColumnHeaderIcons()
+		{
+			foreach (ColumnHeader ch in feedItemsLV.Columns)
+			{
+				ch.ImageIndex = -1;
+			}
+		}
+
+		private int getArrowImageIndexForSortColumn(FeedItemsListViewColumnSorter lvwColumnSorter)
+		{
+			int arrowImageIndex;
+			if (lvwColumnSorter.Order == SortOrder.Ascending)
+			{
+				arrowImageIndex = 0;
+			}
+			else
+			{
+				arrowImageIndex = 1;
+			}
+			return arrowImageIndex;
 		}
 
 		private void storeFormState()
