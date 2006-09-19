@@ -106,6 +106,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Graphics\ARW01DN.ICO" />
+    <Content Include="Graphics\ARW01UP.ICO" />
     <Content Include="Graphics\greenlight.ico" />
     <Content Include="Graphics\redlight.ico" />
     <Content Include="Graphics\yellowlight.ico" />
