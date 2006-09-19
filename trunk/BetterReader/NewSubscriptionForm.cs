@@ -13,6 +13,7 @@ namespace BetterReader
 	{
 		private FeedFolder createInFolder = null;
 		private FeedSubscriptionTree fst;
+		private FeedSubscription fs;
 
 		public FeedFolder CreateInFolder
 		{
@@ -20,39 +21,11 @@ namespace BetterReader
 			set { createInFolder = value; }
 		}
 
-		public string FeedUrl
+		public FeedSubscription FeedSubscription
 		{
 			get
 			{
-				return feedSubscriptionPropertiesControl1.FeedUrl;
-			}
-			set
-			{
-				feedSubscriptionPropertiesControl1.FeedUrl = value;
-			}
-		}
-
-		public string FeedTitle
-		{
-			get
-			{
-				return feedSubscriptionPropertiesControl1.FeedTitle;
-			}
-			set
-			{
-				feedSubscriptionPropertiesControl1.FeedTitle = value;
-			}
-		}
-
-		public int UpdateSeconds
-		{
-			get
-			{
-				return feedSubscriptionPropertiesControl1.UpdateSeconds;
-			}
-			set
-			{
-				feedSubscriptionPropertiesControl1.UpdateSeconds = value;
+				return fs;
 			}
 		}
 
@@ -66,6 +39,9 @@ namespace BetterReader
 		{
 			createInFolder = lDefaultFolder;
 			fst = lFst;
+			fs = new FeedSubscription();
+			fs.UpdateSeconds = 15 * 60;
+			feedSubscriptionPropertiesControl1.LoadFromFeedSubscription(fs);
 		}
 
 		private void NewSubscriptionForm_Load(object sender, EventArgs e)
@@ -111,6 +87,8 @@ namespace BetterReader
 
 		private void okBTN_Click(object sender, EventArgs e)
 		{
+			feedSubscriptionPropertiesControl1.SaveToFeedSubscription(fs);
+			fs.ParentFolder = createInFolder;
 			this.DialogResult = DialogResult.OK;
 			this.Close();
 		}

@@ -36,6 +36,7 @@ namespace BetterReader
 		private const string newUnreadItemsMessage = "You have new, unread items.";
 		private const string oldUnreadItemsMessage = "You have unread items.";
 		private const string noUnreadItemsMessage = "You have no unread items.";
+		private Color controlBackgroundColor = Color.WhiteSmoke;
 
 		internal static string ArchiveDirectory
 		{
@@ -53,6 +54,8 @@ namespace BetterReader
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			archiveDirectory = settingsDirectory + "ArchivedItems\\";
 			formStateFilepath = settingsDirectory + "MainFormState.xml";
+
+			feedsTV.BackColor = feedItemsLV.BackColor = controlBackgroundColor;
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			//AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
@@ -364,6 +367,7 @@ namespace BetterReader
 			{
 				ListViewItem lvi = new ListViewItem(fi.Title);
 				lvi.Tag = fi;
+				lvi.ImageIndex = -1;
 				setListViewItemSubItems(lvi, fi, currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 				if (fi.HasBeenRead)
 				{
@@ -656,11 +660,7 @@ namespace BetterReader
 
 			if (nsf.ShowDialog() == DialogResult.OK)
 			{
-				FeedSubscription fs = new FeedSubscription();
-				fs.FeedUrl = nsf.FeedUrl;
-				fs.DisplayName = nsf.FeedTitle;
-				fs.UpdateSeconds = nsf.UpdateSeconds;
-				fs.ParentFolder = nsf.CreateInFolder;
+				FeedSubscription fs = nsf.FeedSubscription;
 				addFeedSubscriptionToFolder(parentFolder, fs);
 
 				fs.BeginReadFeed(feedSubReadCallback);
@@ -849,6 +849,20 @@ namespace BetterReader
 		}
 
 
+		private void showFeedSubPropertiesDialog(FeedSubscription fs)
+		{
+			SubscriptionPropertiesForm spf = new SubscriptionPropertiesForm(fs);
+			if (spf.ShowDialog() == DialogResult.OK)
+			{
+				saveFeedSubTree();
+				setNodePropertiesFromFeedSubscription(fs, treeNodesByTag[fs]);
+				if (fs.Feed.ReadSuccess != true)
+				{
+					fs.BeginReadFeed(new FeedSubscriptionReadDelegate(feedSubReadCallback));
+					fs.ResetUpdateTimer();
+				}
+			}			
+		}
 
 
 
@@ -950,8 +964,9 @@ namespace BetterReader
 
 		private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
+			showFeedSubPropertiesDialog((FeedSubscription)rightClickedNode.Tag);
 		}
+
 
 		private void feedsTV_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
 		{

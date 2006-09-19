@@ -91,6 +91,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubscriptionPropertiesForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SubscriptionPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -103,6 +107,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SubscriptionPropertiesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubscriptionPropertiesForm.Designer.cs">
+      <DependentUpon>SubscriptionPropertiesForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
