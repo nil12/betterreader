@@ -46,8 +46,11 @@ namespace BetterReader.Backend
 			set 
 			{
 				feedUrl = value;
-				feed = new Feed(guid, feedUrl);
-				feed.ParentSubscription = this;
+				if (feed == null || feed.FeedUrl != feedUrl)
+				{
+					feed = new Feed(guid, feedUrl);
+					feed.ParentSubscription = this;
+				}
 			}
 		}
 
@@ -74,7 +77,7 @@ namespace BetterReader.Backend
 		public FeedSubscription()
 		{
 			guid = Guid.NewGuid();
-			daysToArchive = 14;
+			daysToArchive = 2;
 			updateSeconds = 15 * 60;
 			columnSorter = new FeedItemsListViewColumnSorter();
 		}

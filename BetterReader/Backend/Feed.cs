@@ -243,8 +243,10 @@ namespace BetterReader.Backend
 					{
 						unreadItems++;
 					}
-					fi.ParentFeed = this;
 				}
+
+
+				fi.ParentFeed = this;
 			}
 			purgeOldArchivedItems();
 		}

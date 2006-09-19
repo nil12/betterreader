@@ -36,11 +36,15 @@ namespace BetterReader
 			this.label2 = new System.Windows.Forms.Label();
 			this.urlTB = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.daysToArchiveTB = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.daysToArchiveTB);
+			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.updateMinutesTB);
 			this.groupBox1.Controls.Add(this.label3);
@@ -51,7 +55,7 @@ namespace BetterReader
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.groupBox1.Location = new System.Drawing.Point(0, 0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(453, 114);
+			this.groupBox1.Size = new System.Drawing.Size(453, 148);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Feed Subscription Properties";
@@ -115,13 +119,31 @@ namespace BetterReader
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Feed URL:";
 			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(11, 108);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(117, 13);
+			this.label5.TabIndex = 7;
+			this.label5.Text = "Days To Archive Items:";
+			// 
+			// daysToArchiveTB
+			// 
+			this.daysToArchiveTB.Location = new System.Drawing.Point(131, 105);
+			this.daysToArchiveTB.Name = "daysToArchiveTB";
+			this.daysToArchiveTB.Size = new System.Drawing.Size(100, 20);
+			this.daysToArchiveTB.TabIndex = 8;
+			this.daysToArchiveTB.Text = "2";
+			this.daysToArchiveTB.TextChanged += new System.EventHandler(this.daysToArchiveTB_TextChanged);
+			// 
 			// FeedSubscriptionPropertiesControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox1);
 			this.Name = "FeedSubscriptionPropertiesControl";
-			this.Size = new System.Drawing.Size(453, 114);
+			this.Size = new System.Drawing.Size(453, 148);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
@@ -138,5 +160,7 @@ namespace BetterReader
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox urlTB;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.TextBox daysToArchiveTB;
 	}
 }

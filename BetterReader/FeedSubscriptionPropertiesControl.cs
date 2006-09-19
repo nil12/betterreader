@@ -5,48 +5,28 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using BetterReader.Backend;
 
 namespace BetterReader
 {
 	public partial class FeedSubscriptionPropertiesControl : UserControl
 	{
-		public string FeedTitle
+		internal void LoadFromFeedSubscription(FeedSubscription fs)
 		{
-			get
-			{
-				return feedTitleTB.Text;
-			}
-			set
-			{
-				feedTitleTB.Text = value;
-			}
+			urlTB.Text = fs.FeedUrl;
+			feedTitleTB.Text = fs.DisplayName;
+			updateMinutesTB.Text = ((int)(fs.UpdateSeconds / 60)).ToString();
+			daysToArchiveTB.Text = fs.DaysToArchive.ToString();
 		}
 
-		public string FeedUrl
+		internal void SaveToFeedSubscription(FeedSubscription fs)
 		{
-			get
-			{
-				return urlTB.Text;
-			}
-			set
-			{
-				urlTB.Text = value;
-			}
+			fs.FeedUrl = urlTB.Text;
+			fs.DisplayName = feedTitleTB.Text;
+			fs.UpdateSeconds = int.Parse(updateMinutesTB.Text) * 60;
+			fs.DaysToArchive = int.Parse(daysToArchiveTB.Text);
 		}
 
-		public int UpdateSeconds
-		{
-			get
-			{
-				int minutes = int.Parse(updateMinutesTB.Text);
-				return minutes * 60;
-			}
-			set
-			{
-				int minutes = value / 60;
-				updateMinutesTB.Text = minutes.ToString();
-			}
-		}
 
 
 		public FeedSubscriptionPropertiesControl()
@@ -56,15 +36,34 @@ namespace BetterReader
 
 		private void updateMinutesTB_TextChanged(object sender, EventArgs e)
 		{
-			try
-			{
-				int val = int.Parse(updateMinutesTB.Text);
-			}
-			catch (FormatException)
+			if (! isANumber(updateMinutesTB.Text))
 			{
 				MessageBox.Show("Update interval must be an integer value.", "Error");
 				updateMinutesTB.Text = "15";
 			}
+		}
+
+		private void daysToArchiveTB_TextChanged(object sender, EventArgs e)
+		{
+			if (!isANumber(daysToArchiveTB.Text))
+			{
+				MessageBox.Show("Days to Archive must be an integer value.", "Error");
+				daysToArchiveTB.Text = "2";
+			}
+		}
+
+		private bool isANumber(string val)
+		{
+			try
+			{
+				int iVal = int.Parse(val);
+			}
+			catch
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

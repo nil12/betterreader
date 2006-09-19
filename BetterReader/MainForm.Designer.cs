@@ -51,6 +51,7 @@ namespace BetterReader
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
 			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.itemTitleLBL = new System.Windows.Forms.Label();
@@ -72,7 +73,6 @@ namespace BetterReader
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -194,6 +194,7 @@ namespace BetterReader
 			// feedsTV
 			// 
 			this.feedsTV.AllowDrop = true;
+			this.feedsTV.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.feedsTV.Cursor = System.Windows.Forms.Cursors.Default;
 			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedsTV.DragCursor = null;
@@ -302,6 +303,7 @@ namespace BetterReader
 			// feedItemsLV
 			// 
 			this.feedItemsLV.AllowColumnReorder = true;
+			this.feedItemsLV.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.feedItemsLV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedItemsLV.FullRowSelect = true;
 			this.feedItemsLV.HideSelection = false;
@@ -316,6 +318,13 @@ namespace BetterReader
 			this.feedItemsLV.SelectedIndexChanged += new System.EventHandler(this.feedItemsLV_SelectedIndexChanged);
 			this.feedItemsLV.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.feedItemsLV_ColumnClick);
 			this.feedItemsLV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			// 
+			// imageList1
+			// 
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageList1.Images.SetKeyName(0, "ARW01UP.ICO");
+			this.imageList1.Images.SetKeyName(1, "ARW01DN.ICO");
 			// 
 			// splitContainer4
 			// 
@@ -489,13 +498,6 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
-			// 
-			// imageList1
-			// 
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageList1.Images.SetKeyName(0, "ARW01UP.ICO");
-			this.imageList1.Images.SetKeyName(1, "ARW01DN.ICO");
 			// 
 			// MainForm
 			// 
