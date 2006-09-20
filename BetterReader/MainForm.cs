@@ -1090,6 +1090,11 @@ namespace BetterReader
 			Clipboard.SetText(fs.FeedUrl);
 		}
 
+		private void feedItemsLV_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			visitLink(itemLinkLBL.Links[0]);
+		}
+
 
 
 

@@ -315,6 +315,7 @@ namespace BetterReader
 			this.feedItemsLV.TabIndex = 0;
 			this.feedItemsLV.UseCompatibleStateImageBehavior = false;
 			this.feedItemsLV.View = System.Windows.Forms.View.Details;
+			this.feedItemsLV.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.feedItemsLV_MouseDoubleClick);
 			this.feedItemsLV.SelectedIndexChanged += new System.EventHandler(this.feedItemsLV_SelectedIndexChanged);
 			this.feedItemsLV.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.feedItemsLV_ColumnClick);
 			this.feedItemsLV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
