@@ -233,6 +233,9 @@ namespace BetterReader.Backend
 				return;
 			}
 
+
+			purgeOldArchivedItems();
+
 			foreach (FeedItem fi in feedItems)
 			{
 				if (feedItemsByGuid.ContainsKey(fi.Guid) == false)
@@ -248,7 +251,6 @@ namespace BetterReader.Backend
 
 				fi.ParentFeed = this;
 			}
-			purgeOldArchivedItems();
 		}
 
 		private void purgeOldArchivedItems()
@@ -259,7 +261,7 @@ namespace BetterReader.Backend
 				foreach (FeedItem fi in feedItems)
 				{
 					TimeSpan age = ((TimeSpan)(DateTime.Now - fi.DownloadDate));
-					if ((int)age.TotalDays <= parentSubscription.DaysToArchive)
+					if ((int)age.TotalDays < parentSubscription.DaysToArchive)
 					{
 						newFeedItems.Add(fi);
 					}
