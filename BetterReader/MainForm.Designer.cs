@@ -44,6 +44,7 @@ namespace BetterReader
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+			this.hideReadFeedsCB = new System.Windows.Forms.CheckBox();
 			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.lastDownloadLBL = new System.Windows.Forms.Label();
@@ -78,6 +79,7 @@ namespace BetterReader
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			this.splitContainer5.Panel1.SuspendLayout();
 			this.splitContainer5.Panel2.SuspendLayout();
 			this.splitContainer5.SuspendLayout();
 			this.splitContainer2.Panel1.SuspendLayout();
@@ -181,6 +183,7 @@ namespace BetterReader
 			// splitContainer5.Panel1
 			// 
 			this.splitContainer5.Panel1.BackColor = System.Drawing.SystemColors.Info;
+			this.splitContainer5.Panel1.Controls.Add(this.hideReadFeedsCB);
 			// 
 			// splitContainer5.Panel2
 			// 
@@ -190,6 +193,19 @@ namespace BetterReader
 			this.splitContainer5.TabIndex = 0;
 			this.splitContainer5.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			// 
+			// hideReadFeedsCB
+			// 
+			this.hideReadFeedsCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.hideReadFeedsCB.AutoSize = true;
+			this.hideReadFeedsCB.Checked = true;
+			this.hideReadFeedsCB.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.hideReadFeedsCB.Location = new System.Drawing.Point(198, 21);
+			this.hideReadFeedsCB.Name = "hideReadFeedsCB";
+			this.hideReadFeedsCB.Size = new System.Drawing.Size(109, 17);
+			this.hideReadFeedsCB.TabIndex = 0;
+			this.hideReadFeedsCB.Text = "Hide Read Feeds";
+			this.hideReadFeedsCB.UseVisualStyleBackColor = true;
 			// 
 			// feedsTV
 			// 
@@ -523,6 +539,8 @@ namespace BetterReader
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
+			this.splitContainer5.Panel1.ResumeLayout(false);
+			this.splitContainer5.Panel1.PerformLayout();
 			this.splitContainer5.Panel2.ResumeLayout(false);
 			this.splitContainer5.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
@@ -585,6 +603,7 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem copyLinkLocationToolStripMenuItem;
 		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.CheckBox hideReadFeedsCB;
 
     }
 }

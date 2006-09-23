@@ -69,11 +69,11 @@ namespace BetterReader
 			}
 			catch (DirectoryNotFoundException)
 			{
-				throw new DirectoryNotFoundException("Error.  Could not find Graphics directory.  This directory should be in the same folder as the BetterReader.exe file.");
+				throw new DirectoryNotFoundException("Error.  Could not find Graphics directory at: " + graphicsDirectory + ".  This directory should be in the same folder as the BetterReader.exe file.");
 			}
 			catch (FileNotFoundException)
 			{
-				throw new FileNotFoundException("Error.  Could not find one or more of the required icon files in the Graphics directory.");
+				throw new FileNotFoundException("Error.  Could not find one or more of the required icon files in the Graphics directory: " + graphicsDirectory + ".");
 			}
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -141,6 +141,8 @@ namespace BetterReader
 				return;
 			}
 
+
+
 			try
 			{
 				this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
@@ -185,6 +187,16 @@ namespace BetterReader
 				else
 				{
 					node.NodeFont = feedsNormalFont;
+				}
+
+				if (fs.Feed.UnreadItems == 0 && hideReadFeedsCB.Checked)
+				{
+					//user has selected hideReadFeeds option and this feed has no unread items
+					feedsTV.HideNode(node);
+				}
+				else
+				{
+					feedsTV.ShowNode(fs);
 				}
 			}
 			else
@@ -346,8 +358,17 @@ namespace BetterReader
 			feedItemsLV.Sort();
 
 			clearColumnHeaderIcons();
-			feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex = 
-				getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
+			if (currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn <= feedItemsLV.Columns.Count)
+			{
+				feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex =
+					getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
+			}
+			else
+			{
+				MessageBox.Show("A recoverable error has been encountered: The current sort column index (" +
+					currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn.ToString() + ") is greater than " +
+					"the number of columns in the FeedItems ListView (" + feedItemsLV.Columns.Count.ToString() + ")");
+			}
 			feedItemsLV.EndUpdate();
 		}
 
@@ -357,7 +378,7 @@ namespace BetterReader
 			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 			if (feedItems.Count < 1)
 			{
-				feedItemsLV.Items.Add(new ListViewItem("No items found."));
+				feedItemsLV.Items.Add(new ListViewItem("No items found.")).IndentCount = 0;
 				feedItemsLV.Enabled = false;
 				return;
 			}
@@ -367,7 +388,7 @@ namespace BetterReader
 			{
 				ListViewItem lvi = new ListViewItem(fi.Title);
 				lvi.Tag = fi;
-				lvi.ImageIndex = -1;
+				lvi.IndentCount = 0;
 				setListViewItemSubItems(lvi, fi, currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 				if (fi.HasBeenRead)
 				{
@@ -381,6 +402,7 @@ namespace BetterReader
 				if (fi.Guid == currentlyDisplayedFeedItemGuid)
 				{
 					lvi.Selected = true;
+					feedItemsLV.SelectedIndices.Add(feedItemsLV.Items.IndexOf(lvi));
 				}
 				
 				feedItemsLV.Items.Add(lvi);
