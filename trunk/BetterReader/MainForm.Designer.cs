@@ -64,6 +64,7 @@ namespace BetterReader
 			this.feedSubNewFolderContextMenuStripItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markFeedReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyLinkLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.reloadNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.feedReaderBGW = new System.ComponentModel.BackgroundWorker();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.notifyIconContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -73,7 +74,6 @@ namespace BetterReader
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.reloadNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
@@ -207,6 +207,7 @@ namespace BetterReader
 			this.hideReadFeedsCB.TabIndex = 0;
 			this.hideReadFeedsCB.Text = "Hide Read Feeds";
 			this.hideReadFeedsCB.UseVisualStyleBackColor = true;
+			this.hideReadFeedsCB.CheckedChanged += new System.EventHandler(this.hideReadFeedsCB_CheckedChanged);
 			// 
 			// splitContainer2
 			// 
@@ -432,6 +433,13 @@ namespace BetterReader
 			this.copyLinkLocationToolStripMenuItem.Text = "Copy Link Location";
 			this.copyLinkLocationToolStripMenuItem.Click += new System.EventHandler(this.copyLinkLocationToolStripMenuItem_Click);
 			// 
+			// reloadNowToolStripMenuItem
+			// 
+			this.reloadNowToolStripMenuItem.Name = "reloadNowToolStripMenuItem";
+			this.reloadNowToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+			this.reloadNowToolStripMenuItem.Text = "Reload Now";
+			this.reloadNowToolStripMenuItem.Click += new System.EventHandler(this.reloadNowToolStripMenuItem_Click);
+			// 
 			// feedReaderBGW
 			// 
 			this.feedReaderBGW.DoWork += new System.ComponentModel.DoWorkEventHandler(this.feedReaderBGW_DoWork);
@@ -492,13 +500,6 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
-			// 
-			// reloadNowToolStripMenuItem
-			// 
-			this.reloadNowToolStripMenuItem.Name = "reloadNowToolStripMenuItem";
-			this.reloadNowToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
-			this.reloadNowToolStripMenuItem.Text = "Reload Now";
-			this.reloadNowToolStripMenuItem.Click += new System.EventHandler(this.reloadNowToolStripMenuItem_Click);
 			// 
 			// feedsTV
 			// 

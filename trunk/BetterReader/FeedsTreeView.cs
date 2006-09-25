@@ -72,7 +72,7 @@ namespace BetterReader
 			{
 				if (this.SelectedNode == node)
 				{
-					this.SelectedNode = node.NextVisibleNode;
+					this.SelectedNode = null;
 				}
 				node.Parent.Nodes.Remove(node);
 			}
@@ -90,21 +90,76 @@ namespace BetterReader
 			hiddenNodes.Remove(tag);
 
 			int insertAt = node.index;
+			int lastNodeIndex = node.parent.Nodes.Count - 1;
+			
 
-			if (node.index > node.parent.Nodes.Count - 1 )
+			if (insertAt > lastNodeIndex)
 			{
 				//the actual index of this node is greater than the number of nodes currently displayed
 				//so put this node at the end of the list
-				insertAt = node.parent.Nodes.Count;
+				insertAt = lastNodeIndex + 1;
 			}
+			//else if (insertAt < lastNodeIndex)
+			//{
+			//    //the actual index is less than the number of nodes currently displayed so 
+			//    //step backwards through the nodes to find the correct spot
+			//    int curIndex = lastNodeIndex;
+			//    int curFSIndex = int.MaxValue;
+			//    while (insertAt < curFSIndex)
+			//    {
+			//        FeedSubscription fs = (FeedSubscription)node.parent.Nodes[curIndex].Tag;
+			//        curFSIndex = fs.Index;
+			//        curIndex--;
+			//    }
+
+			//    insertAt = curIndex;
+			//}
 
 			if (this.InvokeRequired)
 			{
-				this.Invoke(new InsertNodeDelegate(node.parent.Nodes.Insert), new object[] { node.index, node.node });
+				this.Invoke(new InsertNodeDelegate(node.parent.Nodes.Insert), new object[] { insertAt, node.node });
 			}
 			else
 			{
 				node.parent.Nodes.Insert(node.index, node.node);
+			}
+		}
+
+
+		internal void HideReadNodes()
+		{
+			hideNodesInList(this.Nodes);
+		}
+
+		private void hideNodesInList(TreeNodeCollection treeNodeCollection)
+		{
+			foreach (TreeNode node in treeNodeCollection)
+			{
+				Type t = node.Tag.GetType();
+
+				if (t == typeof(FeedSubscription))
+				{
+					FeedSubscription fs = (FeedSubscription)node.Tag;
+					if (fs.Feed.UnreadItems == 0)
+					{
+						HideNode(node);
+					}
+				}
+
+				if (t == typeof(FeedFolder))
+				{
+					hideNodesInList(node.Nodes);
+				}
+			}
+		}
+
+		internal void ShowHiddenNodes()
+		{
+			object[] keys = new object[hiddenNodes.Count];
+			hiddenNodes.Keys.CopyTo(keys, 0);
+			foreach (object key in keys)
+			{
+				ShowNode(key);
 			}
 		}
 
@@ -122,5 +177,6 @@ namespace BetterReader
 				index = fs.Index;
 			}
 		}
+
 	}
 }

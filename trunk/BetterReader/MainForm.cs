@@ -899,6 +899,18 @@ namespace BetterReader
 			}			
 		}
 
+		private void toggleHideShowOnFeedSubNodes()
+		{
+			if (hideReadFeedsCB.Checked)
+			{
+				feedsTV.HideReadNodes();
+			}
+			else
+			{
+				feedsTV.ShowHiddenNodes();
+			}
+		}
+
 
 
 		//
@@ -1135,6 +1147,13 @@ namespace BetterReader
 			FeedSubscription fs = (FeedSubscription)rightClickedNode.Tag;
 			fs.BeginReadFeed(feedSubReadCallback);
 		}
+
+		private void hideReadFeedsCB_CheckedChanged(object sender, EventArgs e)
+		{
+			toggleHideShowOnFeedSubNodes();
+		}
+
+
 
     }
 }
