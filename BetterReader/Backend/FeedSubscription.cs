@@ -84,8 +84,12 @@ namespace BetterReader.Backend
 
 		public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
 		{
-		   callback = lCallback;
-		   feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
+			if (updateTimer != null)
+			{
+				updateTimer.Dispose();
+			}
+			callback = lCallback;
+			feed.BeginRead(new FeedReadCompleteDelegate(feedReadCallback));
 		}
 
 		private void feedReadCallback(Feed f)

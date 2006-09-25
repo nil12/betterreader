@@ -18,6 +18,9 @@ namespace BetterReader
 		private int splitContainer5SplitterDistance;
 		private Size windowSize;
 		private FormWindowState windowState;
+		private bool hideReadFeeds;
+
+		
 
 		public Point WindowLocation
 		{
@@ -115,7 +118,18 @@ namespace BetterReader
 			}
 		}
 
-
+		public bool HideReadFeeds
+		{
+			get 
+			{
+				return hideReadFeeds; 
+			}
+			
+			set 
+			{
+				hideReadFeeds = value; 
+			}
+		}
 
 
 		internal static MainFormState Load(string filepath)

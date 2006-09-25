@@ -131,20 +131,20 @@ namespace BetterReader
 				return;
 			}
 
-			try
-			{
-				this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
-			}
-			catch (ObjectDisposedException)
-			{
-				//thread came back after user closed window so ditch the request
-				return;
-			}
+			//try
+			//{
+			//    this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
+			//}
+			//catch (ObjectDisposedException)
+			//{
+			//    //thread came back after user closed window so ditch the request
+			//    return;
+			//}
 
-
-
-			try
+			lock (feedsTV)
 			{
+				//try
+				//{
 				this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
 				this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
 	new object[] { node, fs });
@@ -155,14 +155,15 @@ namespace BetterReader
 					notifyIcon1.Icon = redLightIcon;
 					notifyIcon1.Text = newUnreadItemsMessage;
 				}
-			}
-			catch (InvalidOperationException)
-			{
-				//this was most likely caused by a feed reading thread returning during shutdown
-				//so we'll ignore it
-			}
+				//}
+				//catch (InvalidOperationException)
+				//{
+				//    //this was most likely caused by a feed reading thread returning during shutdown
+				//    //so we'll ignore it
+				//}
 
-			this.Invoke(new MethodInvoker(feedsTV.EndUpdate));
+				//this.Invoke(new MethodInvoker(feedsTV.EndUpdate));
+			}
 		}
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
@@ -277,6 +278,8 @@ namespace BetterReader
 					}
 
 					newNode.Tag = fs;
+					//newNode.ImageIndex = -1;
+					//newNode.SelectedImageIndex = -1;
 					treeNodesByTag.Add(fs, newNode);
 				}
 				else if (nodeType == typeof(FeedFolder))
@@ -294,6 +297,8 @@ namespace BetterReader
 					}
 
 					newNode.Tag = ff;
+					//newNode.ImageIndex = 0;
+					//newNode.SelectedImageIndex = 0;
 					
 					treeNodesByTag.Add(ff, newNode);
 					if (ff.IsExpandedInUI)
@@ -313,63 +318,69 @@ namespace BetterReader
 
 		private void displayFeedItems(FeedSubscription feedSubscription)
 		{
-			currentlyDisplayedFeedSubscription = feedSubscription;
-			currentlyDisplayedFeedItemGuid = "";
-			itemLinkLBL.Visible = false;
-			itemTitleLBL.Visible = false;
-			feedSubscription.ResetUpdateTimer();
-			feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
-			smartSortCB.Visible = true;
-			smartSortCB.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
-			lastDownloadLBL.Visible = true;
-			lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
+			//lock (feedItemsLV)
+			//{
+				currentlyDisplayedFeedSubscription = feedSubscription;
+				currentlyDisplayedFeedItemGuid = "";
+				itemLinkLBL.Visible = false;
+				itemTitleLBL.Visible = false;
+				feedSubscription.ResetUpdateTimer();
+				feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
+				smartSortCB.Visible = true;
+				smartSortCB.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
+				lastDownloadLBL.Visible = true;
+				lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
 
-			listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
-			feedItemsLV.BeginUpdate();
-			feedItemsLV.Clear();
-			if (webBrowser1.DocumentText.Length > 0)
-			{
-				webBrowser1.DocumentText = "";
-			}
-			feedTitleLBL.Text = feedSubscription.DisplayName;
-			feedTitleLBL.Width = splitContainer2.Panel1.Width;
-			if (feedSubscription.Feed.ReadSuccess)
-			{
-				bindFeedItemsToListView(feedSubscription.Feed.FeedItems);
-				feedItemsLV.Enabled = true;
-			}
-			else
-			{
-				if (feedSubscription.Feed.ReadException == null)
+				listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
+				//feedItemsLV.BeginUpdate();
+				feedItemsLV.Clear();
+				if (webBrowser1.DocumentText.Length > 0)
 				{
-					feedItemsLV.Columns.Add("Title");
-					ListViewItem lvi = new ListViewItem("Loading");
-					feedItemsLV.Items.Add(lvi);
-					feedItemsLV.Enabled = false;
+					webBrowser1.DocumentText = "";
+				}
+				feedTitleLBL.Text = feedSubscription.DisplayName;
+				feedTitleLBL.Width = splitContainer2.Panel1.Width;
+				if (feedSubscription.Feed.ReadSuccess)
+				{
+					bindFeedItemsToListView(feedSubscription.Feed.FeedItems);
+					feedItemsLV.Enabled = true;
 				}
 				else
 				{
-					feedItemsLV.Columns.Add("Error");
-					ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
-					feedItemsLV.Items.Add(lvi);
-					feedItemsLV.Enabled = false;
-				}
-			}
-			feedItemsLV.Sort();
+					if (feedSubscription.Feed.ReadException == null)
+					{
+						feedItemsLV.Columns.Add("Title");
+						ListViewItem lvi = new ListViewItem("Loading");
+						feedItemsLV.Items.Add(lvi);
+						feedItemsLV.Enabled = false;
+					}
+					else
+					{
+						feedItemsLV.Columns.Add("Error");
+						ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
+						feedItemsLV.Items.Add(lvi);
+						feedItemsLV.Enabled = false;
+					}
 
-			clearColumnHeaderIcons();
-			if (currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn <= feedItemsLV.Columns.Count)
-			{
-				feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex =
-					getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
-			}
-			else
-			{
-				MessageBox.Show("A recoverable error has been encountered: The current sort column index (" +
-					currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn.ToString() + ") is greater than " +
-					"the number of columns in the FeedItems ListView (" + feedItemsLV.Columns.Count.ToString() + ")");
-			}
-			feedItemsLV.EndUpdate();
+					//feedItemsLV.EndUpdate();
+					return;
+				}
+				feedItemsLV.Sort();
+
+				clearColumnHeaderIcons();
+				if (currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn < feedItemsLV.Columns.Count)
+				{
+					feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex =
+							getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
+				}
+				else
+				{
+					MessageBox.Show("A recoverable error has been encountered: The current sort column index (" +
+						currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn.ToString() + ") is greater than " +
+						"the number of columns in the FeedItems ListView (" + feedItemsLV.Columns.Count.ToString() + ")");
+				}
+				//feedItemsLV.EndUpdate();
+			//}
 		}
 
 		private void bindFeedItemsToListView(List<FeedItem> feedItems)
@@ -838,6 +849,7 @@ namespace BetterReader
 			formState.SplitContainer5SplitterDistance = splitContainer5.SplitterDistance;
 			formState.WindowSize = this.Size;
 			formState.WindowState = this.WindowState;
+			formState.HideReadFeeds = hideReadFeedsCB.Checked;
 		}
 
 		private void restoreFormState()
@@ -855,6 +867,7 @@ namespace BetterReader
 			splitContainer3.SplitterDistance = formState.SplitContainer3SplitterDistance;
 			splitContainer4.SplitterDistance = formState.SplitContainer4SplitterDistance;
 			splitContainer5.SplitterDistance = formState.SplitContainer5SplitterDistance;
+			hideReadFeedsCB.Checked = formState.HideReadFeeds;
 		}
 
 		private void loadFormStateFromDisk()
@@ -1117,21 +1130,11 @@ namespace BetterReader
 			visitLink(itemLinkLBL.Links[0]);
 		}
 
+		private void reloadNowToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FeedSubscription fs = (FeedSubscription)rightClickedNode.Tag;
+			fs.BeginReadFeed(feedSubReadCallback);
+		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
     }
 }

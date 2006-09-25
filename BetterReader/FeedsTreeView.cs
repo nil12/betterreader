@@ -56,6 +56,12 @@ namespace BetterReader
 
 		public void HideNode(TreeNode node)
 		{
+			if (hiddenNodes.ContainsKey(node.Tag))
+			{
+				//the node is already hidden
+				return;
+			}
+
 			HiddenNode hn = new HiddenNode(node);
 			hiddenNodes.Add(node.Tag, hn);
 			if (this.InvokeRequired)
@@ -64,6 +70,10 @@ namespace BetterReader
 			}
 			else
 			{
+				if (this.SelectedNode == node)
+				{
+					this.SelectedNode = node.NextVisibleNode;
+				}
 				node.Parent.Nodes.Remove(node);
 			}
 		}
@@ -78,6 +88,16 @@ namespace BetterReader
 
 			HiddenNode node = hiddenNodes[tag];
 			hiddenNodes.Remove(tag);
+
+			int insertAt = node.index;
+
+			if (node.index > node.parent.Nodes.Count - 1 )
+			{
+				//the actual index of this node is greater than the number of nodes currently displayed
+				//so put this node at the end of the list
+				insertAt = node.parent.Nodes.Count;
+			}
+
 			if (this.InvokeRequired)
 			{
 				this.Invoke(new InsertNodeDelegate(node.parent.Nodes.Insert), new object[] { node.index, node.node });
@@ -98,7 +118,8 @@ namespace BetterReader
 			{
 				node = lNode;
 				parent = lNode.Parent;
-				index = node.Index;
+				FeedSubscription fs = (FeedSubscription)lNode.Tag;
+				index = fs.Index;
 			}
 		}
 	}
