@@ -16,6 +16,14 @@ namespace BetterReader.Backend
 			set { parentFolder = value; }
 		}
 
+		public int Index
+		{
+			get
+			{
+				return parentFolder.ChildNodes.IndexOf(this);
+			}
+		}
+
 
 		public static FeedSubTreeNodeBase GetFromOpmlXmlNode(XmlNode node)
 		{
