@@ -145,9 +145,17 @@ namespace BetterReader
 			{
 				//try
 				//{
-				this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
-				this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
-	new object[] { node, fs });
+				if (this.InvokeRequired)
+				{
+					this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
+					this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
+		new object[] { node, fs });
+				}
+				else
+				{
+					setFeedSubNodeText(node, fs);
+					displayFeedItemsIfNodeSelected(node, fs);
+				}
 
 				if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
 				{
@@ -654,9 +662,16 @@ namespace BetterReader
 		private void deleteFolder(TreeNode rightClickedNode)
 		{
 			FeedFolder ff = (FeedFolder)rightClickedNode.Tag;
-			ff.ParentFolder.ChildNodes.Remove(ff);
-
-			rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
+			if (ff.ParentFolder == null)
+			{
+				fst.RootLevelNodes.Remove(ff);
+				feedsTV.Nodes.Remove(rightClickedNode);
+			}
+			else
+			{
+				ff.ParentFolder.ChildNodes.Remove(ff);
+				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
+			}
 			saveFeedSubTree();
 		}
 

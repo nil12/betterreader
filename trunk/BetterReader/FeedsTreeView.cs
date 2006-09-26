@@ -86,42 +86,35 @@ namespace BetterReader
 				return;
 			}
 
-			HiddenNode node = hiddenNodes[tag];
+			//first get a reference to the hiddenNode then remove it from the hiddenNodes collection (since it will no
+			//longer be hidden when we're done here
+			HiddenNode hiddenNode = hiddenNodes[tag];
 			hiddenNodes.Remove(tag);
 
-			int insertAt = node.index;
-			int lastNodeIndex = node.parent.Nodes.Count - 1;
-			
-
-			if (insertAt > lastNodeIndex)
+			//this loop will determine the correct placement of the newly shown node within the parent's node collection
+			//we'll step through each of the parent nodes node collection and examine the tag of each node
+			//we'll use the indexes from the FeedSubscriptionTree that the tag and the hidden node are bound to to 
+			//determine the proper ordering
+			int insertAt = hiddenNode.feedSubIndex;
+			for (int i = 0; i < hiddenNode.parentTreeNode.Nodes.Count; i++)
 			{
-				//the actual index of this node is greater than the number of nodes currently displayed
-				//so put this node at the end of the list
-				insertAt = lastNodeIndex + 1;
-			}
-			//else if (insertAt < lastNodeIndex)
-			//{
-			//    //the actual index is less than the number of nodes currently displayed so 
-			//    //step backwards through the nodes to find the correct spot
-			//    int curIndex = lastNodeIndex;
-			//    int curFSIndex = int.MaxValue;
-			//    while (insertAt < curFSIndex)
-			//    {
-			//        FeedSubscription fs = (FeedSubscription)node.parent.Nodes[curIndex].Tag;
-			//        curFSIndex = fs.Index;
-			//        curIndex--;
-			//    }
+				TreeNode node = hiddenNode.parentTreeNode.Nodes[i];
+				FeedSubTreeNodeBase curTag = (FeedSubTreeNodeBase)node.Tag;
 
-			//    insertAt = curIndex;
-			//}
+				if (curTag.Index > hiddenNode.feedSubIndex)
+				{
+					insertAt = i;
+					break;
+				}
+			}
 
 			if (this.InvokeRequired)
 			{
-				this.Invoke(new InsertNodeDelegate(node.parent.Nodes.Insert), new object[] { insertAt, node.node });
+				this.Invoke(new InsertNodeDelegate(hiddenNode.parentTreeNode.Nodes.Insert), new object[] { insertAt, hiddenNode.treeNode });
 			}
 			else
 			{
-				node.parent.Nodes.Insert(node.index, node.node);
+				hiddenNode.parentTreeNode.Nodes.Insert(insertAt, hiddenNode.treeNode);
 			}
 		}
 
@@ -133,6 +126,8 @@ namespace BetterReader
 
 		private void hideNodesInList(TreeNodeCollection treeNodeCollection)
 		{
+			List<TreeNode> nodesToHide = new List<TreeNode>();
+
 			foreach (TreeNode node in treeNodeCollection)
 			{
 				Type t = node.Tag.GetType();
@@ -142,7 +137,7 @@ namespace BetterReader
 					FeedSubscription fs = (FeedSubscription)node.Tag;
 					if (fs.Feed.UnreadItems == 0)
 					{
-						HideNode(node);
+						nodesToHide.Add(node);
 					}
 				}
 
@@ -150,6 +145,11 @@ namespace BetterReader
 				{
 					hideNodesInList(node.Nodes);
 				}
+			}
+
+			foreach (TreeNode node in nodesToHide)
+			{
+				HideNode(node);
 			}
 		}
 
@@ -161,20 +161,21 @@ namespace BetterReader
 			{
 				ShowNode(key);
 			}
+			this.Invalidate();
 		}
 
 		private class HiddenNode
 		{
-			internal TreeNode node;
-			internal TreeNode parent;
-			internal int index;
+			internal TreeNode treeNode;
+			internal TreeNode parentTreeNode;
+			internal int feedSubIndex;
 
 			internal HiddenNode(TreeNode lNode)
 			{
-				node = lNode;
-				parent = lNode.Parent;
+				treeNode = lNode;
+				parentTreeNode = lNode.Parent;
 				FeedSubscription fs = (FeedSubscription)lNode.Tag;
-				index = fs.Index;
+				feedSubIndex = fs.Index;
 			}
 		}
 
