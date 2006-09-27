@@ -51,7 +51,7 @@ namespace BetterReader
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.feedItemsImageList = new System.Windows.Forms.ImageList(this.components);
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
 			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.itemTitleLBL = new System.Windows.Forms.Label();
@@ -74,6 +74,8 @@ namespace BetterReader
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.feedsImageList = new System.Windows.Forms.ImageList(this.components);
+			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
@@ -304,7 +306,7 @@ namespace BetterReader
 			this.feedItemsLV.MultiSelect = false;
 			this.feedItemsLV.Name = "feedItemsLV";
 			this.feedItemsLV.Size = new System.Drawing.Size(619, 350);
-			this.feedItemsLV.SmallImageList = this.imageList1;
+			this.feedItemsLV.SmallImageList = this.feedItemsImageList;
 			this.feedItemsLV.TabIndex = 0;
 			this.feedItemsLV.UseCompatibleStateImageBehavior = false;
 			this.feedItemsLV.View = System.Windows.Forms.View.Details;
@@ -313,12 +315,14 @@ namespace BetterReader
 			this.feedItemsLV.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.feedItemsLV_ColumnClick);
 			this.feedItemsLV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
-			// imageList1
+			// feedItemsImageList
 			// 
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageList1.Images.SetKeyName(0, "ARW01UP.ICO");
-			this.imageList1.Images.SetKeyName(1, "ARW01DN.ICO");
+			this.feedItemsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("feedItemsImageList.ImageStream")));
+			this.feedItemsImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.feedItemsImageList.Images.SetKeyName(0, "ARW01UP.ICO");
+			this.feedItemsImageList.Images.SetKeyName(1, "ARW01DN.ICO");
+			this.feedItemsImageList.Images.SetKeyName(2, "UtilityText.ico");
+			this.feedItemsImageList.Images.SetKeyName(3, "Read.ico");
 			// 
 			// splitContainer4
 			// 
@@ -501,6 +505,21 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
 			// 
+			// feedsImageList
+			// 
+			this.feedsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("feedsImageList.ImageStream")));
+			this.feedsImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.feedsImageList.Images.SetKeyName(0, "Folder.ico");
+			this.feedsImageList.Images.SetKeyName(1, "Web_HTML.ico");
+			// 
+			// notifyIconImageList
+			// 
+			this.notifyIconImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("notifyIconImageList.ImageStream")));
+			this.notifyIconImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.notifyIconImageList.Images.SetKeyName(0, "greenlight.ico");
+			this.notifyIconImageList.Images.SetKeyName(1, "yellowlight.ico");
+			this.notifyIconImageList.Images.SetKeyName(2, "redlight.ico");
+			// 
 			// feedsTV
 			// 
 			this.feedsTV.AllowDrop = true;
@@ -516,8 +535,11 @@ namespace BetterReader
 			this.feedsTV.DragOverNodeBackColor = System.Drawing.SystemColors.Highlight;
 			this.feedsTV.DragOverNodeForeColor = System.Drawing.SystemColors.HighlightText;
 			this.feedsTV.HideSelection = false;
+			this.feedsTV.ImageIndex = 0;
+			this.feedsTV.ImageList = this.feedsImageList;
 			this.feedsTV.Location = new System.Drawing.Point(0, 0);
 			this.feedsTV.Name = "feedsTV";
+			this.feedsTV.SelectedImageIndex = 0;
 			this.feedsTV.Size = new System.Drawing.Size(310, 644);
 			this.feedsTV.TabIndex = 0;
 			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
@@ -612,9 +634,11 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem copyLinkLocationToolStripMenuItem;
-		private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.ImageList feedItemsImageList;
 		private System.Windows.Forms.CheckBox hideReadFeedsCB;
 		private System.Windows.Forms.ToolStripMenuItem reloadNowToolStripMenuItem;
+		private System.Windows.Forms.ImageList feedsImageList;
+		private System.Windows.Forms.ImageList notifyIconImageList;
 
     }
 }

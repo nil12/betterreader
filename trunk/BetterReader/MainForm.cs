@@ -58,23 +58,13 @@ namespace BetterReader
 			feedsTV.BackColor = feedItemsLV.BackColor = controlBackgroundColor;
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-			//AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			formGraphics = this.CreateGraphics();
-			try
-			{
-				redLightIcon = new Icon(graphicsDirectory + "redlight.ico");
-				yellowLightIcon = new Icon(graphicsDirectory + "yellowlight.ico");
-				greenLightIcon = new Icon(graphicsDirectory + "greenlight.ico");
-			}
-			catch (DirectoryNotFoundException)
-			{
-				throw new DirectoryNotFoundException("Error.  Could not find Graphics directory at: " + graphicsDirectory + ".  This directory should be in the same folder as the BetterReader.exe file.");
-			}
-			catch (FileNotFoundException)
-			{
-				throw new FileNotFoundException("Error.  Could not find one or more of the required icon files in the Graphics directory: " + graphicsDirectory + ".");
-			}
+
+			redLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[2]).GetHicon());
+			yellowLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[1]).GetHicon());
+			greenLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[0]).GetHicon());
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
@@ -286,8 +276,8 @@ namespace BetterReader
 					}
 
 					newNode.Tag = fs;
-					//newNode.ImageIndex = -1;
-					//newNode.SelectedImageIndex = -1;
+					newNode.ImageIndex = 1;
+					newNode.SelectedImageIndex = 1;
 					treeNodesByTag.Add(fs, newNode);
 				}
 				else if (nodeType == typeof(FeedFolder))
@@ -305,8 +295,8 @@ namespace BetterReader
 					}
 
 					newNode.Tag = ff;
-					//newNode.ImageIndex = 0;
-					//newNode.SelectedImageIndex = 0;
+					newNode.ImageIndex = 0;
+					newNode.SelectedImageIndex = 0;
 					
 					treeNodesByTag.Add(ff, newNode);
 					if (ff.IsExpandedInUI)
@@ -397,7 +387,7 @@ namespace BetterReader
 			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 			if (feedItems.Count < 1)
 			{
-				feedItemsLV.Items.Add(new ListViewItem("No items found.")).IndentCount = 0;
+				feedItemsLV.Items.Add(new ListViewItem("No items found.")).ImageIndex = 2;
 				feedItemsLV.Enabled = false;
 				return;
 			}
@@ -423,6 +413,9 @@ namespace BetterReader
 					lvi.Selected = true;
 					feedItemsLV.SelectedIndices.Add(feedItemsLV.Items.IndexOf(lvi));
 				}
+
+
+				lvi.ImageIndex = 2;
 				
 				feedItemsLV.Items.Add(lvi);
 				listViewItemsByTag.Add(fi, lvi);
