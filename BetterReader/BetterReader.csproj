@@ -118,8 +118,11 @@
   <ItemGroup>
     <Content Include="Graphics\ARW01DN.ICO" />
     <Content Include="Graphics\ARW01UP.ICO" />
+    <Content Include="Graphics\Folder.ico" />
     <Content Include="Graphics\greenlight.ico" />
     <Content Include="Graphics\redlight.ico" />
+    <Content Include="Graphics\UtilityText.ico" />
+    <Content Include="Graphics\Web_HTML.ico" />
     <Content Include="Graphics\yellowlight.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
