@@ -30,13 +30,13 @@ namespace BetterReader
 		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
 		private TreeNode rightClickedNode;
 		private FeedSubscription currentlyDisplayedFeedSubscription;
-		private MainFormState formState;
 		private readonly string formStateFilepath;
 		private string currentlyDisplayedFeedItemGuid;
 		private const string newUnreadItemsMessage = "You have new, unread items.";
 		private const string oldUnreadItemsMessage = "You have unread items.";
 		private const string noUnreadItemsMessage = "You have no unread items.";
 		private Color controlBackgroundColor = Color.WhiteSmoke;
+		private FormWindowState stateBeforeMinimize;
 
 		internal static string ArchiveDirectory
 		{
@@ -92,7 +92,8 @@ namespace BetterReader
 			feedItemsNormalFont = feedItemsLV.Font;
 			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
 
-			restoreFormState();
+			restoreWindowSettings();
+
 			if (File.Exists(feedSubsFilepath))
 			{
 				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
@@ -100,6 +101,30 @@ namespace BetterReader
 				feedReaderBGW.RunWorkerAsync();
 			}
         }
+
+		private void restoreWindowSettings()
+		{
+
+			this.WindowState = Properties.Settings.Default.MyState;
+			hideReadFeedsBTN.Checked = Properties.Settings.Default.HideReadFeeds;
+
+			if (Properties.Settings.Default.MySize != null)
+			{
+				this.Size = Properties.Settings.Default.MySize;
+			}
+
+			if (Properties.Settings.Default.MyLoc != null)
+			{
+				this.Location = Properties.Settings.Default.MyLoc;
+			}
+
+			splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
+			splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
+			splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
+			splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
+			splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
+
+		}
 
 		private void beginReads()
 		{
@@ -114,22 +139,11 @@ namespace BetterReader
 
 		private void setNodePropertiesFromFeedSubscription(FeedSubscription fs, TreeNode node)
 		{
-			//string text;
 
 			if (this.IsDisposed && this.Disposing == false)
 			{
 				return;
 			}
-
-			//try
-			//{
-			//    this.Invoke(new MethodInvoker(feedsTV.BeginUpdate));
-			//}
-			//catch (ObjectDisposedException)
-			//{
-			//    //thread came back after user closed window so ditch the request
-			//    return;
-			//}
 
 			lock (feedsTV)
 			{
@@ -159,8 +173,6 @@ namespace BetterReader
 				//    //this was most likely caused by a feed reading thread returning during shutdown
 				//    //so we'll ignore it
 				//}
-
-				//this.Invoke(new MethodInvoker(feedsTV.EndUpdate));
 			}
 		}
 
@@ -188,7 +200,7 @@ namespace BetterReader
 					node.NodeFont = feedsNormalFont;
 				}
 
-				if (fs.Feed.UnreadItems == 0 && hideReadFeedsCB.Checked)
+				if (fs.Feed.UnreadItems == 0 && hideReadFeedsBTN.Checked)
 				{
 					//user has selected hideReadFeeds option and this feed has no unread items
 					feedsTV.HideNode(node);
@@ -246,14 +258,12 @@ namespace BetterReader
 
         private void bindFSTToTreeView()
         {
-			//feedsTV.SuspendLayout();
 			feedsTV.BeginUpdate();
 			feedsTV.Nodes.Clear();
             treeNodesByTag = new Dictionary<object, TreeNode>();
-			//bindFolderToTreeView(fsc.RootFolder, null);
 			bindNodeListToTreeView(fst.RootLevelNodes, null);
+			feedsTV.ExpandAll();
 			feedsTV.EndUpdate();
-			//feedsTV.ResumeLayout();
         }
 
 		private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
@@ -324,8 +334,8 @@ namespace BetterReader
 				itemTitleLBL.Visible = false;
 				feedSubscription.ResetUpdateTimer();
 				feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
-				smartSortCB.Visible = true;
-				smartSortCB.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
+				showUnreadFirstBTN.Visible = true;
+				showUnreadFirstBTN.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
 				lastDownloadLBL.Visible = true;
 				lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
 
@@ -584,8 +594,7 @@ namespace BetterReader
 		{
 			notifyIcon1.Visible = false;
 			this.Show();
-			this.WindowState = FormWindowState.Normal;
-			restoreFormState();
+			this.WindowState = stateBeforeMinimize;
 		}
 
 
@@ -847,49 +856,7 @@ namespace BetterReader
 			return arrowImageIndex;
 		}
 
-		private void storeFormState()
-		{
-			formState.WindowLocation = this.Location;
-			formState.SplitContainer1SplitterDistance = splitContainer1.SplitterDistance;
-			formState.SplitContainer2SplitterDistance = splitContainer2.SplitterDistance;
-			formState.SplitContainer3SplitterDistance = splitContainer3.SplitterDistance;
-			formState.SplitContainer4SplitterDistance = splitContainer4.SplitterDistance;
-			formState.SplitContainer5SplitterDistance = splitContainer5.SplitterDistance;
-			formState.WindowSize = this.Size;
-			formState.WindowState = this.WindowState;
-			formState.HideReadFeeds = hideReadFeedsCB.Checked;
-		}
-
-		private void restoreFormState()
-		{
-			if (formState == null)
-			{
-				loadFormStateFromDisk();
-			}
-
-			this.Location = formState.WindowLocation;
-			//this.WindowState = formState.WindowState;
-			this.Size = formState.WindowSize;
-			splitContainer1.SplitterDistance = formState.SplitContainer1SplitterDistance;
-			splitContainer2.SplitterDistance = formState.SplitContainer2SplitterDistance;
-			splitContainer3.SplitterDistance = formState.SplitContainer3SplitterDistance;
-			splitContainer4.SplitterDistance = formState.SplitContainer4SplitterDistance;
-			splitContainer5.SplitterDistance = formState.SplitContainer5SplitterDistance;
-			hideReadFeedsCB.Checked = formState.HideReadFeeds;
-		}
-
-		private void loadFormStateFromDisk()
-		{
-			formState = MainFormState.Load(formStateFilepath);
-		}
-
-		private void saveFormStateToDisk()
-		{
-			if (formState != null)
-			{
-				formState.Save(formStateFilepath);
-			}
-		}
+		
 
 
 		private void showFeedSubPropertiesDialog(FeedSubscription fs)
@@ -909,7 +876,7 @@ namespace BetterReader
 
 		private void toggleHideShowOnFeedSubNodes()
 		{
-			if (hideReadFeedsCB.Checked)
+			if (hideReadFeedsBTN.Checked)
 			{
 				feedsTV.HideReadNodes();
 			}
@@ -955,11 +922,36 @@ namespace BetterReader
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			saveFormStateToDisk();
+			saveFormSettings();
+
 			if (fst != null)
 			{
 				fst.Dispose();
 			}
+		}
+
+		private void saveFormSettings()
+		{
+			Properties.Settings.Default.MyState = this.WindowState;
+			Properties.Settings.Default.HideReadFeeds = hideReadFeedsBTN.Checked;
+			Properties.Settings.Default.SplitterDistance1 = splitContainer1.SplitterDistance;
+			Properties.Settings.Default.SplitterDistance2 = splitContainer2.SplitterDistance;
+			Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
+			Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
+			Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
+
+			if (this.WindowState == FormWindowState.Normal)
+			{
+				Properties.Settings.Default.MySize = this.Size;
+				Properties.Settings.Default.MyLoc = this.Location;
+			}
+			else
+			{
+				Properties.Settings.Default.MySize = this.RestoreBounds.Size;
+				Properties.Settings.Default.MyLoc = this.RestoreBounds.Location;
+			}
+
+			Properties.Settings.Default.Save();
 		}
 
 		private void MainForm_Resize(object sender, EventArgs e)
@@ -970,10 +962,9 @@ namespace BetterReader
 			}
 			else
 			{
-				storeFormState();
+				stateBeforeMinimize = WindowState;
 			}
 
-			formState.WindowState = this.WindowState;
 		}
 
 		private void notifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -1100,11 +1091,6 @@ namespace BetterReader
 			handleHotKey(e.KeyChar);
 		}
 
-		private void control_KeyPress(object sender, KeyPressEventArgs e)
-		{
-			//necessary for hotkey support
-			e.Handled = true;
-		}
 
 		private void feedItemsLV_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
@@ -1112,17 +1098,13 @@ namespace BetterReader
 			saveFeedSubTree();
 		}
 
-		private void smartSortCB_CheckedChanged(object sender, EventArgs e)
+		private void hideReadFeedsBTN_CheckedChanged(object sender, EventArgs e)
 		{
-			currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled = smartSortCB.Checked;
+			currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
 			feedItemsLV.Sort();
 			saveFeedSubTree();
 		}
 
-		private void allSplitContainers_SplitterMoved(object sender, SplitterEventArgs e)
-		{
-			storeFormState();
-		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{

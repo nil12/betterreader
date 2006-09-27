@@ -44,10 +44,14 @@ namespace BetterReader
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-			this.hideReadFeedsCB = new System.Windows.Forms.CheckBox();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.hideReadFeedsBTN = new System.Windows.Forms.ToolStripButton();
+			this.feedsTV = new BetterReader.FeedsTreeView();
+			this.feedsImageList = new System.Windows.Forms.ImageList(this.components);
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-			this.lastDownloadLBL = new System.Windows.Forms.Label();
-			this.smartSortCB = new System.Windows.Forms.CheckBox();
+			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+			this.lastDownloadLBL = new System.Windows.Forms.ToolStripLabel();
+			this.showUnreadFirstBTN = new System.Windows.Forms.ToolStripButton();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.feedItemsLV = new System.Windows.Forms.ListView();
@@ -74,9 +78,7 @@ namespace BetterReader
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.feedsImageList = new System.Windows.Forms.ImageList(this.components);
 			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
-			this.feedsTV = new BetterReader.FeedsTreeView();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -85,9 +87,11 @@ namespace BetterReader
 			this.splitContainer5.Panel1.SuspendLayout();
 			this.splitContainer5.Panel2.SuspendLayout();
 			this.splitContainer5.SuspendLayout();
+			this.toolStrip1.SuspendLayout();
 			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
+			this.toolStrip2.SuspendLayout();
 			this.splitContainer3.Panel1.SuspendLayout();
 			this.splitContainer3.Panel2.SuspendLayout();
 			this.splitContainer3.SuspendLayout();
@@ -154,8 +158,7 @@ namespace BetterReader
 			// toolStripStatusLabel1
 			// 
 			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-			this.toolStripStatusLabel1.Size = new System.Drawing.Size(109, 17);
-			this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+			this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
 			// 
 			// splitContainer1
 			// 
@@ -173,7 +176,6 @@ namespace BetterReader
 			this.splitContainer1.Size = new System.Drawing.Size(933, 685);
 			this.splitContainer1.SplitterDistance = 310;
 			this.splitContainer1.TabIndex = 2;
-			this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// splitContainer5
@@ -186,30 +188,73 @@ namespace BetterReader
 			// splitContainer5.Panel1
 			// 
 			this.splitContainer5.Panel1.BackColor = System.Drawing.SystemColors.Info;
-			this.splitContainer5.Panel1.Controls.Add(this.hideReadFeedsCB);
+			this.splitContainer5.Panel1.Controls.Add(this.toolStrip1);
 			// 
 			// splitContainer5.Panel2
 			// 
 			this.splitContainer5.Panel2.Controls.Add(this.feedsTV);
 			this.splitContainer5.Size = new System.Drawing.Size(310, 685);
-			this.splitContainer5.SplitterDistance = 37;
+			this.splitContainer5.SplitterDistance = 57;
 			this.splitContainer5.TabIndex = 0;
-			this.splitContainer5.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
-			// hideReadFeedsCB
+			// toolStrip1
 			// 
-			this.hideReadFeedsCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.hideReadFeedsCB.AutoSize = true;
-			this.hideReadFeedsCB.Checked = true;
-			this.hideReadFeedsCB.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.hideReadFeedsCB.Location = new System.Drawing.Point(198, 17);
-			this.hideReadFeedsCB.Name = "hideReadFeedsCB";
-			this.hideReadFeedsCB.Size = new System.Drawing.Size(109, 17);
-			this.hideReadFeedsCB.TabIndex = 0;
-			this.hideReadFeedsCB.Text = "Hide Read Feeds";
-			this.hideReadFeedsCB.UseVisualStyleBackColor = true;
-			this.hideReadFeedsCB.CheckedChanged += new System.EventHandler(this.hideReadFeedsCB_CheckedChanged);
+			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hideReadFeedsBTN});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 32);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(310, 25);
+			this.toolStrip1.TabIndex = 0;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// hideReadFeedsBTN
+			// 
+			this.hideReadFeedsBTN.CheckOnClick = true;
+			this.hideReadFeedsBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.hideReadFeedsBTN.Image = ((System.Drawing.Image)(resources.GetObject("hideReadFeedsBTN.Image")));
+			this.hideReadFeedsBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.hideReadFeedsBTN.Name = "hideReadFeedsBTN";
+			this.hideReadFeedsBTN.Size = new System.Drawing.Size(92, 22);
+			this.hideReadFeedsBTN.Text = "Hide Read Feeds";
+			this.hideReadFeedsBTN.CheckedChanged += new System.EventHandler(this.hideReadFeedsCB_CheckedChanged);
+			// 
+			// feedsTV
+			// 
+			this.feedsTV.AllowDrop = true;
+			this.feedsTV.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.feedsTV.Cursor = System.Windows.Forms.Cursors.Default;
+			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.feedsTV.DragCursor = null;
+			this.feedsTV.DragCursorType = Sloppycode.UI.DragCursorType.None;
+			this.feedsTV.DragImageIndex = 0;
+			this.feedsTV.DragMode = System.Windows.Forms.DragDropEffects.Move;
+			this.feedsTV.DragNodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.feedsTV.DragNodeOpacity = 0.3;
+			this.feedsTV.DragOverNodeBackColor = System.Drawing.SystemColors.Highlight;
+			this.feedsTV.DragOverNodeForeColor = System.Drawing.SystemColors.HighlightText;
+			this.feedsTV.HideSelection = false;
+			this.feedsTV.ImageIndex = 0;
+			this.feedsTV.ImageList = this.feedsImageList;
+			this.feedsTV.Location = new System.Drawing.Point(0, 0);
+			this.feedsTV.Name = "feedsTV";
+			this.feedsTV.SelectedImageIndex = 0;
+			this.feedsTV.Size = new System.Drawing.Size(310, 624);
+			this.feedsTV.TabIndex = 0;
+			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
+			this.feedsTV.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.feedsTV_AfterLabelEdit);
+			this.feedsTV.DragComplete += new Sloppycode.UI.DragCompleteEventHandler(this.feedsTV_DragComplete);
+			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
+			this.feedsTV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			// 
+			// feedsImageList
+			// 
+			this.feedsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("feedsImageList.ImageStream")));
+			this.feedsImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.feedsImageList.Images.SetKeyName(0, "Folder.ico");
+			this.feedsImageList.Images.SetKeyName(1, "Web_HTML.ico");
 			// 
 			// splitContainer2
 			// 
@@ -221,8 +266,7 @@ namespace BetterReader
 			// splitContainer2.Panel1
 			// 
 			this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.Info;
-			this.splitContainer2.Panel1.Controls.Add(this.lastDownloadLBL);
-			this.splitContainer2.Panel1.Controls.Add(this.smartSortCB);
+			this.splitContainer2.Panel1.Controls.Add(this.toolStrip2);
 			this.splitContainer2.Panel1.Controls.Add(this.feedTitleLBL);
 			this.splitContainer2.Panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			// 
@@ -230,45 +274,45 @@ namespace BetterReader
 			// 
 			this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
 			this.splitContainer2.Size = new System.Drawing.Size(619, 685);
-			this.splitContainer2.SplitterDistance = 37;
+			this.splitContainer2.SplitterDistance = 58;
 			this.splitContainer2.TabIndex = 0;
-			this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
+			// 
+			// toolStrip2
+			// 
+			this.toolStrip2.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lastDownloadLBL,
+            this.showUnreadFirstBTN});
+			this.toolStrip2.Location = new System.Drawing.Point(0, 33);
+			this.toolStrip2.Name = "toolStrip2";
+			this.toolStrip2.Size = new System.Drawing.Size(619, 25);
+			this.toolStrip2.TabIndex = 1;
+			this.toolStrip2.Text = "toolStrip2";
 			// 
 			// lastDownloadLBL
 			// 
-			this.lastDownloadLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.lastDownloadLBL.AutoSize = true;
-			this.lastDownloadLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lastDownloadLBL.Location = new System.Drawing.Point(3, 21);
 			this.lastDownloadLBL.Name = "lastDownloadLBL";
-			this.lastDownloadLBL.Size = new System.Drawing.Size(96, 13);
-			this.lastDownloadLBL.TabIndex = 2;
-			this.lastDownloadLBL.Text = "Last Downloaded: ";
+			this.lastDownloadLBL.Size = new System.Drawing.Size(78, 22);
+			this.lastDownloadLBL.Text = "toolStripLabel1";
 			this.lastDownloadLBL.Visible = false;
 			// 
-			// smartSortCB
+			// showUnreadFirstBTN
 			// 
-			this.smartSortCB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.smartSortCB.AutoSize = true;
-			this.smartSortCB.Checked = true;
-			this.smartSortCB.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.smartSortCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.smartSortCB.Location = new System.Drawing.Point(503, 18);
-			this.smartSortCB.Name = "smartSortCB";
-			this.smartSortCB.Size = new System.Drawing.Size(113, 17);
-			this.smartSortCB.TabIndex = 1;
-			this.smartSortCB.Text = "Show Unread First";
-			this.smartSortCB.UseVisualStyleBackColor = true;
-			this.smartSortCB.Visible = false;
-			this.smartSortCB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-			this.smartSortCB.CheckedChanged += new System.EventHandler(this.smartSortCB_CheckedChanged);
+			this.showUnreadFirstBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.showUnreadFirstBTN.Image = ((System.Drawing.Image)(resources.GetObject("showUnreadFirstBTN.Image")));
+			this.showUnreadFirstBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.showUnreadFirstBTN.Name = "showUnreadFirstBTN";
+			this.showUnreadFirstBTN.Size = new System.Drawing.Size(99, 22);
+			this.showUnreadFirstBTN.Text = "Show Unread First";
+			this.showUnreadFirstBTN.Visible = false;
 			// 
 			// feedTitleLBL
 			// 
 			this.feedTitleLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.feedTitleLBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.feedTitleLBL.Location = new System.Drawing.Point(2, 0);
+			this.feedTitleLBL.Location = new System.Drawing.Point(2, 11);
 			this.feedTitleLBL.Name = "feedTitleLBL";
 			this.feedTitleLBL.Size = new System.Drawing.Size(617, 17);
 			this.feedTitleLBL.TabIndex = 0;
@@ -289,10 +333,9 @@ namespace BetterReader
 			// splitContainer3.Panel2
 			// 
 			this.splitContainer3.Panel2.Controls.Add(this.splitContainer4);
-			this.splitContainer3.Size = new System.Drawing.Size(619, 644);
-			this.splitContainer3.SplitterDistance = 350;
+			this.splitContainer3.Size = new System.Drawing.Size(619, 623);
+			this.splitContainer3.SplitterDistance = 338;
 			this.splitContainer3.TabIndex = 0;
-			this.splitContainer3.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// feedItemsLV
@@ -305,7 +348,7 @@ namespace BetterReader
 			this.feedItemsLV.Location = new System.Drawing.Point(0, 0);
 			this.feedItemsLV.MultiSelect = false;
 			this.feedItemsLV.Name = "feedItemsLV";
-			this.feedItemsLV.Size = new System.Drawing.Size(619, 350);
+			this.feedItemsLV.Size = new System.Drawing.Size(619, 338);
 			this.feedItemsLV.SmallImageList = this.feedItemsImageList;
 			this.feedItemsLV.TabIndex = 0;
 			this.feedItemsLV.UseCompatibleStateImageBehavior = false;
@@ -340,17 +383,16 @@ namespace BetterReader
 			// splitContainer4.Panel2
 			// 
 			this.splitContainer4.Panel2.Controls.Add(this.webBrowser1);
-			this.splitContainer4.Size = new System.Drawing.Size(619, 290);
-			this.splitContainer4.SplitterDistance = 38;
+			this.splitContainer4.Size = new System.Drawing.Size(619, 281);
+			this.splitContainer4.SplitterDistance = 36;
 			this.splitContainer4.TabIndex = 0;
-			this.splitContainer4.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.allSplitContainers_SplitterMoved);
 			this.splitContainer4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// itemLinkLBL
 			// 
 			this.itemLinkLBL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.itemLinkLBL.AutoSize = true;
-			this.itemLinkLBL.Location = new System.Drawing.Point(3, 22);
+			this.itemLinkLBL.Location = new System.Drawing.Point(3, 20);
 			this.itemLinkLBL.Name = "itemLinkLBL";
 			this.itemLinkLBL.Size = new System.Drawing.Size(0, 13);
 			this.itemLinkLBL.TabIndex = 1;
@@ -371,7 +413,7 @@ namespace BetterReader
 			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowser1.Name = "webBrowser1";
-			this.webBrowser1.Size = new System.Drawing.Size(619, 248);
+			this.webBrowser1.Size = new System.Drawing.Size(619, 241);
 			this.webBrowser1.TabIndex = 0;
 			// 
 			// feedSubContextMenuStrip
@@ -505,13 +547,6 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
 			// 
-			// feedsImageList
-			// 
-			this.feedsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("feedsImageList.ImageStream")));
-			this.feedsImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.feedsImageList.Images.SetKeyName(0, "Folder.ico");
-			this.feedsImageList.Images.SetKeyName(1, "Web_HTML.ico");
-			// 
 			// notifyIconImageList
 			// 
 			this.notifyIconImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("notifyIconImageList.ImageStream")));
@@ -519,34 +554,6 @@ namespace BetterReader
 			this.notifyIconImageList.Images.SetKeyName(0, "greenlight.ico");
 			this.notifyIconImageList.Images.SetKeyName(1, "yellowlight.ico");
 			this.notifyIconImageList.Images.SetKeyName(2, "redlight.ico");
-			// 
-			// feedsTV
-			// 
-			this.feedsTV.AllowDrop = true;
-			this.feedsTV.BackColor = System.Drawing.Color.WhiteSmoke;
-			this.feedsTV.Cursor = System.Windows.Forms.Cursors.Default;
-			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.feedsTV.DragCursor = null;
-			this.feedsTV.DragCursorType = Sloppycode.UI.DragCursorType.None;
-			this.feedsTV.DragImageIndex = 0;
-			this.feedsTV.DragMode = System.Windows.Forms.DragDropEffects.Move;
-			this.feedsTV.DragNodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.feedsTV.DragNodeOpacity = 0.3;
-			this.feedsTV.DragOverNodeBackColor = System.Drawing.SystemColors.Highlight;
-			this.feedsTV.DragOverNodeForeColor = System.Drawing.SystemColors.HighlightText;
-			this.feedsTV.HideSelection = false;
-			this.feedsTV.ImageIndex = 0;
-			this.feedsTV.ImageList = this.feedsImageList;
-			this.feedsTV.Location = new System.Drawing.Point(0, 0);
-			this.feedsTV.Name = "feedsTV";
-			this.feedsTV.SelectedImageIndex = 0;
-			this.feedsTV.Size = new System.Drawing.Size(310, 644);
-			this.feedsTV.TabIndex = 0;
-			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
-			this.feedsTV.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.feedsTV_AfterLabelEdit);
-			this.feedsTV.DragComplete += new Sloppycode.UI.DragCompleteEventHandler(this.feedsTV_DragComplete);
-			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
-			this.feedsTV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
 			// MainForm
 			// 
@@ -575,10 +582,14 @@ namespace BetterReader
 			this.splitContainer5.Panel1.PerformLayout();
 			this.splitContainer5.Panel2.ResumeLayout(false);
 			this.splitContainer5.ResumeLayout(false);
+			this.toolStrip1.ResumeLayout(false);
+			this.toolStrip1.PerformLayout();
 			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel1.PerformLayout();
 			this.splitContainer2.Panel2.ResumeLayout(false);
 			this.splitContainer2.ResumeLayout(false);
+			this.toolStrip2.ResumeLayout(false);
+			this.toolStrip2.PerformLayout();
 			this.splitContainer3.Panel1.ResumeLayout(false);
 			this.splitContainer3.Panel2.ResumeLayout(false);
 			this.splitContainer3.ResumeLayout(false);
@@ -600,7 +611,6 @@ namespace BetterReader
         private System.Windows.Forms.StatusStrip mainStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-		//private System.Windows.Forms.TreeView feedsTV;
 		private FeedsTreeView feedsTV;
 		private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
@@ -628,17 +638,19 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStripMenuItem feedSubNewFolderContextMenuStripItem;
 		private System.Windows.Forms.ToolStripMenuItem newFeedSubscriptionToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem markFeedReadToolStripMenuItem;
-		private System.Windows.Forms.CheckBox smartSortCB;
-		private System.Windows.Forms.Label lastDownloadLBL;
 		private System.Windows.Forms.ContextMenuStrip notifyIconContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem copyLinkLocationToolStripMenuItem;
 		private System.Windows.Forms.ImageList feedItemsImageList;
-		private System.Windows.Forms.CheckBox hideReadFeedsCB;
 		private System.Windows.Forms.ToolStripMenuItem reloadNowToolStripMenuItem;
 		private System.Windows.Forms.ImageList feedsImageList;
 		private System.Windows.Forms.ImageList notifyIconImageList;
+		private System.Windows.Forms.ToolStrip toolStrip1;
+		private System.Windows.Forms.ToolStripButton hideReadFeedsBTN;
+		private System.Windows.Forms.ToolStrip toolStrip2;
+		private System.Windows.Forms.ToolStripLabel lastDownloadLBL;
+		private System.Windows.Forms.ToolStripButton showUnreadFirstBTN;
 
     }
 }
