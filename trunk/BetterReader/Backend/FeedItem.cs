@@ -248,20 +248,6 @@ namespace BetterReader.Backend
 			return fi;
 		}
 
-		//private static DateTime? getDateTimeFromString(string text)
-		//{
-		//    DateTime tmp;
-		//    if (DateTime.TryParse(text, out tmp))
-		//    {
-		//        return (DateTime?)tmp;
-		//    }
-		//    else
-		//    {
-		//        System.Diagnostics.Debug.WriteLine(text);
-		//        return null;
-		//    }
-		//}
-
 		private void SetGuid()
 		{
 			if (guid == null || guid.Length < 1)
@@ -411,5 +397,12 @@ namespace BetterReader.Backend
 			return dateFormats;
 		}
 		#endregion
+
+
+
+		internal void MarkRead()
+		{
+			parentFeed.FeedItems.MarkItemRead(this);
+		}
 	}
 }

@@ -23,25 +23,21 @@ namespace BetterReader.Backend
 		private string copyright;
 		private string managingEditor;
 		private string webMaster;
-		private List<FeedItem> feedItems;
+		//private List<FeedItem> feedItems;
+		private FeedItemCollection feedItems;
 		private bool readSuccess;
 		private Exception readException;
 		private Dictionary<string, string> unsupportedFeedProperties;
 		private int unreadItems;
 		private FeedSubscription parentSubscription;
-		private Dictionary<string, FeedItem> feedItemsByGuid;
+		//private Dictionary<string, FeedItem> feedItemsByGuid;
 		private Guid guid;
 		private string archiveFilepath;
 		private int itemCountBeforeRead;
 		private bool hasNewItemsFromLastRead;
-		private FeedItemProperties includedFeedItemProperties;
+		//private FeedItemProperties includedFeedItemProperties;
 		private DateTime lastDownloadAttempt;
-
-
-
-
-
-
+		
 		#region properties
 
 		public DateTime LastDownloadAttempt
@@ -52,8 +48,8 @@ namespace BetterReader.Backend
 
 		internal FeedItemProperties IncludedFeedItemProperties
 		{
-			get { return includedFeedItemProperties; }
-			set { includedFeedItemProperties = value; }
+			get { return feedItems.IncludedFeedItemProperties; }
+			//set { includedFeedItemProperties = value; }
 		}
 
 		public bool HasNewItemsFromLastRead
@@ -69,10 +65,10 @@ namespace BetterReader.Backend
 		}
 
 
-		internal int UnreadItems
+		internal int UnreadCount
 		{
-			get { return unreadItems; }
-			set { unreadItems = value; }
+			get { return feedItems.UnreadCount; }
+			//set { unreadItems = value; }
 		}
 
 
@@ -173,15 +169,23 @@ namespace BetterReader.Backend
 			}
 		}
 
-		public List<FeedItem> FeedItems
+		//public List<FeedItem> FeedItems
+		//{
+		//    get
+		//    {
+		//        return feedItems;
+		//    }
+		//    set
+		//    {
+		//        feedItems = value;
+		//    }
+		//}
+
+		public FeedItemCollection FeedItems
 		{
 			get
 			{
 				return feedItems;
-			}
-			set
-			{
-				feedItems = value;
 			}
 		}
 
@@ -205,10 +209,11 @@ namespace BetterReader.Backend
 		{
 			guid = lGuid;
 			feedUrl = lFeedUrl;
-			feedItems = new List<FeedItem>();
-			feedItemsByGuid = new Dictionary<string, FeedItem>();
+			//feedItems = new List<FeedItem>();
+			//feedItemsByGuid = new Dictionary<string, FeedItem>();
 			unreadItems = 0;
 			archiveFilepath = MainForm.ArchiveDirectory + guid.ToString() + ".xml";
+			feedItems = new FeedItemCollection(this, archiveFilepath);
 			hasNewItemsFromLastRead = false;
 			itemCountBeforeRead = 0;
 		}
@@ -216,75 +221,25 @@ namespace BetterReader.Backend
 
 		private void loadArchivedFeedItems()
 		{
-			try
-			{
-				if (File.Exists(archiveFilepath))
-				{
-					using (TextReader tr = new StreamReader(archiveFilepath))
-					{
-						XmlSerializer xs = new XmlSerializer(typeof(List<FeedItem>));
-						feedItems = (List<FeedItem>)xs.Deserialize(tr);
-					}
-				}
-			}
-			catch
-			{
-				//error reading archive, no big deal
-				return;
-			}
-
-
-			purgeOldArchivedItems();
-
-			foreach (FeedItem fi in feedItems)
-			{
-				if (feedItemsByGuid.ContainsKey(fi.Guid) == false)
-				{
-					feedItemsByGuid.Add(fi.Guid, fi);
-					includedFeedItemProperties |= fi.IncludedProperties;
-					if (fi.HasBeenRead == false)
-					{
-						unreadItems++;
-					}
-				}
-
-
-				fi.ParentFeed = this;
-			}
+			feedItems.LoadArchivedItems();
 		}
 
-		private void purgeOldArchivedItems()
-		{
-			List<FeedItem> newFeedItems = new List<FeedItem>();
-			if (feedItems != null && feedItems.Count > 0)
-			{
-				foreach (FeedItem fi in feedItems)
-				{
-					TimeSpan age = ((TimeSpan)(DateTime.Now - fi.DownloadDate));
-					if ((int)age.TotalDays < parentSubscription.DaysToArchive)
-					{
-						newFeedItems.Add(fi);
-					}
-				}
-			}
+		//private void purgeOldArchivedItems()
+		//{
+		//    feedItems.PurgeOldArchivedItems();
+		//}
 
-			feedItems = newFeedItems;
-		}
-
-		public void ArchiveFeedItems()
-		{
-			using (TextWriter tw = new StreamWriter(archiveFilepath))
-			{
-				XmlSerializer xs = new XmlSerializer(typeof(List<FeedItem>));
-				xs.Serialize(tw, feedItems);
-			}
-		}
+		//public void ArchiveFeedItems()
+		//{
+		//    feedItems.ArchiveItems();
+		//}
 
 		public void BeginRead(FeedReadCompleteDelegate callback)
 		{
 			readSuccess = false;
 			readException = null;
-			loadArchivedFeedItems();
+			//loadArchivedFeedItems();
+			feedItems.LoadArchivedItems();
 			itemCountBeforeRead = feedItems.Count;
 			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
 
@@ -323,7 +278,9 @@ namespace BetterReader.Backend
 				//System.Diagnostics.Debug.WriteLine("Error reading feed: " + e.ToString());
 			}
 
-			ArchiveFeedItems();
+			feedItems.PurgeOldItems();
+			feedItems.ArchiveItems();
+
 			if (feedItems.Count > itemCountBeforeRead)
 			{
 				//new items have been downloaded
@@ -336,6 +293,7 @@ namespace BetterReader.Backend
 
 			state.callback(this);
 		}
+
 
 		private void loadFromXmlDoc(XmlDocument xmlDoc)
 		{
@@ -397,25 +355,7 @@ namespace BetterReader.Backend
 
 		private void addOrUpdateFeedItemsCollection(FeedItem fi)
 		{
-			if (feedItemsByGuid.ContainsKey(fi.Guid))
-			{
-				FeedItem oldFI = feedItemsByGuid[fi.Guid];
-				fi.HasBeenRead = oldFI.HasBeenRead;
-				feedItems.Remove(oldFI);
-				feedItemsByGuid.Remove(fi.Guid);
-			}
-			else
-			{
-				if (fi.HasBeenRead == false)
-				{
-					unreadItems++;
-				}
-			}
-
-			feedItemsByGuid.Add(fi.Guid, fi);
-			fi.ParentFeed = this;
-			feedItems.Add(fi);
-			includedFeedItemProperties |= fi.IncludedProperties;
+			feedItems.AddOrUpdate(fi);
 		}
 
 		private void loadFromRdfNode(XmlNode node)
@@ -535,13 +475,7 @@ namespace BetterReader.Backend
 
 		public void MarkAllItemsRead()
 		{
-			foreach (FeedItem fi in feedItems)
-			{
-				fi.HasBeenRead = true;
-			}
-
-			unreadItems = 0;
-			ArchiveFeedItems();
+			feedItems.MarkAllItemsRead();
 		}
 
 		private class webRequestState
