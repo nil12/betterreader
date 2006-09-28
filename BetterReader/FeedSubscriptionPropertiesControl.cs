@@ -17,6 +17,7 @@ namespace BetterReader
 			feedTitleTB.Text = fs.DisplayName;
 			updateMinutesTB.Text = ((int)(fs.UpdateSeconds / 60)).ToString();
 			daysToArchiveTB.Text = fs.DaysToArchive.ToString();
+			maxItemsTB.Text = fs.MaxItems.ToString();
 		}
 
 		internal void SaveToFeedSubscription(FeedSubscription fs)
@@ -25,6 +26,7 @@ namespace BetterReader
 			fs.DisplayName = feedTitleTB.Text;
 			fs.UpdateSeconds = int.Parse(updateMinutesTB.Text) * 60;
 			fs.DaysToArchive = int.Parse(daysToArchiveTB.Text);
+			fs.MaxItems = int.Parse(maxItemsTB.Text);
 		}
 
 

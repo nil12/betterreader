@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using BetterReader.Backend;
+using System.Diagnostics;
 
 namespace BetterReader
 {
@@ -59,7 +60,6 @@ namespace BetterReader
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
 			formGraphics = this.CreateGraphics();
 
 			redLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[2]).GetHicon());
@@ -76,11 +76,15 @@ namespace BetterReader
 			{
 				MessageBox.Show(ex.ToString(), "Error encountered");
 			}
+
+			MessageLogger.WriteToEventLog("Error: " + ex.ToString());
 		}
 
 		void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
 			MessageBox.Show(e.Exception.ToString(), "Error encoutnered");
+
+			MessageLogger.WriteToEventLog("Error: " + e.Exception.ToString());
 		}
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -104,8 +108,6 @@ namespace BetterReader
 
 		private void restoreWindowSettings()
 		{
-
-			this.WindowState = Properties.Settings.Default.MyState;
 			hideReadFeedsBTN.Checked = Properties.Settings.Default.HideReadFeeds;
 
 			if (Properties.Settings.Default.MySize != null)
@@ -124,6 +126,7 @@ namespace BetterReader
 			splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
 			splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
 
+			this.WindowState = Properties.Settings.Default.MyState;
 		}
 
 		private void beginReads()
@@ -191,7 +194,7 @@ namespace BetterReader
 			if (fs.Feed.ReadSuccess)
 			{
 				text = fs.ToString();
-				if (fs.Feed.UnreadItems > 0)
+				if (fs.Feed.UnreadCount > 0)
 				{
 					node.NodeFont = feedsBoldFont;
 				}
@@ -200,7 +203,7 @@ namespace BetterReader
 					node.NodeFont = feedsNormalFont;
 				}
 
-				if (fs.Feed.UnreadItems == 0 && hideReadFeedsBTN.Checked)
+				if (fs.Feed.UnreadCount == 0 && hideReadFeedsBTN.Checked)
 				{
 					//user has selected hideReadFeeds option and this feed has no unread items
 					feedsTV.HideNode(node);
@@ -391,7 +394,7 @@ namespace BetterReader
 			//}
 		}
 
-		private void bindFeedItemsToListView(List<FeedItem> feedItems)
+		private void bindFeedItemsToListView(FeedItemCollection feedItems)
 		{
 			feedItemsLV.SuspendLayout();
 			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
@@ -550,8 +553,7 @@ namespace BetterReader
 				}
 				if (fi.HasBeenRead == false)
 				{
-					fi.ParentFeed.UnreadItems--;
-					fi.HasBeenRead = true;
+					fi.MarkRead();
 				}
 				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
 				TreeNode node = treeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
@@ -575,7 +577,7 @@ namespace BetterReader
 
 		private void hideFormShowNotifyIcon()
 		{
-			if (fst.GetUnreadItemCount() > 0)
+			if (fst != null && fst.GetUnreadItemCount() > 0)
 			{
 				notifyIcon1.Icon = yellowLightIcon;
 				notifyIcon1.Text = oldUnreadItemsMessage;
@@ -865,6 +867,7 @@ namespace BetterReader
 			if (spf.ShowDialog() == DialogResult.OK)
 			{
 				saveFeedSubTree();
+				fs.Feed.FeedItems.PurgeOldItems();
 				setNodePropertiesFromFeedSubscription(fs, treeNodesByTag[fs]);
 				if (fs.Feed.ReadSuccess != true)
 				{

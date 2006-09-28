@@ -29,6 +29,8 @@ namespace BetterReader
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.daysToArchiveTB = new System.Windows.Forms.TextBox();
+			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.updateMinutesTB = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
@@ -36,13 +38,15 @@ namespace BetterReader
 			this.label2 = new System.Windows.Forms.Label();
 			this.urlTB = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.daysToArchiveTB = new System.Windows.Forms.TextBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.maxItemsTB = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.maxItemsTB);
+			this.groupBox1.Controls.Add(this.label6);
 			this.groupBox1.Controls.Add(this.daysToArchiveTB);
 			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label4);
@@ -59,6 +63,24 @@ namespace BetterReader
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Feed Subscription Properties";
+			// 
+			// daysToArchiveTB
+			// 
+			this.daysToArchiveTB.Location = new System.Drawing.Point(131, 105);
+			this.daysToArchiveTB.Name = "daysToArchiveTB";
+			this.daysToArchiveTB.Size = new System.Drawing.Size(66, 20);
+			this.daysToArchiveTB.TabIndex = 8;
+			this.daysToArchiveTB.Text = "2";
+			this.daysToArchiveTB.TextChanged += new System.EventHandler(this.daysToArchiveTB_TextChanged);
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(11, 108);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(117, 13);
+			this.label5.TabIndex = 7;
+			this.label5.Text = "Days To Archive Items:";
 			// 
 			// label4
 			// 
@@ -119,23 +141,22 @@ namespace BetterReader
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Feed URL:";
 			// 
-			// label5
+			// label6
 			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(11, 108);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(117, 13);
-			this.label5.TabIndex = 7;
-			this.label5.Text = "Days To Archive Items:";
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(226, 108);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(96, 13);
+			this.label6.TabIndex = 9;
+			this.label6.Text = "Max Items in Feed:";
 			// 
-			// daysToArchiveTB
+			// maxItemsTB
 			// 
-			this.daysToArchiveTB.Location = new System.Drawing.Point(131, 105);
-			this.daysToArchiveTB.Name = "daysToArchiveTB";
-			this.daysToArchiveTB.Size = new System.Drawing.Size(100, 20);
-			this.daysToArchiveTB.TabIndex = 8;
-			this.daysToArchiveTB.Text = "2";
-			this.daysToArchiveTB.TextChanged += new System.EventHandler(this.daysToArchiveTB_TextChanged);
+			this.maxItemsTB.Location = new System.Drawing.Point(328, 105);
+			this.maxItemsTB.Name = "maxItemsTB";
+			this.maxItemsTB.Size = new System.Drawing.Size(100, 20);
+			this.maxItemsTB.TabIndex = 10;
+			this.maxItemsTB.Text = "275";
 			// 
 			// FeedSubscriptionPropertiesControl
 			// 
@@ -162,5 +183,7 @@ namespace BetterReader
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox daysToArchiveTB;
+		private System.Windows.Forms.TextBox maxItemsTB;
+		private System.Windows.Forms.Label label6;
 	}
 }

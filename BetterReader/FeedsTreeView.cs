@@ -135,7 +135,7 @@ namespace BetterReader
 				if (t == typeof(FeedSubscription))
 				{
 					FeedSubscription fs = (FeedSubscription)node.Tag;
-					if (fs.Feed.UnreadItems == 0)
+					if (fs.Feed.UnreadCount == 0)
 					{
 						nodesToHide.Add(node);
 					}
