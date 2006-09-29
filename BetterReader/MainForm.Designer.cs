@@ -518,32 +518,33 @@ namespace BetterReader
             this.deleteToolStripMenuItem,
             this.markAllReadToolStripMenuItem});
 			this.folderContextMenuStrip.Name = "folderContextMenuStrip";
-			this.folderContextMenuStrip.Size = new System.Drawing.Size(151, 92);
+			this.folderContextMenuStrip.Size = new System.Drawing.Size(153, 114);
 			// 
 			// newFolderToolStripMenuItem
 			// 
 			this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-			this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+			this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.newFolderToolStripMenuItem.Text = "New Folder";
 			this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderToolStripMenuItem_Click);
 			// 
 			// renameToolStripMenuItem1
 			// 
 			this.renameToolStripMenuItem1.Name = "renameToolStripMenuItem1";
-			this.renameToolStripMenuItem1.Size = new System.Drawing.Size(150, 22);
+			this.renameToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
 			this.renameToolStripMenuItem1.Text = "Rename";
+			this.renameToolStripMenuItem1.Click += new System.EventHandler(this.renameToolStripMenuItem1_Click);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.deleteToolStripMenuItem.Text = "Delete";
 			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
 			// 
 			// markAllReadToolStripMenuItem
 			// 
 			this.markAllReadToolStripMenuItem.Name = "markAllReadToolStripMenuItem";
-			this.markAllReadToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+			this.markAllReadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
 			// 
