@@ -1146,6 +1146,12 @@ namespace BetterReader
 			toggleHideShowOnFeedSubNodes();
 		}
 
+		private void renameToolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			feedsTV.LabelEdit = true;
+			rightClickedNode.BeginEdit();
+		}
+
 
 
     }
