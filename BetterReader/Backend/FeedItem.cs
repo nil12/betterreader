@@ -272,7 +272,14 @@ namespace BetterReader.Backend
 						fi.title = Feed.HtmlDecode(innerText);
 						break;
 					case "link":
-						fi.linkUrl = innerText;
+						if (innerText != null && innerText != string.Empty)
+						{
+							fi.linkUrl = innerText;
+						}
+						else
+						{
+							fi.linkUrl = childNode.Attributes["href"].Value;
+						}
 						break;
 					case "category":
 						fi.category = Feed.HtmlDecode(innerText);
