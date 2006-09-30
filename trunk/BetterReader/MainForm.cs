@@ -120,11 +120,17 @@ namespace BetterReader
 				this.Location = Properties.Settings.Default.MyLoc;
 			}
 
-			splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
-			splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
-			splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
-			splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
-			splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
+			this.WindowState = FormWindowState.Normal;
+
+			//try
+			//{
+				splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
+				splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
+				splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
+				splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
+				splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
+			//}
+			//catch { }
 
 			this.WindowState = Properties.Settings.Default.MyState;
 		}
@@ -341,6 +347,7 @@ namespace BetterReader
 				showUnreadFirstBTN.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
 				lastDownloadLBL.Visible = true;
 				lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
+				MarkAllReadBTN.Visible = true;
 
 				listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
 				//feedItemsLV.BeginUpdate();
@@ -937,14 +944,14 @@ namespace BetterReader
 		{
 			Properties.Settings.Default.MyState = this.WindowState;
 			Properties.Settings.Default.HideReadFeeds = hideReadFeedsBTN.Checked;
-			Properties.Settings.Default.SplitterDistance1 = splitContainer1.SplitterDistance;
-			Properties.Settings.Default.SplitterDistance2 = splitContainer2.SplitterDistance;
-			Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
-			Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
-			Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
 
-			if (this.WindowState == FormWindowState.Normal)
+			if (this.WindowState == FormWindowState.Normal || this.WindowState == FormWindowState.Maximized)
 			{
+				Properties.Settings.Default.SplitterDistance1 = splitContainer1.SplitterDistance;
+				Properties.Settings.Default.SplitterDistance2 = splitContainer2.SplitterDistance;
+				Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
+				Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
+				Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
 				Properties.Settings.Default.MySize = this.Size;
 				Properties.Settings.Default.MyLoc = this.Location;
 			}
@@ -1150,6 +1157,11 @@ namespace BetterReader
 		{
 			feedsTV.LabelEdit = true;
 			rightClickedNode.BeginEdit();
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			markFeedRead(currentlyDisplayedFeedSubscription);
 		}
 
 
