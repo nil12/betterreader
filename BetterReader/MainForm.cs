@@ -565,6 +565,7 @@ namespace BetterReader
 				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
 				TreeNode node = treeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
 				setFeedSubNodeText(node, fi.ParentFeed.ParentSubscription);
+				fi.ParentFeed.FeedItems.ArchiveItems();
 			}
 		}
 
@@ -649,6 +650,13 @@ namespace BetterReader
 
 			newFolder.Name = "New Folder";
 
+			if (fst == null)
+			{
+				//this is most likely a new user with no subscriptions who has chosen to start
+				//with a new folder
+				fst = new FeedSubscriptionTree();
+			}
+
 			if (parentNode == null)
 			{
 				newFolder.ParentFolder = null;
@@ -705,6 +713,8 @@ namespace BetterReader
 			FeedFolder parentFolder = null;
 			if (rightClickedNode != null)
 			{
+				//if rightClickedNode isn't null then we need to figure out the proper parent node
+				//for the sub form to default to 
 				if (rightClickedNode.Tag.GetType() == typeof(FeedFolder))
 				{
 					parentFolder = (FeedFolder)rightClickedNode.Tag;
@@ -752,6 +762,7 @@ namespace BetterReader
 				newNode = feedsTV.Nodes.Add(fs.ToString());
 			}
 			newNode.Tag = fs;
+			newNode.ImageIndex = 1;
 
 			if (treeNodesByTag == null)
 			{
@@ -1153,15 +1164,23 @@ namespace BetterReader
 			toggleHideShowOnFeedSubNodes();
 		}
 
-		private void renameToolStripMenuItem1_Click(object sender, EventArgs e)
+		private void renameFolderMenuItem1_Click(object sender, EventArgs e)
 		{
 			feedsTV.LabelEdit = true;
 			rightClickedNode.BeginEdit();
 		}
 
-		private void toolStripButton1_Click(object sender, EventArgs e)
+		private void markFeedReadButton1_Click(object sender, EventArgs e)
 		{
 			markFeedRead(currentlyDisplayedFeedSubscription);
+		}
+
+		private void showUnreadFirstBTN_Click(object sender, EventArgs e)
+		{
+			FeedItemsListViewColumnSorter sorter = (FeedItemsListViewColumnSorter)feedItemsLV.ListViewItemSorter;
+			sorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
+			feedItemsLV.Sort();
+			saveFeedSubTree();
 		}
 
 
