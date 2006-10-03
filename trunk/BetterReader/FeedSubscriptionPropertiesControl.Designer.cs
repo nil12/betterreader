@@ -29,6 +29,8 @@ namespace BetterReader
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.maxItemsTB = new System.Windows.Forms.TextBox();
+			this.label6 = new System.Windows.Forms.Label();
 			this.daysToArchiveTB = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -38,8 +40,6 @@ namespace BetterReader
 			this.label2 = new System.Windows.Forms.Label();
 			this.urlTB = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.maxItemsTB = new System.Windows.Forms.TextBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -63,6 +63,24 @@ namespace BetterReader
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Feed Subscription Properties";
+			// 
+			// maxItemsTB
+			// 
+			this.maxItemsTB.Location = new System.Drawing.Point(328, 105);
+			this.maxItemsTB.Name = "maxItemsTB";
+			this.maxItemsTB.Size = new System.Drawing.Size(100, 20);
+			this.maxItemsTB.TabIndex = 10;
+			this.maxItemsTB.Text = "275";
+			this.maxItemsTB.TextChanged += new System.EventHandler(this.maxItemsTB_TextChanged);
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(226, 108);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(96, 13);
+			this.label6.TabIndex = 9;
+			this.label6.Text = "Max Items in Feed:";
 			// 
 			// daysToArchiveTB
 			// 
@@ -140,23 +158,6 @@ namespace BetterReader
 			this.label1.Size = new System.Drawing.Size(59, 13);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Feed URL:";
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(226, 108);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(96, 13);
-			this.label6.TabIndex = 9;
-			this.label6.Text = "Max Items in Feed:";
-			// 
-			// maxItemsTB
-			// 
-			this.maxItemsTB.Location = new System.Drawing.Point(328, 105);
-			this.maxItemsTB.Name = "maxItemsTB";
-			this.maxItemsTB.Size = new System.Drawing.Size(100, 20);
-			this.maxItemsTB.TabIndex = 10;
-			this.maxItemsTB.Text = "275";
 			// 
 			// FeedSubscriptionPropertiesControl
 			// 

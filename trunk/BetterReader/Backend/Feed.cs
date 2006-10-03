@@ -241,7 +241,19 @@ namespace BetterReader.Backend
 			//loadArchivedFeedItems();
 			feedItems.LoadArchivedItems();
 			itemCountBeforeRead = feedItems.Count;
-			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
+			HttpWebRequest hwr = null;
+			try
+			{
+				hwr = (HttpWebRequest)WebRequest.Create(feedUrl);
+			}
+			catch (UriFormatException)
+			{
+				//this feed has an improperly formatted URL
+				this.readSuccess = false;
+				this.readException = new Exception("Error.  The Feed URL: " + this.feedUrl + " is invalid.");
+				callback(this);
+				return;
+			}
 
 			webRequestState state = new webRequestState();
 			state.callback = callback;

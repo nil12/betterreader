@@ -9,6 +9,12 @@ using BetterReader.Backend;
 
 namespace BetterReader
 {
+	public struct FeedSubscriptionPropertiesFormValidity
+	{
+		public bool IsValid;
+		public string ErrMsg;
+	}
+
 	public partial class FeedSubscriptionPropertiesControl : UserControl
 	{
 		internal void LoadFromFeedSubscription(FeedSubscription fs)
@@ -27,6 +33,25 @@ namespace BetterReader
 			fs.UpdateSeconds = int.Parse(updateMinutesTB.Text) * 60;
 			fs.DaysToArchive = int.Parse(daysToArchiveTB.Text);
 			fs.MaxItems = int.Parse(maxItemsTB.Text);
+		}
+
+		internal FeedSubscriptionPropertiesFormValidity ValidateFeedSubscription()
+		{
+			//I know this isn't the best way to do this but I need a quick fix right now
+			FeedSubscriptionPropertiesFormValidity v = new FeedSubscriptionPropertiesFormValidity();
+			v.IsValid = true;
+			if (urlTB.Text == string.Empty)
+			{
+				v.ErrMsg += "Feed URL is required.\r\n";
+				v.IsValid = false;
+			}
+			if (feedTitleTB.Text == string.Empty)
+			{
+				v.ErrMsg += "Feed Title is required.\r\n";
+				v.IsValid = false;
+			}
+
+			return v;
 		}
 
 
@@ -66,6 +91,15 @@ namespace BetterReader
 			}
 
 			return true;
+		}
+
+		private void maxItemsTB_TextChanged(object sender, EventArgs e)
+		{
+			if (!isANumber(maxItemsTB.Text))
+			{
+				MessageBox.Show("Max Items in Feed must be an integer value.", "Error");
+				maxItemsTB.Text = "275";
+			}
 		}
 	}
 }

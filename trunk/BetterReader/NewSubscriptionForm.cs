@@ -87,6 +87,12 @@ namespace BetterReader
 
 		private void okBTN_Click(object sender, EventArgs e)
 		{
+			FeedSubscriptionPropertiesFormValidity v = feedSubscriptionPropertiesControl1.ValidateFeedSubscription();
+			if (v.IsValid != true)
+			{
+				MessageBox.Show("The following problems were found with your feed subscription:\r\n" + v.ErrMsg);
+				return;
+			}
 			feedSubscriptionPropertiesControl1.SaveToFeedSubscription(fs);
 			fs.ParentFolder = createInFolder;
 			this.DialogResult = DialogResult.OK;
