@@ -159,5 +159,11 @@ namespace BetterReader.Backend
 		}
 
 		#endregion
+
+		internal void Unsubscribe()
+		{
+			this.feed.FeedItems.DeleteArchivedItems();
+			this.ParentFolder.ChildNodes.Remove(this);
+		}
 	}
 }
