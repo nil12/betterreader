@@ -43,7 +43,6 @@ namespace BetterReader
 			this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.splitContainer5 = new System.Windows.Forms.SplitContainer();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.hideReadFeedsBTN = new System.Windows.Forms.ToolStripButton();
 			this.feedsTV = new BetterReader.FeedsTreeView();
@@ -79,16 +78,13 @@ namespace BetterReader
 			this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.newFeedSubscriptionToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
-			this.splitContainer5.Panel1.SuspendLayout();
-			this.splitContainer5.Panel2.SuspendLayout();
-			this.splitContainer5.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
@@ -170,7 +166,8 @@ namespace BetterReader
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.Controls.Add(this.splitContainer5);
+			this.splitContainer1.Panel1.Controls.Add(this.feedsTV);
+			this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
 			// 
 			// splitContainer1.Panel2
 			// 
@@ -180,33 +177,12 @@ namespace BetterReader
 			this.splitContainer1.TabIndex = 2;
 			this.splitContainer1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
-			// splitContainer5
-			// 
-			this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.splitContainer5.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer5.Name = "splitContainer5";
-			this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer5.Panel1
-			// 
-			this.splitContainer5.Panel1.BackColor = System.Drawing.SystemColors.Info;
-			this.splitContainer5.Panel1.Controls.Add(this.toolStrip1);
-			// 
-			// splitContainer5.Panel2
-			// 
-			this.splitContainer5.Panel2.Controls.Add(this.feedsTV);
-			this.splitContainer5.Size = new System.Drawing.Size(310, 685);
-			this.splitContainer5.SplitterDistance = 57;
-			this.splitContainer5.TabIndex = 0;
-			this.splitContainer5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-			// 
 			// toolStrip1
 			// 
-			this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hideReadFeedsBTN});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 32);
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(310, 25);
 			this.toolStrip1.TabIndex = 0;
@@ -240,10 +216,10 @@ namespace BetterReader
 			this.feedsTV.HideSelection = false;
 			this.feedsTV.ImageIndex = 0;
 			this.feedsTV.ImageList = this.feedsImageList;
-			this.feedsTV.Location = new System.Drawing.Point(0, 0);
+			this.feedsTV.Location = new System.Drawing.Point(0, 25);
 			this.feedsTV.Name = "feedsTV";
 			this.feedsTV.SelectedImageIndex = 0;
-			this.feedsTV.Size = new System.Drawing.Size(310, 624);
+			this.feedsTV.Size = new System.Drawing.Size(310, 660);
 			this.feedsTV.TabIndex = 0;
 			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
 			this.feedsTV.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.feedsTV_AfterLabelEdit);
@@ -538,7 +514,7 @@ namespace BetterReader
             this.markAllReadToolStripMenuItem,
             this.newFeedSubscriptionToolStripMenuItem1});
 			this.folderContextMenuStrip.Name = "folderContextMenuStrip";
-			this.folderContextMenuStrip.Size = new System.Drawing.Size(216, 136);
+			this.folderContextMenuStrip.Size = new System.Drawing.Size(216, 114);
 			// 
 			// newFolderToolStripMenuItem
 			// 
@@ -568,6 +544,13 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem.Text = "Mark All Read";
 			this.markAllReadToolStripMenuItem.Click += new System.EventHandler(this.markAllReadToolStripMenuItem_Click);
 			// 
+			// newFeedSubscriptionToolStripMenuItem1
+			// 
+			this.newFeedSubscriptionToolStripMenuItem1.Name = "newFeedSubscriptionToolStripMenuItem1";
+			this.newFeedSubscriptionToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
+			this.newFeedSubscriptionToolStripMenuItem1.Text = "New Feed Subscription . . .";
+			this.newFeedSubscriptionToolStripMenuItem1.Click += new System.EventHandler(this.newSubscriptionToolStripMenuItem_Click);
+			// 
 			// notifyIconImageList
 			// 
 			this.notifyIconImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("notifyIconImageList.ImageStream")));
@@ -575,13 +558,6 @@ namespace BetterReader
 			this.notifyIconImageList.Images.SetKeyName(0, "greenlight.ico");
 			this.notifyIconImageList.Images.SetKeyName(1, "yellowlight.ico");
 			this.notifyIconImageList.Images.SetKeyName(2, "redlight.ico");
-			// 
-			// newFeedSubscriptionToolStripMenuItem1
-			// 
-			this.newFeedSubscriptionToolStripMenuItem1.Name = "newFeedSubscriptionToolStripMenuItem1";
-			this.newFeedSubscriptionToolStripMenuItem1.Size = new System.Drawing.Size(215, 22);
-			this.newFeedSubscriptionToolStripMenuItem1.Text = "New Feed Subscription . . .";
-			this.newFeedSubscriptionToolStripMenuItem1.Click += new System.EventHandler(this.newSubscriptionToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -604,12 +580,9 @@ namespace BetterReader
 			this.mainStatusStrip.ResumeLayout(false);
 			this.mainStatusStrip.PerformLayout();
 			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel1.PerformLayout();
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
-			this.splitContainer5.Panel1.ResumeLayout(false);
-			this.splitContainer5.Panel1.PerformLayout();
-			this.splitContainer5.Panel2.ResumeLayout(false);
-			this.splitContainer5.ResumeLayout(false);
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.splitContainer2.Panel1.ResumeLayout(false);
@@ -648,7 +621,6 @@ namespace BetterReader
 		private System.Windows.Forms.ListView feedItemsLV;
 		private System.Windows.Forms.SplitContainer splitContainer4;
 		private System.Windows.Forms.WebBrowser webBrowser1;
-		private System.Windows.Forms.SplitContainer splitContainer5;
 		private System.Windows.Forms.Label itemTitleLBL;
 		private System.Windows.Forms.Label feedTitleLBL;
 		private System.Windows.Forms.LinkLabel itemLinkLBL;
