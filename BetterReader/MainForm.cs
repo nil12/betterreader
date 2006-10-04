@@ -128,7 +128,7 @@ namespace BetterReader
 				splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
 				splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
 				splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
-				//splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
+				splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
 			//}
 			//catch { }
 
@@ -963,7 +963,7 @@ namespace BetterReader
 				Properties.Settings.Default.SplitterDistance2 = splitContainer2.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
-				//Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
+				Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
 				Properties.Settings.Default.MySize = this.Size;
 				Properties.Settings.Default.MyLoc = this.Location;
 			}
