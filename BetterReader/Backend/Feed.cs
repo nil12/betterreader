@@ -287,7 +287,6 @@ namespace BetterReader.Backend
 			{
 				readException = e;
 				readSuccess = false;
-				//System.Diagnostics.Debug.WriteLine("Error reading feed: " + e.ToString());
 			}
 
 			feedItems.PurgeOldItems();
