@@ -299,5 +299,13 @@ namespace BetterReader.Backend
 			feedItem.HasBeenRead = true;
 			unreadCount--;
 		}
+
+		internal void DeleteArchivedItems()
+		{
+			if (File.Exists(archiveFilepath))
+			{
+				File.Delete(archiveFilepath);
+			}
+		}
 	}
 }

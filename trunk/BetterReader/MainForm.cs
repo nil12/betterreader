@@ -1019,11 +1019,18 @@ namespace BetterReader
 
 		private void unsubscribeToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			FeedSubscription fs = rightClickedNode.Tag as FeedSubscription;
+			if (fs == null)
+			{
+				//this should never occur
+				MessageBox.Show("Error.  Cannot unsubscribe from this type of node.");
+				return;
+			}
+
 			if (showUnsubscribeConfirmation())
 			{
 				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
-				FeedSubTreeNodeBase fstnb = (FeedSubTreeNodeBase)rightClickedNode.Tag;
-				fstnb.ParentFolder.ChildNodes.Remove(fstnb);
+				fs.Unsubscribe();
 				saveFeedSubTree();
 			}
 		}
