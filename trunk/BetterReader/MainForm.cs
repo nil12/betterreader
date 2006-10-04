@@ -751,18 +751,19 @@ namespace BetterReader
 				parentFolder.ChildNodes.Add(fs);
 			}
 
-			TreeNode newNode = null;
+			TreeNode newNode = new TreeNode(fs.ToString());
+			newNode.Tag = fs;
+			newNode.ImageIndex = 1;
 			if (treeNodesByTag != null && parentFolder != null && treeNodesByTag.ContainsKey(parentFolder))
 			{
 				TreeNode parentNode = treeNodesByTag[parentFolder];
-				newNode = parentNode.Nodes.Add(fs.ToString());
+				parentNode.Nodes.Add(newNode);
 			}
 			else
 			{
-				newNode = feedsTV.Nodes.Add(fs.ToString());
+				feedsTV.Nodes.Add(newNode);
 			}
-			newNode.Tag = fs;
-			newNode.ImageIndex = 1;
+			
 
 			if (treeNodesByTag == null)
 			{
