@@ -89,6 +89,7 @@ namespace BetterReader
 
         private void MainForm_Load(object sender, EventArgs e)
 		{
+			webBrowser1.GotFocus += new EventHandler(webBrowser1_GotFocus);
 			ensureDirectoryExists(settingsDirectory);
 			ensureDirectoryExists(archiveDirectory);
 			feedsNormalFont = feedsTV.Font;
@@ -105,6 +106,12 @@ namespace BetterReader
 				feedReaderBGW.RunWorkerAsync();
 			}
         }
+
+		void webBrowser1_GotFocus(object sender, EventArgs e)
+		{
+			//this is needed for hotkey support
+			feedItemsLV.Focus();
+		}
 
 		private void restoreWindowSettings()
 		{
@@ -816,6 +823,14 @@ namespace BetterReader
 				case 'R':
 					markFeedRead(currentlyDisplayedFeedSubscription);
 					break;
+				case 'm':
+				case 'M':
+					this.WindowState = FormWindowState.Minimized;
+					break;
+				case 'h':
+				case 'H':
+					hideReadFeedsBTN.Checked = !hideReadFeedsBTN.Checked;
+					break;
 			}
 		}
 
@@ -1189,6 +1204,12 @@ namespace BetterReader
 			sorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
 			feedItemsLV.Sort();
 			saveFeedSubTree();
+		}
+
+		private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			//this is needed for hotkey support
+			feedItemsLV.Focus();
 		}
 
 
