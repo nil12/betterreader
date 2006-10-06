@@ -20,7 +20,14 @@ namespace BetterReader.Backend
 		{
 			get
 			{
-				return parentFolder.ChildNodes.IndexOf(this);
+				if (parentFolder != null)
+				{
+					return parentFolder.ChildNodes.IndexOf(this);
+				}
+				else
+				{
+					return 0;
+				}
 			}
 		}
 
