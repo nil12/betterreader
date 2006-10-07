@@ -359,10 +359,7 @@ namespace BetterReader
 				listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
 				//feedItemsLV.BeginUpdate();
 				feedItemsLV.Clear();
-				if (webBrowser1.DocumentText.Length > 0)
-				{
-					webBrowser1.DocumentText = "";
-				}
+				clearWebBrowser();
 				feedTitleLBL.Text = feedSubscription.DisplayName;
 				feedTitleLBL.Width = splitContainer2.Panel1.Width;
 				if (feedSubscription.Feed.ReadSuccess)
@@ -406,6 +403,14 @@ namespace BetterReader
 				}
 				//feedItemsLV.EndUpdate();
 			//}
+		}
+
+		private void clearWebBrowser()
+		{
+			if (webBrowser1.DocumentText.Length > 0)
+			{
+				webBrowser1.DocumentText = "";
+			}
 		}
 
 		private void bindFeedItemsToListView(FeedItemCollection feedItems)
@@ -1210,6 +1215,11 @@ namespace BetterReader
 		{
 			//this is needed for hotkey support
 			feedItemsLV.Focus();
+		}
+
+		private void toolStripButton1_Click(object sender, EventArgs e)
+		{
+			clearWebBrowser();
 		}
 
 
