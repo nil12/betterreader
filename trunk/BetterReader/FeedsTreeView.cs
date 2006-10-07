@@ -6,7 +6,7 @@ using BetterReader.Backend;
 
 namespace BetterReader
 {
-	class FeedsTreeView : Sloppycode.UI.TreeViewDragDrop
+	public class FeedsTreeView : Sloppycode.UI.TreeViewDragDrop
 	{
 
 		private Dictionary<object, HiddenNode> hiddenNodes = new Dictionary<object, HiddenNode>();

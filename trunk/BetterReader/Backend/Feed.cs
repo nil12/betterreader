@@ -23,19 +23,16 @@ namespace BetterReader.Backend
 		private string copyright;
 		private string managingEditor;
 		private string webMaster;
-		//private List<FeedItem> feedItems;
 		private FeedItemCollection feedItems;
 		private bool readSuccess;
 		private Exception readException;
 		private Dictionary<string, string> unsupportedFeedProperties;
-		private int unreadItems;
+		//private int unreadItems;
 		private FeedSubscription parentSubscription;
-		//private Dictionary<string, FeedItem> feedItemsByGuid;
 		private Guid guid;
 		private string archiveFilepath;
 		private int itemCountBeforeRead;
 		private bool hasNewItemsFromLastRead;
-		//private FeedItemProperties includedFeedItemProperties;
 		private DateTime lastDownloadAttempt;
 		
 		#region properties
@@ -49,7 +46,6 @@ namespace BetterReader.Backend
 		internal FeedItemProperties IncludedFeedItemProperties
 		{
 			get { return feedItems.IncludedFeedItemProperties; }
-			//set { includedFeedItemProperties = value; }
 		}
 
 		public bool HasNewItemsFromLastRead
@@ -68,7 +64,6 @@ namespace BetterReader.Backend
 		internal int UnreadCount
 		{
 			get { return feedItems.UnreadCount; }
-			//set { unreadItems = value; }
 		}
 
 
@@ -169,18 +164,6 @@ namespace BetterReader.Backend
 			}
 		}
 
-		//public List<FeedItem> FeedItems
-		//{
-		//    get
-		//    {
-		//        return feedItems;
-		//    }
-		//    set
-		//    {
-		//        feedItems = value;
-		//    }
-		//}
-
 		public FeedItemCollection FeedItems
 		{
 			get
@@ -209,9 +192,7 @@ namespace BetterReader.Backend
 		{
 			guid = lGuid;
 			feedUrl = lFeedUrl;
-			//feedItems = new List<FeedItem>();
-			//feedItemsByGuid = new Dictionary<string, FeedItem>();
-			unreadItems = 0;
+			//unreadItems = 0;
 			archiveFilepath = MainForm.ArchiveDirectory + guid.ToString() + ".xml";
 			feedItems = new FeedItemCollection(this, archiveFilepath);
 			hasNewItemsFromLastRead = false;
@@ -224,21 +205,11 @@ namespace BetterReader.Backend
 			feedItems.LoadArchivedItems();
 		}
 
-		//private void purgeOldArchivedItems()
-		//{
-		//    feedItems.PurgeOldArchivedItems();
-		//}
-
-		//public void ArchiveFeedItems()
-		//{
-		//    feedItems.ArchiveItems();
-		//}
 
 		public void BeginRead(FeedReadCompleteDelegate callback)
 		{
 			readSuccess = false;
 			readException = null;
-			//loadArchivedFeedItems();
 			feedItems.LoadArchivedItems();
 			itemCountBeforeRead = feedItems.Count;
 			HttpWebRequest hwr = null;
@@ -274,11 +245,11 @@ namespace BetterReader.Backend
 		{
 			webRequestState state = (webRequestState)ar.AsyncState;
 			XmlDocument xmlDoc = new XmlDocument();
+			HttpWebResponse response = null;
 			try
 			{
-				HttpWebResponse response = (HttpWebResponse)state.request.GetResponse();
+				response = (HttpWebResponse)state.request.GetResponse();
 				xmlDoc.Load(response.GetResponseStream());
-				//response.Close();
 				loadFromXmlDoc(xmlDoc);
 				readException = null;
 				readSuccess = true;
@@ -287,6 +258,13 @@ namespace BetterReader.Backend
 			{
 				readException = e;
 				readSuccess = false;
+			}
+			finally
+			{
+				if (response != null)
+				{
+					response.Close();
+				}
 			}
 
 			feedItems.PurgeOldItems();
@@ -308,7 +286,6 @@ namespace BetterReader.Backend
 
 		private void loadFromXmlDoc(XmlDocument xmlDoc)
 		{
-			//feedItems = new List<FeedItem>();
 			unsupportedFeedProperties = new Dictionary<string, string>();
 			foreach (XmlNode node in xmlDoc)
 			{
@@ -338,7 +315,6 @@ namespace BetterReader.Backend
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
-				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
 				switch (childNode.Name)
 				{
 					case "title":
@@ -374,7 +350,6 @@ namespace BetterReader.Backend
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
-				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
 				switch (childNode.Name)
 				{
 					case "channel":
@@ -403,7 +378,6 @@ namespace BetterReader.Backend
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
-				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
 				switch (childNode.Name)
 				{
 					case "title":
@@ -427,7 +401,6 @@ namespace BetterReader.Backend
 			foreach (XmlNode childNode in node.ChildNodes)
 			{
 				string innerText = childNode.InnerText;
-				//System.Diagnostics.Debug.WriteLine("node: " + childNode.Name);
 				switch (childNode.Name)
 				{
 					case "title":
