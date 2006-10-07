@@ -14,17 +14,14 @@ namespace BetterReader
     public partial class MainForm : Form
     {
 		
-		private delegate void setFeedSubNodeTextDelegate(TreeNode node, FeedSubscription fs);
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
-        private FeedSubscriptionTree fst;
-        private Dictionary<object, TreeNode> treeNodesByTag;
+		//private FeedSubscriptionTree fst;
+		private FeedSubTreeManager feedSubManager;
 		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
 		private readonly string feedSubsFilepath;
 		private static string archiveDirectory;
 		private readonly string graphicsDirectory = System.Environment.CurrentDirectory + "\\Graphics\\";
-		private Font feedsNormalFont;
-		private Font feedsBoldFont;
 		private Font feedItemsNormalFont;
 		private Font feedItemsBoldFont;
 		private Graphics formGraphics;
@@ -92,19 +89,15 @@ namespace BetterReader
 			webBrowser1.GotFocus += new EventHandler(webBrowser1_GotFocus);
 			ensureDirectoryExists(settingsDirectory);
 			ensureDirectoryExists(archiveDirectory);
-			feedsNormalFont = feedsTV.Font;
-			feedsBoldFont = new Font(feedsNormalFont, FontStyle.Bold);
+			
 			feedItemsNormalFont = feedItemsLV.Font;
 			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
 
 			restoreWindowSettings();
 
-			if (File.Exists(feedSubsFilepath))
-			{
-				fst = FeedSubscriptionTree.GetFromFeedSubscriptionsFile(feedSubsFilepath);
-				bindFSTToTreeView();
-				feedReaderBGW.RunWorkerAsync();
-			}
+			feedSubManager = new FeedSubTreeManager(feedSubsFilepath, feedsTV, hideReadFeedsBTN);
+			
+			feedReaderBGW.RunWorkerAsync();
         }
 
 		void webBrowser1_GotFocus(object sender, EventArgs e)
@@ -142,55 +135,35 @@ namespace BetterReader
 			this.WindowState = Properties.Settings.Default.MyState;
 		}
 
-		private void beginReads()
-		{
-			fst.BeginReadAllFeeds(new FeedSubscriptionReadDelegate(feedSubReadCallback));
-		}
 
         private void feedSubReadCallback(FeedSubscription fs)
-        {
-			TreeNode node = treeNodesByTag[fs];
-			setNodePropertiesFromFeedSubscription(fs, node);
-        }
-
-		private void setNodePropertiesFromFeedSubscription(FeedSubscription fs, TreeNode node)
 		{
-
 			if (this.IsDisposed && this.Disposing == false)
 			{
 				return;
 			}
 
-			lock (feedsTV)
-			{
-				//try
-				//{
-				if (this.InvokeRequired)
-				{
-					this.Invoke(new setFeedSubNodeTextDelegate(setFeedSubNodeText), new object[] { node, fs });
-					this.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
-		new object[] { node, fs });
-				}
-				else
-				{
-					setFeedSubNodeText(node, fs);
-					displayFeedItemsIfNodeSelected(node, fs);
-				}
+			TreeNode node = feedSubManager.UpdateNodeFromFeedSubscription(fs);
 
-				if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
-				{
-					//the app is minimized and new items were found so set the notifyIcon to alert status
-					notifyIcon1.Icon = redLightIcon;
-					notifyIcon1.Text = newUnreadItemsMessage;
-				}
-				//}
-				//catch (InvalidOperationException)
-				//{
-				//    //this was most likely caused by a feed reading thread returning during shutdown
-				//    //so we'll ignore it
-				//}
+			if (this.InvokeRequired)
+			{
+				feedsTV.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
+			   new object[] { node, fs });
 			}
-		}
+			else
+			{
+				displayFeedItemsIfNodeSelected(node, fs);
+			}
+
+			if (fs.Feed.HasNewItemsFromLastRead && notifyIcon1.Visible)
+			{
+				//the app is minimized and new items were found so set the notifyIcon to alert status
+				notifyIcon1.Icon = redLightIcon;
+				notifyIcon1.Text = newUnreadItemsMessage;
+			}
+        }
+
+		
 
 		private void displayFeedItemsIfNodeSelected(TreeNode node, FeedSubscription fs)
 		{
@@ -200,46 +173,7 @@ namespace BetterReader
 			}
 		}
 
-		private void setFeedSubNodeText(TreeNode node, FeedSubscription fs)
-		{
-			string text;
-
-			if (fs.Feed.ReadSuccess)
-			{
-				text = fs.ToString();
-				if (fs.Feed.UnreadCount > 0)
-				{
-					node.NodeFont = feedsBoldFont;
-				}
-				else
-				{
-					node.NodeFont = feedsNormalFont;
-				}
-
-				if (fs.Feed.UnreadCount == 0 && hideReadFeedsBTN.Checked)
-				{
-					//user has selected hideReadFeeds option and this feed has no unread items
-					feedsTV.HideNode(node);
-				}
-				else
-				{
-					feedsTV.ShowNode(fs);
-				}
-			}
-			else
-			{
-				if (fs.Feed.ReadException != null)
-				{
-					text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
-				}
-				else
-				{
-					text = "Loading . . .";
-				}
-			}
-
-			node.Text = text;
-		}
+		
 
 		private void ensureDirectoryExists(string path)
 		{
@@ -260,85 +194,10 @@ namespace BetterReader
             ofd.Multiselect = false;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                importOpml(ofd.FileName);
+				feedSubManager.ImportOpml(ofd.FileName);
+				feedReaderBGW.RunWorkerAsync();
             }
         }
-
-        private void importOpml(string filepath)
-        {
-            fst = Opml.GetFeedSubscriptionTreeFromOpmlFile(filepath);
-			fst.SaveAsFeedSubscriptionsFile(settingsDirectory + "FeedSubscriptions.xml");
-			bindFSTToTreeView();
-			feedReaderBGW.RunWorkerAsync();
-        }
-
-        private void bindFSTToTreeView()
-        {
-			feedsTV.BeginUpdate();
-			feedsTV.Nodes.Clear();
-            treeNodesByTag = new Dictionary<object, TreeNode>();
-			bindNodeListToTreeView(fst.RootLevelNodes, null);
-			feedsTV.ExpandAll();
-			feedsTV.EndUpdate();
-        }
-
-		private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
-		{
-			foreach (FeedSubTreeNodeBase fstnb in nodeList)
-			{
-				Type nodeType = fstnb.GetType();
-				if (nodeType == typeof(FeedSubscription))
-				{
-					FeedSubscription fs = fstnb as FeedSubscription;
-					TreeNode newNode;
-					if (treeNode == null)
-					{
-						//we're at the root level of the tree
-						newNode = feedsTV.Nodes.Add(fs.DisplayName);
-					}
-					else
-					{
-						newNode = treeNode.Nodes.Add(fs.DisplayName);
-					}
-
-					newNode.Tag = fs;
-					newNode.ImageIndex = 1;
-					newNode.SelectedImageIndex = 1;
-					treeNodesByTag.Add(fs, newNode);
-				}
-				else if (nodeType == typeof(FeedFolder))
-				{
-					FeedFolder ff = fstnb as FeedFolder;
-					TreeNode newNode;
-					if (treeNode == null)
-					{
-						//we're at the root level of the tree
-						newNode = feedsTV.Nodes.Add(ff.Name);
-					}
-					else
-					{
-						newNode = treeNode.Nodes.Add(ff.Name);
-					}
-
-					newNode.Tag = ff;
-					newNode.ImageIndex = 0;
-					newNode.SelectedImageIndex = 0;
-					
-					treeNodesByTag.Add(ff, newNode);
-					if (ff.IsExpandedInUI)
-					{
-						newNode.Expand();
-						bool expanded = newNode.IsExpanded;
-					}
-					bindNodeListToTreeView(ff.ChildNodes, newNode);
-				}
-				else
-				{
-					throw new Exception("Form1.bindNodeListToTreeView error: Unrecognized node type: " + nodeType.ToString());
-				}
-			}
-		}
-
 
 		private void displayFeedItems(FeedSubscription feedSubscription)
 		{
@@ -575,8 +434,9 @@ namespace BetterReader
 					fi.MarkRead();
 				}
 				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
-				TreeNode node = treeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
-				setFeedSubNodeText(node, fi.ParentFeed.ParentSubscription);
+				feedSubManager.UpdateNodeFromFeedSubscription(fi.ParentFeed.ParentSubscription);
+				//TreeNode node = feedSubManager.TreeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
+				//setFeedSubNodeText(node, fi.ParentFeed.ParentSubscription);
 				fi.ParentFeed.FeedItems.ArchiveItems();
 			}
 		}
@@ -597,7 +457,8 @@ namespace BetterReader
 
 		private void hideFormShowNotifyIcon()
 		{
-			if (fst != null && fst.GetUnreadItemCount() > 0)
+			if (feedSubManager.GetUnreadItemCount() > 0)
+			//if (fst != null && fst.GetUnreadItemCount() > 0)
 			{
 				notifyIcon1.Icon = yellowLightIcon;
 				notifyIcon1.Text = oldUnreadItemsMessage;
@@ -619,26 +480,6 @@ namespace BetterReader
 			this.WindowState = stateBeforeMinimize;
 		}
 
-
-		private void moveTreeNode(TreeNode movedNode, TreeNode destinationNode)
-		{
-			fst.MoveNode((FeedSubTreeNodeBase)movedNode.Tag, (FeedSubTreeNodeBase)destinationNode.Tag);
-			bindFSTToTreeView();
-		}
-
-
-		private void doDragComplete()
-		{
-			fst.ReloadFromTreeView(feedsTV);
-			saveFeedSubTree();
-		}
-
-		private void saveFeedSubTree()
-		{
-			fst.SaveAsFeedSubscriptionsFile(feedSubsFilepath);
-		}
-
-
 		private bool showUnsubscribeConfirmation()
 		{
 			if (MessageBox.Show("Unsubscribe from this feed?", "Unsubscribe?") == DialogResult.OK)
@@ -649,61 +490,6 @@ namespace BetterReader
 			{
 				return false;
 			}
-		}
-
-
-
-		private void addNewFolder(TreeNode parentNode)
-		{
-			FeedFolder parentFolder = null;
-			TreeNode newNode = null;
-
-			FeedFolder newFolder = new FeedFolder();
-
-			newFolder.Name = "New Folder";
-
-			if (fst == null)
-			{
-				//this is most likely a new user with no subscriptions who has chosen to start
-				//with a new folder
-				fst = new FeedSubscriptionTree();
-			}
-
-			if (parentNode == null)
-			{
-				newFolder.ParentFolder = null;
-				fst.RootLevelNodes.Add(newFolder);
-				newNode = feedsTV.Nodes.Add(newFolder.Name);
-			}
-			else
-			{
-				parentFolder = (FeedFolder)parentNode.Tag;
-
-				newFolder.ParentFolder = parentFolder;
-				parentFolder.ChildNodes.Add(newFolder);
-
-				newNode = parentNode.Nodes.Add(newFolder.Name);
-			}
-
-			newNode.Tag = newFolder;
-			saveFeedSubTree();
-		}
-
-
-		private void deleteFolder(TreeNode rightClickedNode)
-		{
-			FeedFolder ff = (FeedFolder)rightClickedNode.Tag;
-			if (ff.ParentFolder == null)
-			{
-				fst.RootLevelNodes.Remove(ff);
-				feedsTV.Nodes.Remove(rightClickedNode);
-			}
-			else
-			{
-				ff.ParentFolder.ChildNodes.Remove(ff);
-				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
-			}
-			saveFeedSubTree();
 		}
 
 		private bool showDeleteFolderConfirmation()
@@ -737,60 +523,21 @@ namespace BetterReader
 				}
 			}
 
-			NewSubscriptionForm nsf = new NewSubscriptionForm(fst, parentFolder);
+			NewSubscriptionForm nsf = new NewSubscriptionForm(feedSubManager.FeedSubscriptionTree, parentFolder);
 
 			if (nsf.ShowDialog() == DialogResult.OK)
 			{
 				FeedSubscription fs = nsf.FeedSubscription;
-				addFeedSubscriptionToFolder(parentFolder, fs);
+				feedSubManager.AddFeedSubscriptionToFolder(parentFolder, fs);
 
 				fs.BeginReadFeed(feedSubReadCallback);
 			}
 		}
 
-		private void addFeedSubscriptionToFolder(FeedFolder parentFolder, FeedSubscription fs)
-		{
-			if (parentFolder == null)
-			{
-				if (fst == null)
-				{
-					fst = new FeedSubscriptionTree();
-				}
-				fst.RootLevelNodes.Add(fs);
-			}
-			else
-			{
-				parentFolder.ChildNodes.Add(fs);
-			}
-
-			TreeNode newNode = new TreeNode(fs.ToString());
-			newNode.Tag = fs;
-			newNode.ImageIndex = 1;
-			if (treeNodesByTag != null && parentFolder != null && treeNodesByTag.ContainsKey(parentFolder))
-			{
-				TreeNode parentNode = treeNodesByTag[parentFolder];
-				parentNode.Nodes.Add(newNode);
-			}
-			else
-			{
-				feedsTV.Nodes.Add(newNode);
-			}
-			
-
-			if (treeNodesByTag == null)
-			{
-				treeNodesByTag = new Dictionary<object, TreeNode>();
-			}
-			treeNodesByTag.Add(fs, newNode);
-			saveFeedSubTree();
-		}
-
-
 		private void markFeedRead(FeedSubscription fs)
 		{
 			fs.MarkAllItemsRead();
-			TreeNode node = treeNodesByTag[fs];
-			setNodePropertiesFromFeedSubscription(fs, node);
+			feedSubManager.UpdateNodeFromFeedSubscription(fs);
 			if (currentlyDisplayedFeedSubscription == fs)
 			{
 				displayFeedItems(fs);
@@ -905,9 +652,10 @@ namespace BetterReader
 			SubscriptionPropertiesForm spf = new SubscriptionPropertiesForm(fs);
 			if (spf.ShowDialog() == DialogResult.OK)
 			{
-				saveFeedSubTree();
+				feedSubManager.SaveFeedSubTree();
 				fs.Feed.FeedItems.PurgeOldItems();
-				setNodePropertiesFromFeedSubscription(fs, treeNodesByTag[fs]);
+				feedSubManager.UpdateNodeFromFeedSubscription(fs);
+				//setNodePropertiesFromFeedSubscription(fs, feedSubManager.TreeNodesByTag[fs]);
 				if (fs.Feed.ReadSuccess != true)
 				{
 					fs.BeginReadFeed(new FeedSubscriptionReadDelegate(feedSubReadCallback));
@@ -939,7 +687,7 @@ namespace BetterReader
 		//
 		private void feedReaderBGW_DoWork(object sender, DoWorkEventArgs e)
 		{
-			beginReads();
+			feedSubManager.BeginReadAllFeeds(new FeedSubscriptionReadDelegate(feedSubReadCallback));
 		}
 
 		private void feedsTV_AfterSelect(object sender, TreeViewEventArgs e)
@@ -966,9 +714,9 @@ namespace BetterReader
 		{
 			saveFormSettings();
 
-			if (fst != null)
+			if (feedSubManager != null)
 			{
-				fst.Dispose();
+				feedSubManager.Dispose();
 			}
 		}
 
@@ -1016,7 +764,7 @@ namespace BetterReader
 
 		private void feedsTV_DragComplete(object sender, Sloppycode.UI.DragCompleteEventArgs e)
 		{
-			doDragComplete();
+			feedSubManager.DoDragComplete();
 		}
 
 		private void newSubscriptionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1052,7 +800,7 @@ namespace BetterReader
 			{
 				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
 				fs.Unsubscribe();
-				saveFeedSubTree();
+				feedSubManager.SaveFeedSubTree();
 			}
 		}
 
@@ -1081,7 +829,7 @@ namespace BetterReader
 			}
 
 			feedsTV.LabelEdit = false;
-			saveFeedSubTree();
+			feedSubManager.SaveFeedSubTree();
 		}
 
 
@@ -1108,19 +856,19 @@ namespace BetterReader
 
 		private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			addNewFolder(rightClickedNode);
+			feedSubManager.AddNewFolder(rightClickedNode);
 		}
 
 		private void feedSubNewFolderContextMenuStripItem_Click(object sender, EventArgs e)
 		{
-			addNewFolder(rightClickedNode.Parent);
+			feedSubManager.AddNewFolder(rightClickedNode.Parent);
 		}
 
 		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (showDeleteFolderConfirmation())
 			{
-				deleteFolder(rightClickedNode);
+				feedSubManager.DeleteFolder(rightClickedNode);
 			}
 		}
 
@@ -1144,14 +892,14 @@ namespace BetterReader
 		private void feedItemsLV_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
 			sortFeedItemsLV(e.Column);
-			saveFeedSubTree();
+			feedSubManager.SaveFeedSubTree();
 		}
 
 		private void hideReadFeedsBTN_CheckedChanged(object sender, EventArgs e)
 		{
 			currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
 			feedItemsLV.Sort();
-			saveFeedSubTree();
+			feedSubManager.SaveFeedSubTree();
 		}
 
 
@@ -1167,7 +915,7 @@ namespace BetterReader
 
 		private void newFolderToolStripMenuItem1_Click(object sender, EventArgs e)
 		{
-			addNewFolder(null);
+			feedSubManager.AddNewFolder(null);
 		}
 
 		private void copyLinkLocationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1208,7 +956,7 @@ namespace BetterReader
 			FeedItemsListViewColumnSorter sorter = (FeedItemsListViewColumnSorter)feedItemsLV.ListViewItemSorter;
 			sorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
 			feedItemsLV.Sort();
-			saveFeedSubTree();
+			feedSubManager.SaveFeedSubTree();
 		}
 
 		private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
