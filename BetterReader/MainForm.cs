@@ -93,10 +93,10 @@ namespace BetterReader
 			feedItemsNormalFont = feedItemsLV.Font;
 			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
 
-			restoreWindowSettings();
-
 			feedSubManager = new FeedSubTreeManager(feedSubsFilepath, feedsTV, hideReadFeedsBTN);
-			
+
+			restoreWindowSettings();
+						
 			feedReaderBGW.RunWorkerAsync();
         }
 
@@ -120,6 +120,7 @@ namespace BetterReader
 				this.Location = Properties.Settings.Default.MyLoc;
 			}
 
+			this.Visible = false;
 			this.WindowState = FormWindowState.Normal;
 
 			//try
@@ -133,6 +134,7 @@ namespace BetterReader
 			//catch { }
 
 			this.WindowState = Properties.Settings.Default.MyState;
+			this.Visible = true;
 		}
 
 
