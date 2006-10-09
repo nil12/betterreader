@@ -60,7 +60,8 @@
     <Compile Include="FeedSubscriptionPropertiesControl.Designer.cs">
       <DependentUpon>FeedSubscriptionPropertiesControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FeedSubTreeManager.cs" />
+    <Compile Include="UIManagers\FeedItemsListManager.cs" />
+    <Compile Include="UIManagers\FeedSubTreeManager.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
