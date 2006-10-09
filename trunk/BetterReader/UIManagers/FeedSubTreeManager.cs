@@ -6,8 +6,13 @@ using System.IO;
 using System.Drawing;
 using BetterReader.Backend;
 
-namespace BetterReader
+namespace BetterReader.UIManagers
 {
+	/// <summary>
+	/// FeedSubTreeManager is a helper class to mediate between the UI elements and the FeedSubscriptionTree data structure.
+	/// The main purpose of this class is to consolidate the code related to the relationship between the UI and the tree 
+	/// structure.
+	/// </summary>
 	public class FeedSubTreeManager : IDisposable
 	{
 		private delegate void setFeedSubNodeTextDelegate(TreeNode node, FeedSubscription fs);
@@ -293,10 +298,11 @@ namespace BetterReader
 
 					
 				}
-				catch (InvalidOperationException)
+				catch (InvalidOperationException e)
 				{
 					//this was most likely caused by a feed reading thread returning during shutdown
 					//so we'll ignore it
+					string x = e.ToString();
 				}
 			}
 		}

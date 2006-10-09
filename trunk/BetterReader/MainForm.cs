@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using BetterReader.Backend;
+using BetterReader.UIManagers;
 using System.Diagnostics;
 
 namespace BetterReader
@@ -17,24 +18,21 @@ namespace BetterReader
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
 		//private FeedSubscriptionTree fst;
 		private FeedSubTreeManager feedSubManager;
-		private Dictionary<FeedItem, ListViewItem> listViewItemsByTag;
 		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
 		private readonly string feedSubsFilepath;
 		private static string archiveDirectory;
 		private readonly string graphicsDirectory = System.Environment.CurrentDirectory + "\\Graphics\\";
-		private Font feedItemsNormalFont;
-		private Font feedItemsBoldFont;
 		private Graphics formGraphics;
 		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
 		private TreeNode rightClickedNode;
-		private FeedSubscription currentlyDisplayedFeedSubscription;
 		private readonly string formStateFilepath;
-		private string currentlyDisplayedFeedItemGuid;
 		private const string newUnreadItemsMessage = "You have new, unread items.";
 		private const string oldUnreadItemsMessage = "You have unread items.";
 		private const string noUnreadItemsMessage = "You have no unread items.";
 		private Color controlBackgroundColor = Color.WhiteSmoke;
 		private FormWindowState stateBeforeMinimize;
+		private FeedItemsListManager feedItemsManager;
+		private string currentlyDisplayedFeedItemGuid;
 
 		internal static string ArchiveDirectory
 		{
@@ -46,12 +44,11 @@ namespace BetterReader
 
         public MainForm()
         {
-			currentlyDisplayedFeedItemGuid = "";
-			currentlyDisplayedFeedSubscription = null;
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			archiveDirectory = settingsDirectory + "ArchivedItems\\";
 			formStateFilepath = settingsDirectory + "MainFormState.xml";
+			currentlyDisplayedFeedItemGuid = "";
 
 			feedsTV.BackColor = feedItemsLV.BackColor = controlBackgroundColor;
 
@@ -90,10 +87,9 @@ namespace BetterReader
 			ensureDirectoryExists(settingsDirectory);
 			ensureDirectoryExists(archiveDirectory);
 			
-			feedItemsNormalFont = feedItemsLV.Font;
-			feedItemsBoldFont = new Font(feedItemsNormalFont, FontStyle.Bold);
-
 			feedSubManager = new FeedSubTreeManager(feedSubsFilepath, feedsTV, hideReadFeedsBTN);
+			feedItemsManager = new FeedItemsListManager(feedItemsLV, itemLinkLBL, itemTitleLBL, lastDownloadLBL, 
+				showUnreadFirstBTN, markAllReadBTN, feedSubManager);
 
 			restoreWindowSettings();
 						
@@ -104,6 +100,14 @@ namespace BetterReader
 		{
 			//this is needed for hotkey support
 			feedItemsLV.Focus();
+		}
+
+		private void displayFeedItems(FeedSubscription feedSubscription)
+		{
+			feedItemsManager.DisplayFeedItems(feedSubscription);
+			clearWebBrowser();
+			feedTitleLBL.Text = feedSubscription.DisplayName;
+			feedTitleLBL.Width = splitContainer2.Panel1.Width;
 		}
 
 		private void restoreWindowSettings()
@@ -201,70 +205,7 @@ namespace BetterReader
             }
         }
 
-		private void displayFeedItems(FeedSubscription feedSubscription)
-		{
-			//lock (feedItemsLV)
-			//{
-				currentlyDisplayedFeedSubscription = feedSubscription;
-				currentlyDisplayedFeedItemGuid = "";
-				itemLinkLBL.Visible = false;
-				itemTitleLBL.Visible = false;
-				feedSubscription.ResetUpdateTimer();
-				feedItemsLV.ListViewItemSorter = currentlyDisplayedFeedSubscription.ColumnSorter;
-				showUnreadFirstBTN.Visible = true;
-				showUnreadFirstBTN.Checked = currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled;
-				lastDownloadLBL.Visible = true;
-				lastDownloadLBL.Text = "Last Downloaded: " + feedSubscription.Feed.LastDownloadAttempt.ToString();
-				MarkAllReadBTN.Visible = true;
-
-				listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
-				//feedItemsLV.BeginUpdate();
-				feedItemsLV.Clear();
-				clearWebBrowser();
-				feedTitleLBL.Text = feedSubscription.DisplayName;
-				feedTitleLBL.Width = splitContainer2.Panel1.Width;
-				if (feedSubscription.Feed.ReadSuccess)
-				{
-					bindFeedItemsToListView(feedSubscription.Feed.FeedItems);
-					feedItemsLV.Enabled = true;
-				}
-				else
-				{
-					if (feedSubscription.Feed.ReadException == null)
-					{
-						feedItemsLV.Columns.Add("Title");
-						ListViewItem lvi = new ListViewItem("Loading");
-						feedItemsLV.Items.Add(lvi);
-						feedItemsLV.Enabled = false;
-					}
-					else
-					{
-						feedItemsLV.Columns.Add("Error");
-						ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
-						feedItemsLV.Items.Add(lvi);
-						feedItemsLV.Enabled = false;
-					}
-
-					//feedItemsLV.EndUpdate();
-					return;
-				}
-				feedItemsLV.Sort();
-
-				clearColumnHeaderIcons();
-				if (currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn < feedItemsLV.Columns.Count)
-				{
-					feedItemsLV.Columns[currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn].ImageIndex =
-							getArrowImageIndexForSortColumn(currentlyDisplayedFeedSubscription.ColumnSorter);
-				}
-				else
-				{
-					MessageBox.Show("A recoverable error has been encountered: The current sort column index (" +
-						currentlyDisplayedFeedSubscription.ColumnSorter.SortColumn.ToString() + ") is greater than " +
-						"the number of columns in the FeedItems ListView (" + feedItemsLV.Columns.Count.ToString() + ")");
-				}
-				//feedItemsLV.EndUpdate();
-			//}
-		}
+		
 
 		private void clearWebBrowser()
 		{
@@ -274,120 +215,7 @@ namespace BetterReader
 			}
 		}
 
-		private void bindFeedItemsToListView(FeedItemCollection feedItems)
-		{
-			feedItemsLV.SuspendLayout();
-			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
-			if (feedItems.Count < 1)
-			{
-				feedItemsLV.Items.Add(new ListViewItem("No items found.")).ImageIndex = 2;
-				feedItemsLV.Enabled = false;
-				return;
-			}
 
-			feedItemsLV.Enabled = true;
-			foreach (FeedItem fi in feedItems)
-			{
-				ListViewItem lvi = new ListViewItem(fi.Title);
-				lvi.Tag = fi;
-				lvi.IndentCount = 0;
-				setListViewItemSubItems(lvi, fi, currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
-				if (fi.HasBeenRead)
-				{
-					lvi.Font = feedItemsNormalFont;
-				}
-				else
-				{
-					lvi.Font = feedItemsBoldFont;
-				}
-
-				if (fi.Guid == currentlyDisplayedFeedItemGuid)
-				{
-					lvi.Selected = true;
-					feedItemsLV.SelectedIndices.Add(feedItemsLV.Items.IndexOf(lvi));
-				}
-
-
-				lvi.ImageIndex = 2;
-				
-				feedItemsLV.Items.Add(lvi);
-				listViewItemsByTag.Add(fi, lvi);
-			}
-
-			setFeedItemColumnWidths();
-			feedItemsLV.ResumeLayout();
-		}
-
-		private void setFeedItemColumnWidths()
-		{
-			foreach (ColumnHeader ch in feedItemsLV.Columns)
-			{
-				ch.Width = -1;
-			}
-		}
-
-
-		private void setListViewItemSubItems(ListViewItem lvi, FeedItem fi, FeedItemProperties itemProps)
-		{
-			if ((itemProps & FeedItemProperties.PubDate) == FeedItemProperties.PubDate)
-			{
-				lvi.SubItems.Add(fi.PubDate.ToString());
-			}
-
-			if ((itemProps & FeedItemProperties.HasBeenRead) == FeedItemProperties.HasBeenRead)
-			{
-				lvi.SubItems.Add(fi.HasBeenRead.ToString());
-			}
-
-			if ((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate)
-			{
-				lvi.SubItems.Add(fi.DownloadDate.ToString());
-			}
-
-			if ((itemProps & FeedItemProperties.Category) == FeedItemProperties.Category)
-			{
-				lvi.SubItems.Add(fi.Category.ToString());
-			}
-
-			if ((itemProps & FeedItemProperties.Author) == FeedItemProperties.Author)
-			{
-				lvi.SubItems.Add(fi.Author.ToString());
-			}
-		}
-
-
-		private void addFeedItemColumnsToListView(FeedItemProperties itemProps)
-		{
-			feedItemsLV.Columns.Add("Title");
-
-			if ((itemProps & FeedItemProperties.PubDate) == FeedItemProperties.PubDate)
-			{
-				feedItemsLV.Columns.Add("PubDate");
-			}
-
-			if ((itemProps & FeedItemProperties.HasBeenRead) == FeedItemProperties.HasBeenRead)
-			{
-				feedItemsLV.Columns.Add("Read");
-			}
-
-			if (((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate) &&
-				((itemProps & FeedItemProperties.PubDate) != FeedItemProperties.PubDate))
-			{
-				//only show downloadDate if pubDate is unavailable
-				feedItemsLV.Columns.Add("DownloadDate");
-			}
-
-			if ((itemProps & FeedItemProperties.Category) == FeedItemProperties.Category)
-			{
-				feedItemsLV.Columns.Add("Category");
-			}
-
-			if ((itemProps & FeedItemProperties.Author) == FeedItemProperties.Author)
-			{
-				feedItemsLV.Columns.Add("Author");
-			}
-
-		}
 
 
 
@@ -431,15 +259,8 @@ namespace BetterReader
 						}
 					}
 				}
-				if (fi.HasBeenRead == false)
-				{
-					fi.MarkRead();
-				}
-				feedItemsLV.SelectedItems[0].Font = feedItemsNormalFont;
-				feedSubManager.UpdateNodeFromFeedSubscription(fi.ParentFeed.ParentSubscription);
-				//TreeNode node = feedSubManager.TreeNodesByTag[fi.ParentFeed.ParentSubscription] as TreeNode;
-				//setFeedSubNodeText(node, fi.ParentFeed.ParentSubscription);
-				fi.ParentFeed.FeedItems.ArchiveItems();
+
+				feedItemsManager.MarkFeedItemRead(fi);
 			}
 		}
 
@@ -540,7 +361,7 @@ namespace BetterReader
 		{
 			fs.MarkAllItemsRead();
 			feedSubManager.UpdateNodeFromFeedSubscription(fs);
-			if (currentlyDisplayedFeedSubscription == fs)
+			if (feedItemsManager.CurrentlyDisplayedFeedSubscription == fs)
 			{
 				displayFeedItems(fs);
 			}
@@ -575,7 +396,7 @@ namespace BetterReader
 			{
 				case 'r':
 				case 'R':
-					markFeedRead(currentlyDisplayedFeedSubscription);
+					markFeedRead(feedItemsManager.CurrentlyDisplayedFeedSubscription);
 					break;
 				case 'm':
 				case 'M':
@@ -588,63 +409,9 @@ namespace BetterReader
 			}
 		}
 
-		private void sortFeedItemsLV(int columnIndex)
-		{
-			FeedItemsListViewColumnSorter lvwColumnSorter = (FeedItemsListViewColumnSorter)feedItemsLV.ListViewItemSorter;
-
-			clearColumnHeaderIcons();
+		
 
 
-			// Determine if clicked column is already the column that is being sorted.
-			if (columnIndex == lvwColumnSorter.SortColumn)
-			{
-				// Reverse the current sort direction for this column.
-				if (lvwColumnSorter.Order == SortOrder.Ascending)
-				{
-					lvwColumnSorter.Order = SortOrder.Descending;
-
-				}
-				else
-				{
-					lvwColumnSorter.Order = SortOrder.Ascending;
-				}
-			}
-			else
-			{
-				// Set the column number that is to be sorted; default to ascending.
-				lvwColumnSorter.SortColumn = columnIndex;
-				lvwColumnSorter.Order = SortOrder.Ascending;
-			}
-
-			int arrowImageIndex = getArrowImageIndexForSortColumn(lvwColumnSorter);
-
-			feedItemsLV.Columns[columnIndex].ImageIndex = arrowImageIndex;
-
-			// Perform the sort with these new sort options.
-			feedItemsLV.Sort();
-		}
-
-		private void clearColumnHeaderIcons()
-		{
-			foreach (ColumnHeader ch in feedItemsLV.Columns)
-			{
-				ch.ImageIndex = -1;
-			}
-		}
-
-		private int getArrowImageIndexForSortColumn(FeedItemsListViewColumnSorter lvwColumnSorter)
-		{
-			int arrowImageIndex;
-			if (lvwColumnSorter.Order == SortOrder.Ascending)
-			{
-				arrowImageIndex = 0;
-			}
-			else
-			{
-				arrowImageIndex = 1;
-			}
-			return arrowImageIndex;
-		}
 
 		
 
@@ -893,13 +660,13 @@ namespace BetterReader
 
 		private void feedItemsLV_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
-			sortFeedItemsLV(e.Column);
+			feedItemsManager.SortFeedItemsLV(e.Column);
 			feedSubManager.SaveFeedSubTree();
 		}
 
 		private void hideReadFeedsBTN_CheckedChanged(object sender, EventArgs e)
 		{
-			currentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
+			feedItemsManager.CurrentlyDisplayedFeedSubscription.ColumnSorter.SmartSortEnabled = showUnreadFirstBTN.Checked;
 			feedItemsLV.Sort();
 			feedSubManager.SaveFeedSubTree();
 		}
@@ -950,7 +717,7 @@ namespace BetterReader
 
 		private void markFeedReadButton1_Click(object sender, EventArgs e)
 		{
-			markFeedRead(currentlyDisplayedFeedSubscription);
+			markFeedRead(feedItemsManager.CurrentlyDisplayedFeedSubscription);
 		}
 
 		private void showUnreadFirstBTN_Click(object sender, EventArgs e)

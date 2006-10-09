@@ -53,7 +53,7 @@ namespace BetterReader
 			this.lastDownloadLBL = new System.Windows.Forms.ToolStripLabel();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.showUnreadFirstBTN = new System.Windows.Forms.ToolStripButton();
-			this.MarkAllReadBTN = new System.Windows.Forms.ToolStripButton();
+			this.markAllReadBTN = new System.Windows.Forms.ToolStripButton();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -62,7 +62,10 @@ namespace BetterReader
 			this.splitContainer4 = new System.Windows.Forms.SplitContainer();
 			this.itemLinkLBL = new System.Windows.Forms.LinkLabel();
 			this.itemTitleLBL = new System.Windows.Forms.Label();
+			this.panel2 = new System.Windows.Forms.Panel();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+			this.browserToolStrip = new System.Windows.Forms.ToolStrip();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.feedSubContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newSubscriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,9 +86,6 @@ namespace BetterReader
 			this.markAllReadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newFeedSubscriptionToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
-			this.browserToolStrip = new System.Windows.Forms.ToolStrip();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -106,11 +106,11 @@ namespace BetterReader
 			this.splitContainer4.Panel1.SuspendLayout();
 			this.splitContainer4.Panel2.SuspendLayout();
 			this.splitContainer4.SuspendLayout();
+			this.panel2.SuspendLayout();
+			this.browserToolStrip.SuspendLayout();
 			this.feedSubContextMenuStrip.SuspendLayout();
 			this.notifyIconContextMenuStrip.SuspendLayout();
 			this.folderContextMenuStrip.SuspendLayout();
-			this.browserToolStrip.SuspendLayout();
-			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// mainMenuStrip
@@ -293,7 +293,7 @@ namespace BetterReader
             this.lastDownloadLBL,
             this.toolStripSeparator1,
             this.showUnreadFirstBTN,
-            this.MarkAllReadBTN});
+            this.markAllReadBTN});
 			this.feedItemsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.feedItemsToolStrip.Name = "feedItemsToolStrip";
 			this.feedItemsToolStrip.Size = new System.Drawing.Size(619, 25);
@@ -326,17 +326,17 @@ namespace BetterReader
 			this.showUnreadFirstBTN.Visible = false;
 			this.showUnreadFirstBTN.Click += new System.EventHandler(this.showUnreadFirstBTN_Click);
 			// 
-			// MarkAllReadBTN
+			// markAllReadBTN
 			// 
-			this.MarkAllReadBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.MarkAllReadBTN.Image = ((System.Drawing.Image)(resources.GetObject("MarkAllReadBTN.Image")));
-			this.MarkAllReadBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MarkAllReadBTN.Name = "MarkAllReadBTN";
-			this.MarkAllReadBTN.Size = new System.Drawing.Size(23, 22);
-			this.MarkAllReadBTN.Text = "toolStripButton1";
-			this.MarkAllReadBTN.ToolTipText = "Mark All Read (hotkey R)";
-			this.MarkAllReadBTN.Visible = false;
-			this.MarkAllReadBTN.Click += new System.EventHandler(this.markFeedReadButton1_Click);
+			this.markAllReadBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.markAllReadBTN.Image = ((System.Drawing.Image)(resources.GetObject("markAllReadBTN.Image")));
+			this.markAllReadBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.markAllReadBTN.Name = "markAllReadBTN";
+			this.markAllReadBTN.Size = new System.Drawing.Size(23, 22);
+			this.markAllReadBTN.Text = "toolStripButton1";
+			this.markAllReadBTN.ToolTipText = "Mark All Read (hotkey R)";
+			this.markAllReadBTN.Visible = false;
+			this.markAllReadBTN.Click += new System.EventHandler(this.markFeedReadButton1_Click);
 			// 
 			// feedTitleLBL
 			// 
@@ -447,6 +447,15 @@ namespace BetterReader
 			this.itemTitleLBL.Size = new System.Drawing.Size(0, 17);
 			this.itemTitleLBL.TabIndex = 0;
 			// 
+			// panel2
+			// 
+			this.panel2.Controls.Add(this.webBrowser1);
+			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel2.Location = new System.Drawing.Point(0, 25);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(619, 220);
+			this.panel2.TabIndex = 2;
+			// 
 			// webBrowser1
 			// 
 			this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -456,6 +465,27 @@ namespace BetterReader
 			this.webBrowser1.Size = new System.Drawing.Size(619, 220);
 			this.webBrowser1.TabIndex = 0;
 			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+			// 
+			// browserToolStrip
+			// 
+			this.browserToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1});
+			this.browserToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.browserToolStrip.Name = "browserToolStrip";
+			this.browserToolStrip.Size = new System.Drawing.Size(619, 25);
+			this.browserToolStrip.TabIndex = 1;
+			this.browserToolStrip.Text = "toolStrip1";
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+			this.toolStripButton1.Text = "toolStripButton1";
+			this.toolStripButton1.ToolTipText = "Clear Browser Window";
+			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
 			// 
 			// feedSubContextMenuStrip
 			// 
@@ -605,36 +635,6 @@ namespace BetterReader
 			this.notifyIconImageList.Images.SetKeyName(1, "yellowlight.ico");
 			this.notifyIconImageList.Images.SetKeyName(2, "redlight.ico");
 			// 
-			// browserToolStrip
-			// 
-			this.browserToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1});
-			this.browserToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.browserToolStrip.Name = "browserToolStrip";
-			this.browserToolStrip.Size = new System.Drawing.Size(619, 25);
-			this.browserToolStrip.TabIndex = 1;
-			this.browserToolStrip.Text = "toolStrip1";
-			// 
-			// panel2
-			// 
-			this.panel2.Controls.Add(this.webBrowser1);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel2.Location = new System.Drawing.Point(0, 25);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(619, 220);
-			this.panel2.TabIndex = 2;
-			// 
-			// toolStripButton1
-			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButton1.Text = "toolStripButton1";
-			this.toolStripButton1.ToolTipText = "Clear Browser Window";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -679,12 +679,12 @@ namespace BetterReader
 			this.splitContainer4.Panel2.ResumeLayout(false);
 			this.splitContainer4.Panel2.PerformLayout();
 			this.splitContainer4.ResumeLayout(false);
+			this.panel2.ResumeLayout(false);
+			this.browserToolStrip.ResumeLayout(false);
+			this.browserToolStrip.PerformLayout();
 			this.feedSubContextMenuStrip.ResumeLayout(false);
 			this.notifyIconContextMenuStrip.ResumeLayout(false);
 			this.folderContextMenuStrip.ResumeLayout(false);
-			this.browserToolStrip.ResumeLayout(false);
-			this.browserToolStrip.PerformLayout();
-			this.panel2.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -735,7 +735,7 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStrip feedItemsToolStrip;
 		private System.Windows.Forms.ToolStripLabel lastDownloadLBL;
 		private System.Windows.Forms.ToolStripButton showUnreadFirstBTN;
-		private System.Windows.Forms.ToolStripButton MarkAllReadBTN;
+		private System.Windows.Forms.ToolStripButton markAllReadBTN;
 		private System.Windows.Forms.ToolStripMenuItem newFeedSubscriptionToolStripMenuItem1;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
