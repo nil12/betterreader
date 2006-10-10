@@ -37,12 +37,12 @@ namespace BetterReader
 			// 
 			this.feedSubscriptionPropertiesControl1.Location = new System.Drawing.Point(12, 12);
 			this.feedSubscriptionPropertiesControl1.Name = "feedSubscriptionPropertiesControl1";
-			this.feedSubscriptionPropertiesControl1.Size = new System.Drawing.Size(453, 138);
+			this.feedSubscriptionPropertiesControl1.Size = new System.Drawing.Size(453, 268);
 			this.feedSubscriptionPropertiesControl1.TabIndex = 0;
 			// 
 			// okBTN
 			// 
-			this.okBTN.Location = new System.Drawing.Point(389, 156);
+			this.okBTN.Location = new System.Drawing.Point(390, 286);
 			this.okBTN.Name = "okBTN";
 			this.okBTN.Size = new System.Drawing.Size(75, 23);
 			this.okBTN.TabIndex = 1;
@@ -53,7 +53,7 @@ namespace BetterReader
 			// cancelBTN
 			// 
 			this.cancelBTN.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelBTN.Location = new System.Drawing.Point(308, 156);
+			this.cancelBTN.Location = new System.Drawing.Point(309, 286);
 			this.cancelBTN.Name = "cancelBTN";
 			this.cancelBTN.Size = new System.Drawing.Size(75, 23);
 			this.cancelBTN.TabIndex = 2;
@@ -67,7 +67,7 @@ namespace BetterReader
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelBTN;
-			this.ClientSize = new System.Drawing.Size(482, 198);
+			this.ClientSize = new System.Drawing.Size(482, 319);
 			this.ControlBox = false;
 			this.Controls.Add(this.cancelBTN);
 			this.Controls.Add(this.okBTN);

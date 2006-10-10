@@ -40,11 +40,18 @@ namespace BetterReader
 			this.label2 = new System.Windows.Forms.Label();
 			this.urlTB = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.defaultRB = new System.Windows.Forms.RadioButton();
+			this.loadDescRB = new System.Windows.Forms.RadioButton();
+			this.loadLinkIntRB = new System.Windows.Forms.RadioButton();
+			this.loadLinkExtRB = new System.Windows.Forms.RadioButton();
 			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.groupBox2);
 			this.groupBox1.Controls.Add(this.maxItemsTB);
 			this.groupBox1.Controls.Add(this.label6);
 			this.groupBox1.Controls.Add(this.daysToArchiveTB);
@@ -59,7 +66,7 @@ namespace BetterReader
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.groupBox1.Location = new System.Drawing.Point(0, 0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(453, 148);
+			this.groupBox1.Size = new System.Drawing.Size(453, 275);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Feed Subscription Properties";
@@ -159,15 +166,69 @@ namespace BetterReader
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Feed URL:";
 			// 
+			// groupBox2
+			// 
+			this.groupBox2.Controls.Add(this.loadLinkExtRB);
+			this.groupBox2.Controls.Add(this.loadLinkIntRB);
+			this.groupBox2.Controls.Add(this.loadDescRB);
+			this.groupBox2.Controls.Add(this.defaultRB);
+			this.groupBox2.Location = new System.Drawing.Point(14, 141);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(245, 117);
+			this.groupBox2.TabIndex = 11;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "When a feed item is clicked . . .";
+			// 
+			// defaultRB
+			// 
+			this.defaultRB.AutoSize = true;
+			this.defaultRB.Checked = true;
+			this.defaultRB.Location = new System.Drawing.Point(9, 32);
+			this.defaultRB.Name = "defaultRB";
+			this.defaultRB.Size = new System.Drawing.Size(59, 17);
+			this.defaultRB.TabIndex = 1;
+			this.defaultRB.TabStop = true;
+			this.defaultRB.Text = "Default";
+			this.defaultRB.UseVisualStyleBackColor = true;
+			// 
+			// loadDescRB
+			// 
+			this.loadDescRB.Location = new System.Drawing.Point(9, 55);
+			this.loadDescRB.Name = "loadDescRB";
+			this.loadDescRB.Size = new System.Drawing.Size(114, 35);
+			this.loadDescRB.TabIndex = 2;
+			this.loadDescRB.Text = "Load Description in internal browser";
+			this.loadDescRB.UseVisualStyleBackColor = true;
+			// 
+			// loadLinkIntRB
+			// 
+			this.loadLinkIntRB.Location = new System.Drawing.Point(124, 55);
+			this.loadLinkIntRB.Name = "loadLinkIntRB";
+			this.loadLinkIntRB.Size = new System.Drawing.Size(109, 41);
+			this.loadLinkIntRB.TabIndex = 3;
+			this.loadLinkIntRB.Text = "Load Item Link in internal browser";
+			this.loadLinkIntRB.UseVisualStyleBackColor = true;
+			// 
+			// loadLinkExtRB
+			// 
+			this.loadLinkExtRB.Location = new System.Drawing.Point(124, 18);
+			this.loadLinkExtRB.Name = "loadLinkExtRB";
+			this.loadLinkExtRB.Size = new System.Drawing.Size(109, 44);
+			this.loadLinkExtRB.TabIndex = 4;
+			this.loadLinkExtRB.Text = "Load item link in external browser";
+			this.loadLinkExtRB.UseVisualStyleBackColor = true;
+			// 
 			// FeedSubscriptionPropertiesControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox1);
 			this.Name = "FeedSubscriptionPropertiesControl";
-			this.Size = new System.Drawing.Size(453, 148);
+			this.Size = new System.Drawing.Size(453, 275);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -186,5 +247,10 @@ namespace BetterReader
 		private System.Windows.Forms.TextBox daysToArchiveTB;
 		private System.Windows.Forms.TextBox maxItemsTB;
 		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.RadioButton defaultRB;
+		private System.Windows.Forms.RadioButton loadLinkExtRB;
+		private System.Windows.Forms.RadioButton loadLinkIntRB;
+		private System.Windows.Forms.RadioButton loadDescRB;
 	}
 }

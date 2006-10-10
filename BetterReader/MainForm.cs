@@ -215,10 +215,6 @@ namespace BetterReader
 			}
 		}
 
-
-
-
-
 		private void displaySelectedFeedItem()
 		{
 			if (feedItemsLV.SelectedItems.Count > 0)
@@ -231,44 +227,89 @@ namespace BetterReader
 				itemLinkLBL.Text = fi.LinkUrl;
 				itemLinkLBL.Links[0].LinkData = fi.LinkUrl;
 				itemLinkLBL.LinkVisited = false;
-				if (fi != null)
-				{
-					string docText = "";
-					if (fi.EncodedContent != null && fi.EncodedContent.Length > 0)
-					{
-						docText = formatDescriptionHTML(fi.EncodedContent);
-					}
-					else if (fi.Description != null && fi.Description.Length > 0)
-					{
-						docText = formatDescriptionHTML(fi.Description);
-					}
 
-					if (docText != "")
-					{
-						if (webBrowser1.DocumentText.Length != docText.Length)
-						{
-							webBrowser1.DocumentText = docText;
-						}
-					}
-					else
-					{
-						webBrowser1.DocumentText = formatDescriptionHTML("Loading page . . .");
-						if (webBrowser1.Url == null || webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
-						{
-							webBrowser1.Navigate(fi.LinkUrl);
-						}
-					}
+				switch (fi.ParentFeed.ParentSubscription.FeedItemClickAction)
+				{
+					case FeedItemClickAction.Default:
+						Debug.WriteLine("using default method");
+						displayFeedItemDefaultMethod(fi);
+						break;
+					case FeedItemClickAction.LoadDescriptionInternalBrowser:
+						Debug.WriteLine("using loadDescriptionInternalBrowser method");
+						setWebBrowserText(getFeedItemDescription(fi));
+						break;
+					case FeedItemClickAction.LoadLinkInternalBrowser:
+						Debug.WriteLine("using loadLinkInternalBrowser method");
+						setWebBrowserUrlToFeedItemLinkUrl(fi);
+						break;
+					case FeedItemClickAction.LoadLinkExternalBrowser:
+						Debug.WriteLine("using loadLinkExternalBrowser method");
+						launchExternalBrowser(fi.LinkUrl);
+						break;
 				}
 
 				feedItemsManager.MarkFeedItemRead(fi);
 			}
 		}
 
+		private void displayFeedItemDefaultMethod(FeedItem fi)
+		{
+			if (fi != null)
+			{
+				string docText = getFeedItemDescription(fi);
+
+				if (docText != "")
+				{
+					setWebBrowserText(docText);
+				}
+				else
+				{
+					webBrowser1.DocumentText = formatDescriptionHTML("Loading page . . .");
+					setWebBrowserUrlToFeedItemLinkUrl(fi);
+				}
+			}
+		}
+
+		private void setWebBrowserUrlToFeedItemLinkUrl(FeedItem fi)
+		{
+			if (webBrowser1.Url == null || webBrowser1.Url.AbsoluteUri != fi.LinkUrl)
+			{
+				webBrowser1.Navigate(fi.LinkUrl);
+			}
+		}
+
+		private void setWebBrowserText(string docText)
+		{
+			if (webBrowser1.DocumentText.Length != docText.Length)
+			{
+				webBrowser1.DocumentText = docText;
+			}
+		}
+
+		private string getFeedItemDescription(FeedItem fi)
+		{
+			string docText = "";
+			if (fi.EncodedContent != null && fi.EncodedContent.Length > 0)
+			{
+				docText = formatDescriptionHTML(fi.EncodedContent);
+			}
+			else if (fi.Description != null && fi.Description.Length > 0)
+			{
+				docText = formatDescriptionHTML(fi.Description);
+			}
+			return docText;
+		}
+
 
 		private void visitLink(LinkLabel.Link link)
 		{
 			link.Visited = true;
-			System.Diagnostics.Process.Start(link.LinkData.ToString());
+			launchExternalBrowser(link.LinkData.ToString());
+		}
+
+		private static void launchExternalBrowser(string link)
+		{
+			System.Diagnostics.Process.Start(link);
 		}
 
 		private string formatDescriptionHTML(string description)

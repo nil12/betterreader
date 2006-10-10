@@ -19,6 +19,13 @@ namespace BetterReader.Backend
 		private int daysToArchive;
 		private int maxItems;
 		private FeedItemsListViewColumnSorter columnSorter;
+		private FeedItemClickAction feedItemClickAction;
+
+		public FeedItemClickAction FeedItemClickAction
+		{
+			get { return feedItemClickAction; }
+			set { feedItemClickAction = value; }
+		}
 
 
 		public int MaxItems
@@ -87,8 +94,9 @@ namespace BetterReader.Backend
 			guid = Guid.NewGuid();
 			daysToArchive = 2;
 			updateSeconds = 15 * 60;
-			maxItems = 275;
+			maxItems = 100;
 			columnSorter = new FeedItemsListViewColumnSorter();
+			feedItemClickAction = FeedItemClickAction.Default;
 		}
 
 		public void BeginReadFeed(FeedSubscriptionReadDelegate lCallback)
