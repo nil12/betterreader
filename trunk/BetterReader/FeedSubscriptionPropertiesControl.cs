@@ -24,6 +24,21 @@ namespace BetterReader
 			updateMinutesTB.Text = ((int)(fs.UpdateSeconds / 60)).ToString();
 			daysToArchiveTB.Text = fs.DaysToArchive.ToString();
 			maxItemsTB.Text = fs.MaxItems.ToString();
+			switch (fs.FeedItemClickAction)
+			{
+				case FeedItemClickAction.Default:
+					defaultRB.Checked = true;
+					break;
+				case FeedItemClickAction.LoadDescriptionInternalBrowser:
+					loadDescRB.Checked = true;
+					break;
+				case FeedItemClickAction.LoadLinkExternalBrowser:
+					loadLinkExtRB.Checked = true;
+					break;
+				case FeedItemClickAction.LoadLinkInternalBrowser:
+					loadLinkIntRB.Checked = true;
+					break;
+			}
 		}
 
 		internal void SaveToFeedSubscription(FeedSubscription fs)
@@ -33,6 +48,28 @@ namespace BetterReader
 			fs.UpdateSeconds = int.Parse(updateMinutesTB.Text) * 60;
 			fs.DaysToArchive = int.Parse(daysToArchiveTB.Text);
 			fs.MaxItems = int.Parse(maxItemsTB.Text);
+
+			if (defaultRB.Checked)
+			{
+				fs.FeedItemClickAction = FeedItemClickAction.Default;
+			}
+			else if (loadDescRB.Checked)
+			{
+				fs.FeedItemClickAction = FeedItemClickAction.LoadDescriptionInternalBrowser;
+			}
+			else if (loadLinkExtRB.Checked)
+			{
+				fs.FeedItemClickAction = FeedItemClickAction.LoadLinkExternalBrowser;
+			}
+			else if (loadLinkIntRB.Checked)
+			{
+				fs.FeedItemClickAction = FeedItemClickAction.LoadLinkInternalBrowser;
+			}
+			else
+			{
+				//this is a case that really shouldn't occur so set to default
+				fs.FeedItemClickAction = FeedItemClickAction.LoadDescriptionInternalBrowser;
+			}
 		}
 
 		internal FeedSubscriptionPropertiesFormValidity ValidateFeedSubscription()
