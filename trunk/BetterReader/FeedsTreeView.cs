@@ -8,7 +8,6 @@ namespace BetterReader
 {
 	public class FeedsTreeView : Sloppycode.UI.TreeViewDragDrop
 	{
-
 		private Dictionary<object, HiddenNode> hiddenNodes = new Dictionary<object, HiddenNode>();
 		private delegate void HideNodeDelegate(TreeNode node);
 		private delegate void InsertNodeDelegate(int index, TreeNode node);
