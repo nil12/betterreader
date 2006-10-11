@@ -48,7 +48,7 @@ namespace BetterReader.UIManagers
 
 		public void BindFeedItemsToListView(FeedItemCollection feedItems)
 		{
-			feedItemsLV.SuspendLayout();
+			//feedItemsLV.SuspendLayout();
 			addFeedItemColumnsToListView(currentlyDisplayedFeedSubscription.Feed.IncludedFeedItemProperties);
 			if (feedItems.Count < 1)
 			{
@@ -81,7 +81,7 @@ namespace BetterReader.UIManagers
 			}
 
 			setFeedItemColumnWidths();
-			feedItemsLV.ResumeLayout();
+			//feedItemsLV.ResumeLayout();
 		}
 
 		public void DisplayFeedItems(FeedSubscription feedSubscription)
