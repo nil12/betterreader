@@ -14,6 +14,7 @@ namespace BetterReader
 
 		protected override void OnDragDrop(DragEventArgs e)
 		{
+			//DisableBackgroundErase = false;
 			handleCustomCursor();
 
 			// Check it's a treenode being dragged
@@ -44,6 +45,8 @@ namespace BetterReader
 					doPostDragTasks(dragNode, targetNode);
 				}
 			}
+			//this.Invalidate();
+			//DisableBackgroundErase = true;
 		}
 
 		private void moveNodeToBeforeTargetNode(TreeNode dragNode, TreeNode targetNode)
