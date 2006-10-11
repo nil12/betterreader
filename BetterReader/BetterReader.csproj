@@ -28,10 +28,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Sloppycode.UI.DragDropTreeView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>RequiredBinaries\Sloppycode.UI.DragDropTreeView.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -60,6 +56,9 @@
     </Compile>
     <Compile Include="FeedSubscriptionPropertiesControl.Designer.cs">
       <DependentUpon>FeedSubscriptionPropertiesControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SloppyCodeTreeView\DragDropTreeView.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UIManagers\FeedItemsListManager.cs" />
     <Compile Include="UIManagers\FeedSubTreeManager.cs" />
