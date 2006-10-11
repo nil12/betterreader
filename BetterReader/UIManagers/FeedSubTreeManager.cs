@@ -88,12 +88,10 @@ namespace BetterReader.UIManagers
 
 		internal void BindTreeView()
 		{
-			feedsTreeView.BeginUpdate();
 			feedsTreeView.Nodes.Clear();
 			treeNodesByTag = new Dictionary<object, TreeNode>();
 			bindNodeListToTreeView(fst.RootLevelNodes, null);
 			feedsTreeView.ExpandAll();
-			feedsTreeView.EndUpdate();
 		}
 
 		private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
