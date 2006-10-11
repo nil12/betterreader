@@ -37,7 +37,7 @@ namespace BetterReader.Backend
             }
         }
 
-		public void ReloadFromTreeView(System.Windows.Forms.TreeView treeView)
+		public void ReloadFromTreeView(FeedsTreeView treeView)
 		{
 			rootLevelNodes.Clear();
 			loadNodesFromTreeNodeCollection(treeView.Nodes, rootLevelNodes);
