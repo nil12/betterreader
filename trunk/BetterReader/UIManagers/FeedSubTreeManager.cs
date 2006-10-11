@@ -166,8 +166,19 @@ namespace BetterReader.UIManagers
 
 		internal void DoDragComplete()
 		{
+			bool readFeedsHidden = hideReadFeedsBTN.Checked;
+
+			if (readFeedsHidden)
+			{
+				//if the read feeds are hidden we need to temporarily unhide them
+				//so that we can accurately get the state of the full tree from the treeview
+				hideReadFeedsBTN.Checked = false;
+			}
+
 			fst.ReloadFromTreeView(feedsTreeView);
 			SaveFeedSubTree();
+
+			hideReadFeedsBTN.Checked = readFeedsHidden;
 		}
 
 		internal void SaveFeedSubTree()
