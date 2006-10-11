@@ -65,11 +65,11 @@ namespace BetterReader.Backend
 					{
 						loadNodesFromTreeNodeCollection(treeNode.Nodes, ff.ChildNodes);
 					}
-					else
-					{
-						throw new Exception("Error loading node: " + treeNode.Text +
-							".  Tag is not a FeedFolder node but TreeNode has child nodes.");
-					}
+					//else
+					//{
+					//    throw new Exception("Error loading node: " + treeNode.Text +
+					//        ".  Tag is not a FeedFolder node but TreeNode has child nodes.");
+					//}
 				}
 			}
 		}
