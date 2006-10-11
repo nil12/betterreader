@@ -231,19 +231,18 @@ namespace BetterReader
 				switch (fi.ParentFeed.ParentSubscription.FeedItemClickAction)
 				{
 					case FeedItemClickAction.Default:
-						Debug.WriteLine("using default method");
 						displayFeedItemDefaultMethod(fi);
 						break;
 					case FeedItemClickAction.LoadDescriptionInternalBrowser:
-						Debug.WriteLine("using loadDescriptionInternalBrowser method");
 						setWebBrowserText(getFeedItemDescription(fi));
 						break;
 					case FeedItemClickAction.LoadLinkInternalBrowser:
-						Debug.WriteLine("using loadLinkInternalBrowser method");
 						setWebBrowserUrlToFeedItemLinkUrl(fi);
 						break;
 					case FeedItemClickAction.LoadLinkExternalBrowser:
-						Debug.WriteLine("using loadLinkExternalBrowser method");
+						webBrowser1.DocumentText = formatDescriptionHTML("Link: <a href='" + fi.LinkUrl + "'>" +
+							fi.LinkUrl + "</a> loaded in external browser.  This action may be changed by right-clicking " +
+							"the Feed Subscription and choosing 'Properties . . .'");
 						launchExternalBrowser(fi.LinkUrl);
 						break;
 				}
