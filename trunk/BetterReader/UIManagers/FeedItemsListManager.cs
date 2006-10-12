@@ -192,8 +192,10 @@ namespace BetterReader.UIManagers
 				lvi.SubItems.Add(fi.HasBeenRead.ToString());
 			}
 
-			if ((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate)
+			if (((itemProps & FeedItemProperties.DownloadDate) == FeedItemProperties.DownloadDate) &&
+				((itemProps & FeedItemProperties.PubDate) != FeedItemProperties.PubDate))
 			{
+				//only show downloadDate if pubDate is unavailable
 				lvi.SubItems.Add(fi.DownloadDate.ToString());
 			}
 

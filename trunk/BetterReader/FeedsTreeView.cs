@@ -76,7 +76,14 @@ namespace BetterReader
 				{
 					this.SelectedNode = null;
 				}
-				node.Parent.Nodes.Remove(node);
+				if (node.Parent == null)
+				{
+					this.Nodes.Remove(node);
+				}
+				else
+				{
+					node.Parent.Nodes.Remove(node);
+				}
 			}
 		}
 
@@ -98,9 +105,20 @@ namespace BetterReader
 			//we'll use the indexes from the FeedSubscriptionTree that the tag and the hidden node are bound to to 
 			//determine the proper ordering
 			int insertAt = hiddenNode.feedSubIndex;
-			for (int i = 0; i < hiddenNode.parentTreeNode.Nodes.Count; i++)
+			TreeNodeCollection parentNodesCollection = null;
+
+			if (hiddenNode.parentTreeNode == null)
 			{
-				TreeNode node = hiddenNode.parentTreeNode.Nodes[i];
+				parentNodesCollection = this.Nodes;
+			}
+			else
+			{
+				parentNodesCollection = hiddenNode.parentTreeNode.Nodes;
+			}
+
+			for (int i = 0; i < parentNodesCollection.Count; i++)
+			{
+				TreeNode node = parentNodesCollection[i];
 				FeedSubTreeNodeBase curTag = (FeedSubTreeNodeBase)node.Tag;
 
 				if (curTag.Index > hiddenNode.feedSubIndex)
@@ -112,11 +130,11 @@ namespace BetterReader
 
 			if (this.InvokeRequired)
 			{
-				this.Invoke(new InsertNodeDelegate(hiddenNode.parentTreeNode.Nodes.Insert), new object[] { insertAt, hiddenNode.treeNode });
+				this.Invoke(new InsertNodeDelegate(parentNodesCollection.Insert), new object[] { insertAt, hiddenNode.treeNode });
 			}
 			else
 			{
-				hiddenNode.parentTreeNode.Nodes.Insert(insertAt, hiddenNode.treeNode);
+				parentNodesCollection.Insert(insertAt, hiddenNode.treeNode);
 			}
 		}
 
