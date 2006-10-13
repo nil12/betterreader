@@ -52,26 +52,26 @@ namespace BetterReader
 		private void moveNodeToBeforeTargetNode(TreeNode dragNode, TreeNode targetNode)
 		{
 			TreeNodeCollection dragNodeParentNodesCollection, targetNodeParentNodesCollection;
-			if (dragNode.Parent == null)
-			{
-				dragNodeParentNodesCollection = this.Nodes;
-			}
-			else
-			{
-				dragNodeParentNodesCollection = dragNode.Parent.Nodes;
-			}
-
-			if (targetNode.Parent == null)
-			{
-				targetNodeParentNodesCollection = this.Nodes;
-			}
-			else
-			{
-				targetNodeParentNodesCollection = targetNode.Parent.Nodes;
-			}
+			dragNodeParentNodesCollection = getParentNodesCollection(dragNode);
+			targetNodeParentNodesCollection = getParentNodesCollection(targetNode);
+			
 
 			dragNodeParentNodesCollection.Remove(dragNode);
 			targetNodeParentNodesCollection.Insert(targetNode.Index, dragNode);
+		}
+
+		private TreeNodeCollection getParentNodesCollection(TreeNode node)
+		{
+			TreeNodeCollection parentNodesCollection;
+			if (node == null || node.Parent == null)
+			{
+				parentNodesCollection = this.Nodes;
+			}
+			else
+			{
+				parentNodesCollection = node.Parent.Nodes;
+			}
+			return parentNodesCollection;
 		}
 
 
@@ -85,9 +85,10 @@ namespace BetterReader
 
 			HiddenNode hn = new HiddenNode(node);
 			hiddenNodes.Add(node.Tag, hn);
+			TreeNodeCollection parentNodesCollection = getParentNodesCollection(node);
 			if (this.InvokeRequired)
 			{
-				this.Invoke(new HideNodeDelegate(node.Parent.Nodes.Remove), new object[] { node });
+				this.Invoke(new HideNodeDelegate(parentNodesCollection.Remove), new object[] { node });
 			}
 			else
 			{
@@ -95,14 +96,8 @@ namespace BetterReader
 				{
 					this.SelectedNode = null;
 				}
-				if (node.Parent == null)
-				{
-					this.Nodes.Remove(node);
-				}
-				else
-				{
-					node.Parent.Nodes.Remove(node);
-				}
+
+				parentNodesCollection.Remove(node);
 			}
 		}
 
@@ -124,16 +119,7 @@ namespace BetterReader
 			//we'll use the indexes from the FeedSubscriptionTree that the tag and the hidden node are bound to to 
 			//determine the proper ordering
 			int insertAt = hiddenNode.feedSubIndex;
-			TreeNodeCollection parentNodesCollection = null;
-
-			if (hiddenNode.parentTreeNode == null)
-			{
-				parentNodesCollection = this.Nodes;
-			}
-			else
-			{
-				parentNodesCollection = hiddenNode.parentTreeNode.Nodes;
-			}
+			TreeNodeCollection parentNodesCollection = getParentNodesCollection(hiddenNode.parentTreeNode);
 
 			for (int i = 0; i < parentNodesCollection.Count; i++)
 			{

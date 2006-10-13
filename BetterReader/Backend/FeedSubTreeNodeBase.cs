@@ -9,6 +9,13 @@ namespace BetterReader.Backend
 	{
 
 		private FeedFolder parentFolder;
+		private FeedSubscriptionTree parentFeedSubTree;
+
+		internal FeedSubscriptionTree ParentFeedSubTree
+		{
+			get { return parentFeedSubTree; }
+			set { parentFeedSubTree = value; }
+		}
 
 		internal FeedFolder ParentFolder
 		{
@@ -26,7 +33,7 @@ namespace BetterReader.Backend
 				}
 				else
 				{
-					return 0;
+					return parentFeedSubTree.RootLevelNodes.IndexOf(this);
 				}
 			}
 		}

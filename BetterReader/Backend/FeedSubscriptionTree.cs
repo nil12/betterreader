@@ -83,19 +83,20 @@ namespace BetterReader.Backend
                 fsc = xs.Deserialize(tr) as FeedSubscriptionTree;
             }
 
-			fsc.setParentFolderOnNodesInList(fsc.rootLevelNodes, null);
+			fsc.setParentInfoOnNodesInList(fsc.rootLevelNodes, null);
             return fsc;
         }
 
-		private void setParentFolderOnNodesInList(List<FeedSubTreeNodeBase> nodeList, FeedFolder curParent)
+		private void setParentInfoOnNodesInList(List<FeedSubTreeNodeBase> nodeList, FeedFolder curParent)
 		{
 			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
 				fstnb.ParentFolder = curParent;
+				fstnb.ParentFeedSubTree = this;
 				if (fstnb.GetType() == typeof(FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
-					setParentFolderOnNodesInList(ff.ChildNodes, ff);
+					setParentInfoOnNodesInList(ff.ChildNodes, ff);
 				}
 			}
 		}
