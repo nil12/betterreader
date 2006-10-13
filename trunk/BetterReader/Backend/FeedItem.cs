@@ -253,8 +253,7 @@ namespace BetterReader.Backend
 			if (guid == null || guid.Length < 1)
 			{
 				//no guid provided by source so calculate our own
-				string allProps = this.author + this.description + this.encodedContent + this.description +
-					this.linkUrl + this.pubDate + this.title;
+				string allProps = this.author + this.linkUrl + this.pubDate + this.title;
 				this.guid = allProps.GetHashCode().ToString();
 			}
 		}
