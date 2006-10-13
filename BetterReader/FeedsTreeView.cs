@@ -51,8 +51,27 @@ namespace BetterReader
 
 		private void moveNodeToBeforeTargetNode(TreeNode dragNode, TreeNode targetNode)
 		{
-			dragNode.Parent.Nodes.Remove(dragNode);
-			targetNode.Parent.Nodes.Insert(targetNode.Index, dragNode);
+			TreeNodeCollection dragNodeParentNodesCollection, targetNodeParentNodesCollection;
+			if (dragNode.Parent == null)
+			{
+				dragNodeParentNodesCollection = this.Nodes;
+			}
+			else
+			{
+				dragNodeParentNodesCollection = dragNode.Parent.Nodes;
+			}
+
+			if (targetNode.Parent == null)
+			{
+				targetNodeParentNodesCollection = this.Nodes;
+			}
+			else
+			{
+				targetNodeParentNodesCollection = targetNode.Parent.Nodes;
+			}
+
+			dragNodeParentNodesCollection.Remove(dragNode);
+			targetNodeParentNodesCollection.Insert(targetNode.Index, dragNode);
 		}
 
 
