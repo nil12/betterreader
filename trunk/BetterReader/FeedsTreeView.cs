@@ -119,7 +119,15 @@ namespace BetterReader
 			//we'll use the indexes from the FeedSubscriptionTree that the tag and the hidden node are bound to to 
 			//determine the proper ordering
 			int insertAt = hiddenNode.feedSubIndex;
-			TreeNodeCollection parentNodesCollection = getParentNodesCollection(hiddenNode.parentTreeNode);
+			TreeNodeCollection parentNodesCollection;
+			if (hiddenNode.parentTreeNode != null)
+			{
+				parentNodesCollection = hiddenNode.parentTreeNode.Nodes;
+			}
+			else
+			{
+				parentNodesCollection = this.Nodes;
+			}
 
 			for (int i = 0; i < parentNodesCollection.Count; i++)
 			{
