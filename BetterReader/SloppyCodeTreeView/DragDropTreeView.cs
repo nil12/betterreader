@@ -518,30 +518,30 @@ namespace Sloppycode.UI
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnDragDrop(System.Windows.Forms.DragEventArgs e)
-		{
-			handleCustomCursor();
+		//protected override void OnDragDrop(System.Windows.Forms.DragEventArgs e)
+		//{
+		//    handleCustomCursor();
 
-			// Check it's a treenode being dragged
+		//    // Check it's a treenode being dragged
 
-			TreeNode dragNode = getTreeNodeFromDragEventArgs(e);
-			if( dragNode != null )
-			{
-				// Get the target node from the mouse coords
-				TreeNode targetNode = getTargetNodeFromDragEventArgs(e);
+		//    TreeNode dragNode = getTreeNodeFromDragEventArgs(e);
+		//    if( dragNode != null )
+		//    {
+		//        // Get the target node from the mouse coords
+		//        TreeNode targetNode = getTargetNodeFromDragEventArgs(e);
 			
-				// De-color it
-				decolorNode(targetNode);
+		//        // De-color it
+		//        decolorNode(targetNode);
 				
 
-				if (dragIsValid(dragNode, targetNode))
-				{
-					moveNodeToNewParent(dragNode, targetNode);
+		//        if (dragIsValid(dragNode, targetNode))
+		//        {
+		//            moveNodeToNewParent(dragNode, targetNode);
 
-					doPostDragTasks(dragNode, targetNode);
-				}
-			}	
-		}
+		//            doPostDragTasks(dragNode, targetNode);
+		//        }
+		//    }	
+		//}
 
 		protected void moveNodeToNewParent(TreeNode dragNode, TreeNode targetNode)
 		{
@@ -655,39 +655,7 @@ namespace Sloppycode.UI
 			}
 		}
 
-		// Custom double buffering courtesy of http://www.bobpowell.net/tipstricks.htm
-		// (doesn't seem to work with this treeview, the wndproc method is the only solution)
-		//	protected override void onpaint(painteventargs e) 
-		//	{ 
-		//		if(this._backbuffer==null) 
-		//		{ 
-		//			this._backbuffer=new bitmap(this.clientsize.width,this.clientsize.height); 
-		//		} 
-		//		graphics g=graphics.fromimage(this._backbuffer); 
-		//    
-		//		//paint your graphics on g here 
-		//		g.dispose(); 
-		//
-		//		//copy the back buffer to the screen 
-		//		e.graphics.drawimageunscaled(this._backbuffer,0,0); 
-		//
-		//		base.onpaint (e); //optional but not recommended 
-		//	}
-		//
-		//	protected override void onpaintbackground(painteventargs e) 
-		//	{ 
-		//		//don't allow the background to paint
-		//	} 
-		//
-		//	protected override void onsizechanged(eventargs e) 
-		//	{ 
-		//		if(this._backbuffer!=null) 
-		//		{ 
-		//			this._backbuffer.dispose(); 
-		//			this._backbuffer=null; 
-		//		} 
-		//		base.onsizechanged (e); 
-		//	} 
+
 		#endregion
 
 		#region FormDrag form

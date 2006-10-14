@@ -28,6 +28,11 @@ namespace BetterReader.Backend
 
         public void SaveAsFeedSubscriptionsFile(string filepath)
         {
+			if (File.Exists(filepath))
+			{
+				File.Copy(filepath, filepath.Replace(".xml", ".bak"), true);
+			}
+
             using (TextWriter tw = new StreamWriter(filepath))
             {
 				XmlSerializer xs = new XmlSerializer(this.GetType());

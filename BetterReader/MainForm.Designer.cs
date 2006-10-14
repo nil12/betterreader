@@ -194,6 +194,7 @@ namespace BetterReader
 			this.feedsTV.AllowDrop = true;
 			this.feedsTV.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.feedsTV.Cursor = System.Windows.Forms.Cursors.Default;
+			this.feedsTV.DisableBackgroundErase = true;
 			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedsTV.DragCursor = null;
 			this.feedsTV.DragCursorType = Sloppycode.UI.DragCursorType.None;
@@ -208,7 +209,7 @@ namespace BetterReader
 			this.feedsTV.ImageList = this.feedsImageList;
 			this.feedsTV.Location = new System.Drawing.Point(0, 25);
 			this.feedsTV.Name = "feedsTV";
-			this.feedsTV.SelectedImageIndex = 0;
+			this.feedsTV.SelectedImageIndex = 1;
 			this.feedsTV.Size = new System.Drawing.Size(310, 660);
 			this.feedsTV.TabIndex = 0;
 			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
