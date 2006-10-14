@@ -391,6 +391,7 @@ namespace BetterReader
 			if (nsf.ShowDialog() == DialogResult.OK)
 			{
 				FeedSubscription fs = nsf.FeedSubscription;
+				fs.ParentFeedSubTree = feedSubManager.FeedSubscriptionTree;
 				feedSubManager.AddFeedSubscriptionToFolder(parentFolder, fs);
 
 				fs.BeginReadFeed(feedSubReadCallback);
