@@ -328,7 +328,7 @@ namespace BetterReader.Backend
 						break;
 					case "entry":
 						FeedItem fi = FeedItem.GetFromAtomEntryNode(childNode);
-						addOrUpdateFeedItemsCollection(fi);
+						feedItems.AddOrUpdate(fi);
 						break;
 				}
 			}
@@ -340,10 +340,10 @@ namespace BetterReader.Backend
 
 		}
 
-		private void addOrUpdateFeedItemsCollection(FeedItem fi)
-		{
-			feedItems.AddOrUpdate(fi);
-		}
+		//private void addOrUpdateFeedItemsCollection(FeedItem fi)
+		//{
+		//    feedItems.AddOrUpdate(fi);
+		//}
 
 		private void loadFromRdfNode(XmlNode node)
 		{
@@ -357,7 +357,7 @@ namespace BetterReader.Backend
 						break;
 					case "item":
 						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
-						addOrUpdateFeedItemsCollection(fi);
+						feedItems.AddOrUpdate(fi);
 						break;
 					default:
 						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
@@ -417,7 +417,7 @@ namespace BetterReader.Backend
 						break;
 					case "item":
 						FeedItem fi = FeedItem.GetFromRssOrRdfItemNode(childNode);
-						addOrUpdateFeedItemsCollection(fi);
+						feedItems.AddOrUpdate(fi);
 						break;
 					default:
 						if (unsupportedFeedProperties.ContainsKey(childNode.Name))
