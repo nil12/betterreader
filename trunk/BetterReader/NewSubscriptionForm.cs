@@ -35,12 +35,18 @@ namespace BetterReader
 		}
 
 
-		public NewSubscriptionForm(FeedSubscriptionTree lFst, FeedFolder lDefaultFolder) : this()
+		public NewSubscriptionForm(FeedSubscriptionTree lFst, FeedFolder lDefaultFolder) : this(lFst, lDefaultFolder, "")
+		{
+			
+		}
+
+		public NewSubscriptionForm(FeedSubscriptionTree lFst, FeedFolder lDefaultFolder, string lFeedUrl) : this()
 		{
 			createInFolder = lDefaultFolder;
 			fst = lFst;
 			fs = new FeedSubscription();
 			fs.UpdateSeconds = 15 * 60;
+			fs.FeedUrl = lFeedUrl;
 			feedSubscriptionPropertiesControl1.LoadFromFeedSubscription(fs);
 		}
 
@@ -58,6 +64,7 @@ namespace BetterReader
 		{
 			bindFolderNodesToTreeView(fst.RootLevelNodes, feedFoldersTV.Nodes);
 		}
+
 
 		private void bindFolderNodesToTreeView(List<FeedSubTreeNodeBase> list, TreeNodeCollection treeNodeCollection)
 		{

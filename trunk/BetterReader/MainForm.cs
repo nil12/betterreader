@@ -94,7 +94,19 @@ namespace BetterReader
 			restoreWindowSettings();
 						
 			feedReaderBGW.RunWorkerAsync();
+
+			processCommandLineArgs(Environment.GetCommandLineArgs());
         }
+
+		private void processCommandLineArgs(string[] cmdLine)
+		{
+			if (cmdLine.Length == 2)
+			{
+				showNewSubscriptionForm(null, cmdLine[1]);
+			}
+		}
+
+
 
 		void webBrowser1_GotFocus(object sender, EventArgs e)
 		{
@@ -367,8 +379,12 @@ namespace BetterReader
 			}
 		}
 
-
 		private void showNewSubscriptionForm(TreeNode rightClickedNode)
+		{
+			showNewSubscriptionForm(rightClickedNode, "");
+		}
+
+		private void showNewSubscriptionForm(TreeNode rightClickedNode, string feedUrl)
 		{
 
 			FeedFolder parentFolder = null;
@@ -386,7 +402,7 @@ namespace BetterReader
 				}
 			}
 
-			NewSubscriptionForm nsf = new NewSubscriptionForm(feedSubManager.FeedSubscriptionTree, parentFolder);
+			NewSubscriptionForm nsf = new NewSubscriptionForm(feedSubManager.FeedSubscriptionTree, parentFolder, feedUrl);
 
 			if (nsf.ShowDialog() == DialogResult.OK)
 			{
@@ -778,6 +794,17 @@ namespace BetterReader
 		private void toolStripButton1_Click(object sender, EventArgs e)
 		{
 			clearWebBrowser();
+		}
+		
+		public void StartupNextInstanceHandler(object sender, Microsoft.VisualBasic.ApplicationServices.StartupNextInstanceEventArgs e)
+		{
+			// do whatever you want here with e.CommandLine...
+			if (e.CommandLine.Count > 0)
+			{
+				string[] cmdLine = new string[e.CommandLine.Count];
+				e.CommandLine.CopyTo(cmdLine, 0);
+				processCommandLineArgs(cmdLine);
+			}
 		}
 
 
