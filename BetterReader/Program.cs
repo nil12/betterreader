@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BetterReader
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
@@ -14,7 +15,10 @@ namespace BetterReader
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+			//Application.Run(new MainForm());
+			MainForm mainForm = new MainForm();
+			SingleInstanceApplication.Run(mainForm,
+			new StartupNextInstanceEventHandler(mainForm.StartupNextInstanceHandler));
         }
     }
 }
