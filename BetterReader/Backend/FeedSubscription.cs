@@ -171,7 +171,14 @@ namespace BetterReader.Backend
 		internal void Unsubscribe()
 		{
 			this.feed.FeedItems.DeleteArchivedItems();
-			this.ParentFolder.ChildNodes.Remove(this);
+			if (this.ParentFolder == null)
+			{
+				this.ParentFeedSubTree.RootLevelNodes.Remove(this);
+			}
+			else
+			{
+				this.ParentFolder.ChildNodes.Remove(this);
+			}
 		}
 	}
 }
