@@ -801,6 +801,7 @@ namespace BetterReader
 			// do whatever you want here with e.CommandLine...
 			if (e.CommandLine.Count > 0)
 			{
+				showFormHideNotifyIcon();
 				string[] cmdLine = new string[e.CommandLine.Count];
 				e.CommandLine.CopyTo(cmdLine, 0);
 				processCommandLineArgs(cmdLine);
