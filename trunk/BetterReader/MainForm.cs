@@ -624,7 +624,16 @@ namespace BetterReader
 
 			if (showUnsubscribeConfirmation())
 			{
-				rightClickedNode.Parent.Nodes.Remove(rightClickedNode);
+				TreeNodeCollection parentNodes;
+				if (rightClickedNode.Parent == null)
+				{
+					parentNodes = feedsTV.Nodes;
+				}
+				else
+				{
+					parentNodes = rightClickedNode.Parent.Nodes;
+				}
+				parentNodes.Remove(rightClickedNode);
 				fs.Unsubscribe();
 				feedSubManager.SaveFeedSubTree();
 			}
