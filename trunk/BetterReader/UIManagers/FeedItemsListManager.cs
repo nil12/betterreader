@@ -76,8 +76,16 @@ namespace BetterReader.UIManagers
 
 				lvi.ImageIndex = 2;
 
-				feedItemsLV.Items.Add(lvi);
-				listViewItemsByTag.Add(fi, lvi);
+				if (listViewItemsByTag.ContainsKey(fi))
+				{
+					//MessageBox.Show("Recoverable error displaying FeedItem: " + fi.Title + "(" + fi.Guid + ")");
+				}
+				else
+				{
+					feedItemsLV.Items.Add(lvi);
+					listViewItemsByTag.Add(fi, lvi);
+				}
+
 			}
 
 			setFeedItemColumnWidths();
