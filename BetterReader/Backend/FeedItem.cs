@@ -222,7 +222,8 @@ namespace BetterReader.Backend
 						fi.pubDate = fi.safeDateTimeParse(innerText);
 						break;
 					case "guid":
-						fi.guid = innerText;
+						//a linefeed in a guid causes problems with uniquely identifying items
+						fi.guid = innerText.Replace("\r\n", "");
 						break;
 					case "description":
 						fi.description = innerText;
@@ -254,7 +255,8 @@ namespace BetterReader.Backend
 			{
 				//no guid provided by source so calculate our own
 				string allProps = this.author + this.linkUrl + this.pubDate + this.title;
-				this.guid = allProps.GetHashCode().ToString();
+				//a linefeed in the guid causes uniquess issues
+				this.guid = allProps.GetHashCode().ToString().Replace("\r\n", "");
 			}
 		}
 
@@ -296,7 +298,8 @@ namespace BetterReader.Backend
 						fi.pubDate = fi.safeDateTimeParse(innerText);
 						break;
 					case "id":
-						fi.guid = innerText;
+						//a linefeed in the guid causes uniqueness problems
+						fi.guid = innerText.Replace("\r\n", "");
 						break;
 					case "content":
 						fi.description = innerText;
