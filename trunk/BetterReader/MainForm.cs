@@ -357,7 +357,7 @@ namespace BetterReader
 
 		private bool showUnsubscribeConfirmation()
 		{
-			if (MessageBox.Show("Unsubscribe from this feed?", "Unsubscribe?") == DialogResult.OK)
+			if (MessageBox.Show("Unsubscribe from this feed?", "Unsubscribe?", MessageBoxButtons.OKCancel) == DialogResult.OK)
 			{
 				return true;
 			}
@@ -369,7 +369,7 @@ namespace BetterReader
 
 		private bool showDeleteFolderConfirmation()
 		{
-			if (MessageBox.Show("Delete Folder and all children?", "Delete Folder") == DialogResult.OK)
+			if (MessageBox.Show("Delete Folder and all children?", "Delete Folder", MessageBoxButtons.OKCancel) == DialogResult.OK)
 			{
 				return true;
 			}
