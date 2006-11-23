@@ -232,6 +232,7 @@ namespace BetterReader
 			if (feedItemsLV.SelectedItems.Count > 0)
 			{
 				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
+				fi.ParentFeed.ParentSubscription.ResetUpdateTimer();
 				currentlyDisplayedFeedItemGuid = fi.Guid;
 				itemTitleLBL.Text = fi.Title;
 				itemTitleLBL.Visible = true;
