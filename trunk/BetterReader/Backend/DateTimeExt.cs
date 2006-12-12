@@ -59,7 +59,7 @@ namespace BetterReader.Backend
 				}
 			}
 
-			return XmlConvert.ToDateTime(datetime);
+			return XmlConvert.ToDateTime(datetime, XmlDateTimeSerializationMode.Local);
 
 		}
 
@@ -208,7 +208,7 @@ namespace BetterReader.Backend
 				datetimeString = datetimeString + ":00";
 			}
 
-			DateTime toReturn = XmlConvert.ToDateTime( datetimeString );
+			DateTime toReturn = XmlConvert.ToDateTime( datetimeString, XmlDateTimeSerializationMode.Local );
 
 			try
 			{

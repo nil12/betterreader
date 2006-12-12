@@ -63,7 +63,7 @@ namespace BetterReader
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         }
 
-		void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			Exception ex = e.ExceptionObject as Exception;
 			if (ex != null)
@@ -74,7 +74,7 @@ namespace BetterReader
 			MessageLogger.WriteToEventLog("Error: " + ex.ToString());
 		}
 
-		void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+		private void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
 			MessageBox.Show(e.Exception.ToString(), "Error encoutnered");
 
@@ -150,7 +150,10 @@ namespace BetterReader
 			//catch { }
 
 			this.WindowState = Properties.Settings.Default.MyState;
-			this.Visible = true;
+			if (this.WindowState != FormWindowState.Minimized)
+			{
+				this.Visible = true;
+			}
 		}
 
 
