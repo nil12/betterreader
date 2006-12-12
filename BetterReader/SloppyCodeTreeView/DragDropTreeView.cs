@@ -518,30 +518,30 @@ namespace Sloppycode.UI
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		//protected override void OnDragDrop(System.Windows.Forms.DragEventArgs e)
-		//{
-		//    handleCustomCursor();
+		protected override void OnDragDrop(System.Windows.Forms.DragEventArgs e)
+		{
+			handleCustomCursor();
 
-		//    // Check it's a treenode being dragged
+			// Check it's a treenode being dragged
 
-		//    TreeNode dragNode = getTreeNodeFromDragEventArgs(e);
-		//    if( dragNode != null )
-		//    {
-		//        // Get the target node from the mouse coords
-		//        TreeNode targetNode = getTargetNodeFromDragEventArgs(e);
-			
-		//        // De-color it
-		//        decolorNode(targetNode);
-				
+			TreeNode dragNode = getTreeNodeFromDragEventArgs(e);
+			if (dragNode != null)
+			{
+				// Get the target node from the mouse coords
+				TreeNode targetNode = getTargetNodeFromDragEventArgs(e);
 
-		//        if (dragIsValid(dragNode, targetNode))
-		//        {
-		//            moveNodeToNewParent(dragNode, targetNode);
+				// De-color it
+				decolorNode(targetNode);
 
-		//            doPostDragTasks(dragNode, targetNode);
-		//        }
-		//    }	
-		//}
+
+				if (dragIsValid(dragNode, targetNode))
+				{
+					moveNodeToNewParent(dragNode, targetNode);
+
+					doPostDragTasks(dragNode, targetNode);
+				}
+			}
+		}
 
 		protected void moveNodeToNewParent(TreeNode dragNode, TreeNode targetNode)
 		{

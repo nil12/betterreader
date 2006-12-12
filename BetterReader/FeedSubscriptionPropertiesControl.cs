@@ -17,6 +17,19 @@ namespace BetterReader
 
 	public partial class FeedSubscriptionPropertiesControl : UserControl
 	{
+
+		public bool FeedTitleTextBoxEnabled
+		{
+			get
+			{
+				return feedTitleTB.Enabled;
+			}
+			set
+			{
+				feedTitleTB.Enabled = value;
+			}
+		}
+
 		internal void LoadFromFeedSubscription(FeedSubscription fs)
 		{
 			urlTB.Text = fs.FeedUrl;
