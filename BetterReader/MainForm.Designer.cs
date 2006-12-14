@@ -197,7 +197,7 @@ namespace BetterReader
 			this.feedsTV.DisableBackgroundErase = true;
 			this.feedsTV.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.feedsTV.DragCursor = null;
-			this.feedsTV.DragCursorType = Sloppycode.UI.DragCursorType.None;
+			this.feedsTV.DragCursorType = BindableTreeView.DragCursorType.None;
 			this.feedsTV.DragImageIndex = 0;
 			this.feedsTV.DragMode = System.Windows.Forms.DragDropEffects.Move;
 			this.feedsTV.DragNodeFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -214,7 +214,7 @@ namespace BetterReader
 			this.feedsTV.TabIndex = 0;
 			this.feedsTV.MouseClick += new System.Windows.Forms.MouseEventHandler(this.feedsTV_MouseClick);
 			this.feedsTV.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.feedsTV_AfterLabelEdit);
-			this.feedsTV.DragComplete += new Sloppycode.UI.DragCompleteEventHandler(this.feedsTV_DragComplete);
+			this.feedsTV.DragComplete += new BindableTreeView.DragCompleteEventHandler(this.feedsTV_DragComplete);
 			this.feedsTV.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.feedsTV_AfterSelect);
 			this.feedsTV.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			// 
