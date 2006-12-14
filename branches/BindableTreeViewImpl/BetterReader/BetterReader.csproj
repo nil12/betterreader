@@ -48,6 +48,13 @@
     <Compile Include="Backend\FeedSubscriptionTree.cs" />
     <Compile Include="Backend\FeedSubTreeNodeBase.cs" />
     <Compile Include="Backend\Opml.cs" />
+    <Compile Include="BindableTreeView\BindableTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BindableTreeView\BindableTreeViewNodeBase.cs" />
+    <Compile Include="BindableTreeView\BindableTreeViewUtils.cs" />
+    <Compile Include="BindableTreeView\IBindableTreeViewNode.cs" />
+    <Compile Include="BindableTreeView\TreeNodeIndex.cs" />
     <Compile Include="FeedItemsListViewColumnSorter.cs" />
     <Compile Include="FeedsTreeView.cs">
       <SubType>Component</SubType>
@@ -59,9 +66,6 @@
       <DependentUpon>FeedSubscriptionPropertiesControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SingleInstanceApplication.cs" />
-    <Compile Include="SloppyCodeTreeView\DragDropTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UIManagers\FeedItemsListManager.cs" />
     <Compile Include="UIManagers\FeedSubTreeManager.cs" />
     <Compile Include="MainForm.cs">

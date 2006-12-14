@@ -592,7 +592,7 @@ namespace BetterReader
 			showFormHideNotifyIcon();
 		}
 
-		private void feedsTV_DragComplete(object sender, Sloppycode.UI.DragCompleteEventArgs e)
+		private void feedsTV_DragComplete(object sender, BindableTreeView.DragCompleteEventArgs e)
 		{
 			feedSubManager.DoDragComplete();
 		}
