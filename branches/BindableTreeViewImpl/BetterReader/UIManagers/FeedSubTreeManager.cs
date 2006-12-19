@@ -90,66 +90,67 @@ namespace BetterReader.UIManagers
 		{
 			feedsTreeView.Nodes.Clear();
 			treeNodesByTag = new Dictionary<object, TreeNode>();
-			bindNodeListToTreeView(fst.RootLevelNodes, null);
+			feedsTreeView.DataBind(fst.RootLevelNodes);
+			//bindNodeListToTreeView(fst.RootLevelNodes, null);
 			feedsTreeView.ExpandAll();
 		}
 
-		private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
-		{
-			foreach (FeedSubTreeNodeBase fstnb in nodeList)
-			{
-				Type nodeType = fstnb.GetType();
-				if (nodeType == typeof(FeedSubscription))
-				{
-					FeedSubscription fs = fstnb as FeedSubscription;
-					TreeNode newNode;
-					if (treeNode == null)
-					{
-						//we're at the root level of the tree
-						newNode = feedsTreeView.Nodes.Add(fs.DisplayName);
-					}
-					else
-					{
-						newNode = treeNode.Nodes.Add(fs.DisplayName);
-					}
+		//private void bindNodeListToTreeView(List<FeedSubTreeNodeBase> nodeList, TreeNode treeNode)
+		//{
+		//    foreach (FeedSubTreeNodeBase fstnb in nodeList)
+		//    {
+		//        Type nodeType = fstnb.GetType();
+		//        if (nodeType == typeof(FeedSubscription))
+		//        {
+		//            FeedSubscription fs = fstnb as FeedSubscription;
+		//            TreeNode newNode;
+		//            if (treeNode == null)
+		//            {
+		//                //we're at the root level of the tree
+		//                newNode = feedsTreeView.Nodes.Add(fs.DisplayName);
+		//            }
+		//            else
+		//            {
+		//                newNode = treeNode.Nodes.Add(fs.DisplayName);
+		//            }
 
-					newNode.Tag = fs;
-					newNode.ImageIndex = 1;
-					newNode.SelectedImageIndex = 1;
-					TreeNodesByTag.Add(fs, newNode);
-				}
-				else if (nodeType == typeof(FeedFolder))
-				{
-					FeedFolder ff = fstnb as FeedFolder;
-					TreeNode newNode;
-					if (treeNode == null)
-					{
-						//we're at the root level of the tree
-						newNode = feedsTreeView.Nodes.Add(ff.Name);
-					}
-					else
-					{
-						newNode = treeNode.Nodes.Add(ff.Name);
-					}
+		//            newNode.Tag = fs;
+		//            newNode.ImageIndex = 1;
+		//            newNode.SelectedImageIndex = 1;
+		//            TreeNodesByTag.Add(fs, newNode);
+		//        }
+		//        else if (nodeType == typeof(FeedFolder))
+		//        {
+		//            FeedFolder ff = fstnb as FeedFolder;
+		//            TreeNode newNode;
+		//            if (treeNode == null)
+		//            {
+		//                //we're at the root level of the tree
+		//                newNode = feedsTreeView.Nodes.Add(ff.Name);
+		//            }
+		//            else
+		//            {
+		//                newNode = treeNode.Nodes.Add(ff.Name);
+		//            }
 
-					newNode.Tag = ff;
-					newNode.ImageIndex = 0;
-					newNode.SelectedImageIndex = 0;
+		//            newNode.Tag = ff;
+		//            newNode.ImageIndex = 0;
+		//            newNode.SelectedImageIndex = 0;
 
-					TreeNodesByTag.Add(ff, newNode);
-					if (ff.IsExpandedInUI)
-					{
-						newNode.Expand();
-						bool expanded = newNode.IsExpanded;
-					}
-					bindNodeListToTreeView(ff.ChildNodes, newNode);
-				}
-				else
-				{
-					throw new Exception("Form1.bindNodeListToTreeView error: Unrecognized node type: " + nodeType.ToString());
-				}
-			}
-		}
+		//            TreeNodesByTag.Add(ff, newNode);
+		//            if (ff.IsExpandedInUI)
+		//            {
+		//                newNode.Expand();
+		//                bool expanded = newNode.IsExpanded;
+		//            }
+		//            bindNodeListToTreeView(ff.ChildNodes, newNode);
+		//        }
+		//        else
+		//        {
+		//            throw new Exception("Form1.bindNodeListToTreeView error: Unrecognized node type: " + nodeType.ToString());
+		//        }
+		//    }
+		//}
 
 		internal int GetUnreadItemCount()
 		{
