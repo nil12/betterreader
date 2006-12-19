@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using BindableTreeView;
 
 namespace BetterReader.Backend
 {
-	public abstract class FeedSubTreeNodeBase
+	public abstract class FeedSubTreeNodeBase : BindableTreeViewNodeBase
 	{
 
 		private FeedFolder parentFolder;

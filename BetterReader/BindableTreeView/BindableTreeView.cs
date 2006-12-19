@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
@@ -666,9 +667,22 @@ namespace BindableTreeView
 
 		#endregion
 
+		/// <summary>
+		/// Clears the TreeView and then binds the rootNode and all child nodes.
+		/// </summary>
+		/// <param name="rootNode">The IBindableTreeViewNode to start the bind at.</param>
 		public void DataBind(IBindableTreeViewNode rootNode)
 		{
 			treeNodeIndex = BindableTreeViewUtils.BindRootNodeToTreeView(rootNode, this);
+		}
+
+		/// <summary>
+		/// Adds a list of IBindableTreeViewNodes to the root level Nodes collection of the TreeView.
+		/// </summary>
+		/// <param name="nodes">The List of IBindableTreeViewNodes to add.</param>
+		public void DataBind<T>(List<T> nodes) where T : IBindableTreeViewNode
+		{
+			treeNodeIndex = BindableTreeViewUtils.BindNodeListToTreeView(nodes, this, treeNodeIndex);
 		}
 
 		#region FormDrag form
