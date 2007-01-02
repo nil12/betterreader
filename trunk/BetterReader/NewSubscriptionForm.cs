@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+//using System.ComponentModel;
+//using System.Data;
+//using System.Drawing;
+//using System.Text;
 using System.Windows.Forms;
 using BetterReader.Backend;
 
@@ -60,8 +60,9 @@ namespace BetterReader
 
 		}
 
-		public void SetFeedSubscriptionTree(FeedSubscriptionTree fst)
+		public void SetFeedSubscriptionTree(FeedSubscriptionTree lFst)
 		{
+			fst = lFst;
 			bindFolderNodesToTreeView(fst.RootLevelNodes, feedFoldersTV.Nodes);
 		}
 
@@ -88,8 +89,8 @@ namespace BetterReader
 
 		private void cancelBTN_Click(object sender, EventArgs e)
 		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
+			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 
 		private void okBTN_Click(object sender, EventArgs e)
@@ -102,8 +103,8 @@ namespace BetterReader
 			}
 			feedSubscriptionPropertiesControl1.SaveToFeedSubscription(fs);
 			fs.ParentFolder = createInFolder;
-			this.DialogResult = DialogResult.OK;
-			this.Close();
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private void feedFoldersTV_AfterSelect(object sender, TreeViewEventArgs e)

@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+//using System.Text;
 using System.Windows.Forms;
 using BetterReader.Backend;
+using Sloppycode.UI;
 
 namespace BetterReader
 {
-	public class FeedsTreeView : Sloppycode.UI.TreeViewDragDrop
+	public class FeedsTreeView : TreeViewDragDrop
 	{
 		private Dictionary<object, HiddenNode> hiddenNodes = new Dictionary<object, HiddenNode>();
+
 		private delegate void HideNodeDelegate(TreeNode node);
+
 		private delegate void InsertNodeDelegate(int index, TreeNode node);
 
 		protected override void OnDragDrop(DragEventArgs e)
@@ -33,7 +36,7 @@ namespace BetterReader
 				{
 					Type t = targetNode.Tag.GetType();
 
-					if (t == typeof(FeedSubscription))
+					if (t == typeof (FeedSubscription))
 					{
 						moveNodeToBeforeTargetNode(dragNode, targetNode);
 					}
@@ -54,7 +57,7 @@ namespace BetterReader
 			TreeNodeCollection dragNodeParentNodesCollection, targetNodeParentNodesCollection;
 			dragNodeParentNodesCollection = getParentNodesCollection(dragNode);
 			targetNodeParentNodesCollection = getParentNodesCollection(targetNode);
-			
+
 
 			dragNodeParentNodesCollection.Remove(dragNode);
 			targetNodeParentNodesCollection.Insert(targetNode.Index, dragNode);
@@ -65,7 +68,7 @@ namespace BetterReader
 			TreeNodeCollection parentNodesCollection;
 			if (node == null || node.Parent == null)
 			{
-				parentNodesCollection = this.Nodes;
+				parentNodesCollection = Nodes;
 			}
 			else
 			{
@@ -86,15 +89,15 @@ namespace BetterReader
 			HiddenNode hn = new HiddenNode(node);
 			hiddenNodes.Add(node.Tag, hn);
 			TreeNodeCollection parentNodesCollection = getParentNodesCollection(node);
-			if (this.InvokeRequired)
+			if (InvokeRequired)
 			{
-				this.Invoke(new HideNodeDelegate(parentNodesCollection.Remove), new object[] { node });
+				Invoke(new HideNodeDelegate(parentNodesCollection.Remove), new object[] {node});
 			}
 			else
 			{
-				if (this.SelectedNode == node)
+				if (SelectedNode == node)
 				{
-					this.SelectedNode = null;
+					SelectedNode = null;
 				}
 
 				parentNodesCollection.Remove(node);
@@ -126,13 +129,13 @@ namespace BetterReader
 			}
 			else
 			{
-				parentNodesCollection = this.Nodes;
+				parentNodesCollection = Nodes;
 			}
 
 			for (int i = 0; i < parentNodesCollection.Count; i++)
 			{
 				TreeNode node = parentNodesCollection[i];
-				FeedSubTreeNodeBase curTag = (FeedSubTreeNodeBase)node.Tag;
+				FeedSubTreeNodeBase curTag = (FeedSubTreeNodeBase) node.Tag;
 
 				if (curTag.Index > hiddenNode.feedSubIndex)
 				{
@@ -141,9 +144,9 @@ namespace BetterReader
 				}
 			}
 
-			if (this.InvokeRequired)
+			if (InvokeRequired)
 			{
-				this.Invoke(new InsertNodeDelegate(parentNodesCollection.Insert), new object[] { insertAt, hiddenNode.treeNode });
+				Invoke(new InsertNodeDelegate(parentNodesCollection.Insert), new object[] {insertAt, hiddenNode.treeNode});
 			}
 			else
 			{
@@ -154,7 +157,7 @@ namespace BetterReader
 
 		internal void HideReadNodes()
 		{
-			hideNodesInList(this.Nodes);
+			hideNodesInList(Nodes);
 		}
 
 		private void hideNodesInList(TreeNodeCollection treeNodeCollection)
@@ -165,16 +168,16 @@ namespace BetterReader
 			{
 				Type t = node.Tag.GetType();
 
-				if (t == typeof(FeedSubscription))
+				if (t == typeof (FeedSubscription))
 				{
-					FeedSubscription fs = (FeedSubscription)node.Tag;
+					FeedSubscription fs = (FeedSubscription) node.Tag;
 					if (fs.Feed.UnreadCount == 0)
 					{
 						nodesToHide.Add(node);
 					}
 				}
 
-				if (t == typeof(FeedFolder))
+				if (t == typeof (FeedFolder))
 				{
 					hideNodesInList(node.Nodes);
 				}
@@ -194,7 +197,7 @@ namespace BetterReader
 			{
 				ShowNode(key);
 			}
-			this.Invalidate();
+			Invalidate();
 		}
 
 		private class HiddenNode
@@ -207,10 +210,9 @@ namespace BetterReader
 			{
 				treeNode = lNode;
 				parentTreeNode = lNode.Parent;
-				FeedSubscription fs = (FeedSubscription)lNode.Tag;
+				FeedSubscription fs = (FeedSubscription) lNode.Tag;
 				feedSubIndex = fs.Index;
 			}
 		}
-
 	}
 }

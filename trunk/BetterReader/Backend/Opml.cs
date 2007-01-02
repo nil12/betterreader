@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+//using System.Collections.Generic;
+//using System.Text;
 using System.Xml;
 using System.IO;
 
@@ -18,7 +18,7 @@ namespace BetterReader.Backend
 			settings.IgnoreWhitespace = true;
 			settings.ValidationType = ValidationType.None;
 
-			XmlDocument xmlDoc = null;
+			XmlDocument xmlDoc;
 			using (TextReader tr = new StreamReader(filepath))
 			{
 				XmlReader xr = XmlReader.Create(tr, settings);

@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
+//using System.Collections.Generic;
+//using System.ComponentModel;
+//using System.Drawing;
+//using System.Data;
+//using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 using BetterReader.Backend;
 
@@ -17,6 +18,7 @@ namespace BetterReader
 
 	public partial class FeedSubscriptionPropertiesControl : UserControl
 	{
+		private CultureInfo info = new System.Globalization.CultureInfo("en-US", true);
 
 		public bool FeedTitleTextBoxEnabled
 		{
@@ -34,7 +36,7 @@ namespace BetterReader
 		{
 			urlTB.Text = fs.FeedUrl;
 			feedTitleTB.Text = fs.DisplayName;
-			updateMinutesTB.Text = ((int)(fs.UpdateSeconds / 60)).ToString();
+			updateMinutesTB.Text = (fs.UpdateSeconds / 60).ToString();
 			daysToArchiveTB.Text = fs.DaysToArchive.ToString();
 			maxItemsTB.Text = fs.MaxItems.ToString();
 			switch (fs.FeedItemClickAction)
@@ -131,16 +133,22 @@ namespace BetterReader
 
 		private bool isANumber(string val)
 		{
-			try
-			{
-				int iVal = int.Parse(val);
-			}
-			catch
+			if (val == null)
 			{
 				return false;
 			}
+			
+			if (val.Length > 0)
+			{
+				double dummyOut;
 
-			return true;
+				return Double.TryParse(val, System.Globalization.NumberStyles.Any,
+					info.NumberFormat, out dummyOut);
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		private void maxItemsTB_TextChanged(object sender, EventArgs e)

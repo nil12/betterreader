@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+//using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
@@ -140,7 +140,6 @@ namespace BetterReader.UIManagers
 					if (ff.IsExpandedInUI)
 					{
 						newNode.Expand();
-						bool expanded = newNode.IsExpanded;
 					}
 					bindNodeListToTreeView(ff.ChildNodes, newNode);
 				}
@@ -186,8 +185,8 @@ namespace BetterReader.UIManagers
 
 		internal void AddNewFolder(TreeNode parentNode)
 		{
-			FeedFolder parentFolder = null;
-			TreeNode newNode = null;
+			FeedFolder parentFolder;
+			TreeNode newNode;
 
 			FeedFolder newFolder = new FeedFolder();
 
@@ -307,11 +306,11 @@ namespace BetterReader.UIManagers
 
 					
 				}
-				catch (InvalidOperationException e)
+				catch (InvalidOperationException)
 				{
 					//this was most likely caused by a feed reading thread returning during shutdown
 					//so we'll ignore it
-					string x = e.ToString();
+//					string x = e.ToString();
 				}
 			}
 		}

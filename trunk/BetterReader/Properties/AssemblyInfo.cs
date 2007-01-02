@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("BetterReader")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Red Sky Technology")]
+[assembly: AssemblyCompany("Skainix")]
 [assembly: AssemblyProduct("BetterReader")]
-[assembly: AssemblyCopyright("Copyright © Red Sky Technology 2006")]
+[assembly: AssemblyCopyright("Copyright © Skainix 2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
