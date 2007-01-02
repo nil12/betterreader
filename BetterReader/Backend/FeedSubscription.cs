@@ -1,14 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+//using System.Collections.Generic;
+//using System.Text;
 using System.Xml;
 using System.Threading;
 
 namespace BetterReader.Backend
 {
-    public delegate void FeedSubscriptionReadDelegate(FeedSubscription fs);
+	public delegate void FeedSubscriptionReadDelegate(FeedSubscription fs);
+
 	public class FeedSubscription : FeedSubTreeNodeBase, IDisposable
-    {
+	{
 		private string feedUrl;
 		private string displayName;
 		private int updateSeconds;
@@ -54,11 +55,8 @@ namespace BetterReader.Backend
 
 		public string FeedUrl
 		{
-			get 
-			{ 
-				return feedUrl; 
-			}
-			set 
+			get { return feedUrl; }
+			set
 			{
 				feedUrl = value;
 				if (feed == null || feed.FeedUrl != feedUrl)
@@ -93,7 +91,7 @@ namespace BetterReader.Backend
 		{
 			guid = Guid.NewGuid();
 			daysToArchive = 2;
-			updateSeconds = 15 * 60;
+			updateSeconds = 15*60;
 			maxItems = 100;
 			columnSorter = new FeedItemsListViewColumnSorter();
 			feedItemClickAction = FeedItemClickAction.Default;
@@ -127,9 +125,8 @@ namespace BetterReader.Backend
 				updateTimer.Dispose();
 			}
 
-			updateTimer = new Timer(new TimerCallback(timerCallback), null, updateSeconds * 1000, 
-				Timeout.Infinite);
-
+			updateTimer = new Timer(new TimerCallback(timerCallback), null, updateSeconds*1000,
+			                        Timeout.Infinite);
 		}
 
 		private void timerCallback(object state)
@@ -139,22 +136,21 @@ namespace BetterReader.Backend
 
 		public new static FeedSubscription GetFromOpmlXmlNode(XmlNode node)
 		{
-		   FeedSubscription fs = new FeedSubscription();
-		   fs.DisplayName = node.Attributes["text"].Value;
-		   fs.FeedUrl = node.Attributes["xmlUrl"].Value;
-		   return fs;
+			FeedSubscription fs = new FeedSubscription();
+			fs.DisplayName = node.Attributes["text"].Value;
+			fs.FeedUrl = node.Attributes["xmlUrl"].Value;
+			return fs;
 		}
 
 		public override string ToString()
 		{
-		   return displayName + "(" + feed.UnreadCount.ToString() + "/" + feed.FeedItems.Count.ToString() + ")";
+			return displayName + "(" + feed.UnreadCount.ToString() + "/" + feed.FeedItems.Count.ToString() + ")";
 		}
 
 		public void MarkAllItemsRead()
 		{
 			feed.MarkAllItemsRead();
 		}
-
 
 		#region IDisposable Members
 
@@ -170,14 +166,14 @@ namespace BetterReader.Backend
 
 		internal void Unsubscribe()
 		{
-			this.feed.FeedItems.DeleteArchivedItems();
-			if (this.ParentFolder == null)
+			feed.FeedItems.DeleteArchivedItems();
+			if (ParentFolder == null)
 			{
-				this.ParentFeedSubTree.RootLevelNodes.Remove(this);
+				ParentFeedSubTree.RootLevelNodes.Remove(this);
 			}
 			else
 			{
-				this.ParentFolder.ChildNodes.Remove(this);
+				ParentFolder.ChildNodes.Remove(this);
 			}
 		}
 	}

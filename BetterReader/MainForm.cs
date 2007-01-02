@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+//using System.Data;
 using System.Drawing;
-using System.Text;
+//using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using BetterReader.Backend;
 using BetterReader.UIManagers;
-using System.Diagnostics;
+//using System.Diagnostics;
 
 namespace BetterReader
 {
@@ -18,21 +18,23 @@ namespace BetterReader
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
 		//private FeedSubscriptionTree fst;
 		private FeedSubTreeManager feedSubManager;
-		private readonly string settingsDirectory = System.Environment.CurrentDirectory + "\\appSettings\\";
+		private readonly string settingsDirectory = string.Format("{0}\\appSettings\\", Environment.CurrentDirectory);
 		private readonly string feedSubsFilepath;
 		private static string archiveDirectory;
-		private readonly string graphicsDirectory = System.Environment.CurrentDirectory + "\\Graphics\\";
-		private Graphics formGraphics;
-		private Icon redLightIcon, yellowLightIcon, greenLightIcon;
-		private TreeNode rightClickedNode;
-		private readonly string formStateFilepath;
+//		private readonly string graphicsDirectory = Environment.CurrentDirectory + "\\Graphics\\";
+//		private Graphics formGraphics;
+		private Icon redLightIcon;
+    	private Icon yellowLightIcon;
+    	private Icon greenLightIcon;
+    	private TreeNode rightClickedNode;
+//		private readonly string formStateFilepath;
 		private const string newUnreadItemsMessage = "You have new, unread items.";
 		private const string oldUnreadItemsMessage = "You have unread items.";
 		private const string noUnreadItemsMessage = "You have no unread items.";
 		private Color controlBackgroundColor = Color.WhiteSmoke;
 		private FormWindowState stateBeforeMinimize;
 		private FeedItemsListManager feedItemsManager;
-		private string currentlyDisplayedFeedItemGuid;
+//		private string currentlyDisplayedFeedItemGuid;
 
 		internal static string ArchiveDirectory
 		{
@@ -47,14 +49,14 @@ namespace BetterReader
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			archiveDirectory = settingsDirectory + "ArchivedItems\\";
-			formStateFilepath = settingsDirectory + "MainFormState.xml";
-			currentlyDisplayedFeedItemGuid = "";
+//			formStateFilepath = settingsDirectory + "MainFormState.xml";
+//			currentlyDisplayedFeedItemGuid = "";
 
 			feedsTV.BackColor = feedItemsLV.BackColor = controlBackgroundColor;
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-			formGraphics = this.CreateGraphics();
+//			formGraphics = this.CreateGraphics();
 
 			redLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[2]).GetHicon());
 			yellowLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[1]).GetHicon());
@@ -102,7 +104,8 @@ namespace BetterReader
 		{
 			if (cmdLine.Length == 2)
 			{
-				showNewSubscriptionForm(null, cmdLine[1]);
+				rightClickedNode = null;
+				showNewSubscriptionForm(cmdLine[1]);
 			}
 		}
 
@@ -136,8 +139,8 @@ namespace BetterReader
 				this.Location = Properties.Settings.Default.MyLoc;
 			}
 
-			this.Visible = false;
-			this.WindowState = FormWindowState.Normal;
+			Visible = false;
+			WindowState = FormWindowState.Normal;
 
 			//try
 			//{
@@ -152,21 +155,21 @@ namespace BetterReader
 			this.WindowState = Properties.Settings.Default.MyState;
 			if (this.WindowState != FormWindowState.Minimized)
 			{
-				this.Visible = true;
+				Visible = true;
 			}
 		}
 
 
         private void feedSubReadCallback(FeedSubscription fs)
 		{
-			if (this.IsDisposed && this.Disposing == false)
+			if (IsDisposed && Disposing == false)
 			{
 				return;
 			}
 
 			TreeNode node = feedSubManager.UpdateNodeFromFeedSubscription(fs);
 
-			if (this.InvokeRequired)
+			if (InvokeRequired)
 			{
 				feedsTV.Invoke(new displayFeedItemsIfSelectedDelegate(displayFeedItemsIfNodeSelected),
 			   new object[] { node, fs });
@@ -236,7 +239,7 @@ namespace BetterReader
 			{
 				FeedItem fi = feedItemsLV.SelectedItems[0].Tag as FeedItem;
 				fi.ParentFeed.ParentSubscription.ResetUpdateTimer();
-				currentlyDisplayedFeedItemGuid = fi.Guid;
+//				currentlyDisplayedFeedItemGuid = fi.Guid;
 				itemTitleLBL.Text = fi.Title;
 				itemTitleLBL.Visible = true;
 				itemLinkLBL.Visible = true;
@@ -348,15 +351,15 @@ namespace BetterReader
 				notifyIcon1.Text = noUnreadItemsMessage;
 			}
 
-			this.Hide();
+			Hide();
 			notifyIcon1.Visible = true;
 		}
 
 		private void showFormHideNotifyIcon()
 		{
 			notifyIcon1.Visible = false;
-			this.Show();
-			this.WindowState = stateBeforeMinimize;
+			Show();
+			WindowState = stateBeforeMinimize;
 		}
 
 		private bool showUnsubscribeConfirmation()
@@ -383,12 +386,12 @@ namespace BetterReader
 			}
 		}
 
-		private void showNewSubscriptionForm(TreeNode rightClickedNode)
+		private void showNewSubscriptionForm()
 		{
-			showNewSubscriptionForm(rightClickedNode, "");
+			showNewSubscriptionForm(String.Empty);
 		}
 
-		private void showNewSubscriptionForm(TreeNode rightClickedNode, string feedUrl)
+		private void showNewSubscriptionForm(string feedUrl)
 		{
 
 			FeedFolder parentFolder = null;
@@ -461,7 +464,7 @@ namespace BetterReader
 					break;
 				case 'm':
 				case 'M':
-					this.WindowState = FormWindowState.Minimized;
+					WindowState = FormWindowState.Minimized;
 					break;
 				case 'h':
 				case 'H':
@@ -599,7 +602,7 @@ namespace BetterReader
 
 		private void newSubscriptionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			showNewSubscriptionForm(rightClickedNode);
+			showNewSubscriptionForm();
 		}
 
 
@@ -744,7 +747,7 @@ namespace BetterReader
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			Close();
 		}
 
 		private void newFeedSubscriptionToolStripMenuItem_Click(object sender, EventArgs e)

@@ -73,102 +73,60 @@ namespace BetterReader.Backend
 
 		public string Title
 		{
-			get
-			{
-				return title;
-			}
-			set
-			{
-				title = value;
-			}
+			get { return title; }
+			set { title = value; }
 		}
 
 		public string LinkUrl
 		{
-			get
-			{
-				return linkUrl;
-			}
-			set
-			{
-				linkUrl = value;
-			}
+			get { return linkUrl; }
+			set { linkUrl = value; }
 		}
 
 		public string Category
 		{
-			get
-			{
-				return category;
-			}
-			set
-			{
-				category = value;
-			}
+			get { return category; }
+			set { category = value; }
 		}
 
 		public string Author
 		{
-			get
-			{
-				return author;
-			}
-			set
-			{
-				author = value;
-			}
+			get { return author; }
+			set { author = value; }
 		}
 
 		public DateTime? PubDate
 		{
-			get
-			{
-				return pubDate;
-			}
-			set
-			{
-				pubDate = value;
-			}
+			get { return pubDate; }
+			set { pubDate = value; }
 		}
 
 		public string Guid
 		{
-			get
-			{
-				return guid;
-			}
-			set
-			{
-				guid = value;
-			}
+			get { return guid; }
+			set { guid = value; }
 		}
 
 		public string Description
 		{
-			get
-			{
-				return description;
-			}
-			set
-			{
-				description = value;
-			}
+			get { return description; }
+			set { description = value; }
 		}
 
 		public FeedItem()
 		{
 			unsupportedFeedItemProperties = new Dictionary<string, string>();
-			this.author = "";
-			this.category = "";
-			this.description = "";
-			this.downloadDate = null;
-			this.encodedContent = "";
-			this.guid = "";
-			this.hasBeenRead = false;
-			this.linkUrl = "";
-			this.parentFeed = null;
-			this.pubDate = null;
-			this.title = "";
+			author = "";
+			category = "";
+			description = "";
+			downloadDate = null;
+			encodedContent = "";
+			guid = "";
+			hasBeenRead = false;
+			linkUrl = "";
+			parentFeed = null;
+			pubDate = null;
+			title = "";
 		}
 
 		private void setIncludedProperties()
@@ -254,9 +212,9 @@ namespace BetterReader.Backend
 			if (guid == null || guid.Length < 1)
 			{
 				//no guid provided by source so calculate our own
-				string allProps = this.author + this.linkUrl + this.pubDate + this.title;
+				string allProps = author + linkUrl + pubDate + title;
 				//a linefeed in the guid causes uniquess issues
-				this.guid = allProps.Replace("\r\n", "").ToLower().GetHashCode().ToString();
+				guid = allProps.Replace("\r\n", "").ToLower().GetHashCode().ToString();
 			}
 		}
 
@@ -326,7 +284,7 @@ namespace BetterReader.Backend
 		{
 			if (obj.GetType() == this.GetType())
 			{
-				FeedItem other = (FeedItem)obj;
+				FeedItem other = (FeedItem) obj;
 				return this.guid.Equals(other.guid);
 			}
 			else
@@ -341,6 +299,7 @@ namespace BetterReader.Backend
 		}
 
 		#region datetime parsing
+
 		private DateTime? safeDateTimeParse(string dt)
 		{
 			DateTime? retVal = null;
@@ -401,13 +360,17 @@ namespace BetterReader.Backend
 			//'NEWS.COM.COM = Thu, 02 Jun, 2005 4:16:00 PDT
 			string dfNewsCom2 = "ddd, dd MMM, yyyy h:mm:ss z";
 			//'dateFormats = New String() {"r", "s", "u", "yyyy-MM-ddTHH:mmzzz", "yyyy-MM-ddTHH:mm:sszzz", "yyyyMMddTHHmmss", "ddd, dd MMM yyyy HH:mm Z", "ddd, dd MMM, yyyy HH:mm:ss Z"}
-			string[] dateFormats = { "r", "s", "u", dfCraigslist, dfCraigslistII, dfBlogMaverick, dfTopix, dfNewsCom, dfNewsCom2, "ddd, dd MMM yyyy HH:mm:ss z", "ddd, dd MMM yyyy HH:mm:ss zzzz", "ddd, dd MMM yyyy HH:mm:ss -zzzz", "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss -zzz", "ddd, dd MMM yyyy HH:mm:ss Z" };
-			
+			string[] dateFormats = {
+			                       	"r", "s", "u", dfCraigslist, dfCraigslistII, dfBlogMaverick, dfTopix, dfNewsCom, dfNewsCom2,
+			                       	"ddd, dd MMM yyyy HH:mm:ss z", "ddd, dd MMM yyyy HH:mm:ss zzzz",
+			                       	"ddd, dd MMM yyyy HH:mm:ss -zzzz", "ddd, dd MMM yyyy HH:mm:ss zzz",
+			                       	"ddd, dd MMM yyyy HH:mm:ss -zzz", "ddd, dd MMM yyyy HH:mm:ss Z"
+			                       };
+
 			return dateFormats;
 		}
+
 		#endregion
-
-
 
 		internal void MarkRead()
 		{

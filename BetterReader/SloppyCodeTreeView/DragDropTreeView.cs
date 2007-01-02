@@ -1,11 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
-using System.Collections;
+//using System.Collections;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Windows.Forms;
-using System.Data;
+//using System.Data;
 using System.Runtime.InteropServices;
-using System.Windows.Forms.Design;
+//using System.Windows.Forms.Design;
 
 namespace Sloppycode.UI
 {
@@ -27,148 +29,144 @@ namespace Sloppycode.UI
 	//Modified by Steve Kain for the BetterReader project
 
 	#region TreeViewDragDrop class
+
 	/// <summary>
 	/// A treeview with inbuilt drag-drop support and custom cursor/icon dragging.
 	/// </summary>
 	[
-	ToolboxBitmap(typeof(TreeViewDragDrop), "Sloppycode.UI.DragDropTreeView.bmp"),
-	Description("A treeview with inbuilt drag-drop support and custom cursor/icon dragging.")	
-	]
-	public class TreeViewDragDrop : System.Windows.Forms.TreeView
+		ToolboxBitmap(typeof (TreeViewDragDrop), "Sloppycode.UI.DragDropTreeView.bmp"),
+			Description("A treeview with inbuilt drag-drop support and custom cursor/icon dragging.")
+		]
+	public class TreeViewDragDrop : TreeView
 	{
 		#region Win32 api import, events
+
 		[DllImport("user32.dll")]
-		private static extern int SendMessage (IntPtr hWnd, int wMsg, IntPtr wParam,int lParam);
+		private static extern int SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, int lParam);
 
 		/// <summary>
 		/// Occurs when an item is starting to be dragged. This
 		/// event can be used to cancel dragging of particular items.
 		/// </summary>
 		[
-		Description("Occurs when an item is starting to be dragged. This event can be used to cancel dragging of particular items."),
-		]
+			Description(
+				"Occurs when an item is starting to be dragged. This event can be used to cancel dragging of particular items."),
+			]
 		public event DragItemEventHandler DragStart;
 
 		/// <summary>
 		/// Occurs when an item is dragged and dropped onto another.
 		/// </summary>
 		[
-		Description("Occurs when an item is dragged and dropped onto another."),
-		]
+			Description("Occurs when an item is dragged and dropped onto another."),
+			]
 		public event DragCompleteEventHandler DragComplete;
-		
+
 		/// <summary>
 		/// Occurs when an item is dragged, and the drag is cancelled.
 		/// </summary>
 		[
-		Description("Occurs when an item is dragged, and the drag is cancelled."),
-		]
+			Description("Occurs when an item is dragged, and the drag is cancelled."),
+			]
 		public event DragItemEventHandler DragCancel;
 
-		
 		#endregion
 
 		#region Public properties
+
 		/// <summary>
 		/// The imagelist control from which DragImage icons are taken.
 		/// </summary>
 		[
-		Description("The imagelist control from which DragImage icons are taken."),
-		Category("Drag and drop")
-		]
+			Description("The imagelist control from which DragImage icons are taken."),
+				Category("Drag and drop")
+			]
 		public ImageList DragImageList
 		{
-			get
-			{
-				return this._formDrag.imageList1;
-			}
+			get { return _formDrag.imageList1; }
 			set
 			{
-				if ( value == this._formDrag.imageList1 )
+				if (value == _formDrag.imageList1)
 				{
 					return;
 				}
 
-				this._formDrag.imageList1 = value;
+				_formDrag.imageList1 = value;
 
 				// Change the picture box to use this image
-				if ( this._formDrag.imageList1.Images.Count > 0 && this._formDrag.imageList1.Images[this._dragImageIndex] != null )
+				if (_formDrag.imageList1.Images.Count > 0 && _formDrag.imageList1.Images[_dragImageIndex] != null)
 				{
-					this._formDrag.pictureBox1.Image = this._formDrag.imageList1.Images[this._dragImageIndex];
-					this._formDrag.Height = this._formDrag.pictureBox1.Image.Height;
+					_formDrag.pictureBox1.Image = _formDrag.imageList1.Images[_dragImageIndex];
+					_formDrag.Height = _formDrag.pictureBox1.Image.Height;
 				}
 
-				if ( !base.IsHandleCreated )
+				if (!base.IsHandleCreated)
 				{
 					return;
 				}
-				SendMessage((IntPtr) 4361, 0, ((value == null) ? IntPtr.Zero : value.Handle),0);
+				SendMessage((IntPtr) 4361, 0, ((value == null) ? IntPtr.Zero : value.Handle), 0);
 			}
-
 		}
 
 		/// <summary>
 		/// The default image index for the DragImage icon.
 		/// </summary>
 		[
-		Description("The default image index for the DragImage icon."),
-		Category("Drag and drop"),
-		TypeConverter(typeof(ImageIndexConverter)), 
-		Editor("System.Windows.Forms.Design.ImageIndexEditor",typeof(System.Drawing.Design.UITypeEditor))
-		]
+			Description("The default image index for the DragImage icon."),
+				Category("Drag and drop"),
+				TypeConverter(typeof (ImageIndexConverter)),
+				Editor("System.Windows.Forms.Design.ImageIndexEditor", typeof (UITypeEditor))
+			]
 		public int DragImageIndex
 		{
 			get
 			{
-				if ( this._formDrag.imageList1 == null)
+				if (_formDrag.imageList1 == null)
 				{
 					return -1;
 				}
 
-				if ( this._dragImageIndex >= this._formDrag.imageList1.Images.Count)
+				if (_dragImageIndex >= _formDrag.imageList1.Images.Count)
 				{
-					return Math.Max(0, (this._formDrag.imageList1.Images.Count - 1));
+					return Math.Max(0, (_formDrag.imageList1.Images.Count - 1));
 				}
 				else
 
-				return this._dragImageIndex;
+					return _dragImageIndex;
 			}
 			set
 			{
 				// Change the picture box to use this image
-				if ( this._formDrag.imageList1.Images.Count > 0 && this._formDrag.imageList1.Images[value] != null )
+				if (_formDrag.imageList1.Images.Count > 0 && _formDrag.imageList1.Images[value] != null)
 				{
-					this._formDrag.pictureBox1.Image = this._formDrag.imageList1.Images[value];
-					this._formDrag.Size = new Size(this._formDrag.Width,this._formDrag.pictureBox1.Image.Height);
-					this._formDrag.labelText.Size = new Size(this._formDrag.labelText.Width,this._formDrag.pictureBox1.Image.Height);
+					_formDrag.pictureBox1.Image = _formDrag.imageList1.Images[value];
+					_formDrag.Size = new Size(_formDrag.Width, _formDrag.pictureBox1.Image.Height);
+					_formDrag.labelText.Size = new Size(_formDrag.labelText.Width, _formDrag.pictureBox1.Image.Height);
 				}
 
-				this._dragImageIndex = value;
+				_dragImageIndex = value;
 			}
 		}
-		
+
 		/// <summary>
 		/// The custom cursor to use when dragging an item, if DragCursor is set to Custom.
 		/// </summary>
 		[
-		Description("The custom cursor to use when dragging an item, if DragCursor is set to Custom."),
-		Category("Drag and drop")
-		]
+			Description("The custom cursor to use when dragging an item, if DragCursor is set to Custom."),
+				Category("Drag and drop")
+			]
 		public Cursor DragCursor
 		{
-			get
-			{
-				return this._dragCursor;
-			}
+			get { return _dragCursor; }
 			set
 			{
-				if ( value == this._dragCursor)
+				if (value == _dragCursor)
 				{
 					return;
 				}
 
-				this._dragCursor = value;
-				if ( !base.IsHandleCreated )
+				_dragCursor = value;
+				if (!base.IsHandleCreated)
 				{
 					return;
 				}
@@ -179,43 +177,35 @@ namespace Sloppycode.UI
 		/// The cursor type to use when dragging - None uses the default drag and drop cursor, DragIcon uses an icon and label, Custom uses a custom cursor.
 		/// </summary>
 		[
-		Description("The cursor type to use when dragging - None uses the default drag and drop cursor, DragIcon uses an icon and label, Custom uses a custom cursor."),
-		Category("Drag and drop")
-		]
+			Description(
+				"The cursor type to use when dragging - None uses the default drag and drop cursor, DragIcon uses an icon and label, Custom uses a custom cursor."
+				),
+				Category("Drag and drop")
+			]
 		public DragCursorType DragCursorType
 		{
-			get
-			{
-				return this._dragCursorType;
-			}
-			set
-			{
-				this._dragCursorType = value;
-			}
+			get { return _dragCursorType; }
+			set { _dragCursorType = value; }
 		}
 
 		/// <summary>
 		/// Sets the font for the dragged node (shown as ghosted text/icon).
 		/// </summary>
 		[
-		Description("Sets the font for the dragged node (shown as ghosted text/icon)."),
-		Category("Drag and drop")
-		]
+			Description("Sets the font for the dragged node (shown as ghosted text/icon)."),
+				Category("Drag and drop")
+			]
 		public Font DragNodeFont
 		{
-			get
-			{
-				return this._formDrag.labelText.Font ;
-			}
+			get { return _formDrag.labelText.Font; }
 			set
 			{
-				this._formDrag.labelText.Font = value;
+				_formDrag.labelText.Font = value;
 
 				// Set the drag form height to the font height
-				this._formDrag.Size = new Size(this._formDrag.Width,(int) this._formDrag.labelText.Font.GetHeight());
-				this._formDrag.labelText.Size = new Size(this._formDrag.labelText.Width,(int) this._formDrag.labelText.Font.GetHeight());
-				
-
+				_formDrag.Size = new Size(_formDrag.Width, (int) _formDrag.labelText.Font.GetHeight());
+				_formDrag.labelText.Size =
+					new Size(_formDrag.labelText.Width, (int) _formDrag.labelText.Font.GetHeight());
 			}
 		}
 
@@ -224,19 +214,13 @@ namespace Sloppycode.UI
 		/// </summary>
 		[
 			Description("Sets the opacity for the dragged node (shown as ghosted text/icon)."),
-			Category("Drag and drop"),
-			TypeConverter(typeof(System.Windows.Forms.OpacityConverter))
-		]
+				Category("Drag and drop"),
+				TypeConverter(typeof (OpacityConverter))
+			]
 		public double DragNodeOpacity
-		{ 
-			get
-			{
-				return this._formDrag.Opacity;
-			}
-			set
-			{
-				this._formDrag.Opacity = value;
-			}
+		{
+			get { return _formDrag.Opacity; }
+			set { _formDrag.Opacity = value; }
 		}
 
 		/// <summary>
@@ -244,18 +228,12 @@ namespace Sloppycode.UI
 		/// </summary>
 		[
 			Description("The background colour of the node being dragged over."),
-			Category("Drag and drop")
-		]
+				Category("Drag and drop")
+			]
 		public Color DragOverNodeBackColor
 		{
-			get
-			{
-				return this._dragOverNodeBackColor;
-			}
-			set
-			{
-				this._dragOverNodeBackColor = value;
-			}
+			get { return _dragOverNodeBackColor; }
+			set { _dragOverNodeBackColor = value; }
 		}
 
 		/// <summary>
@@ -263,18 +241,12 @@ namespace Sloppycode.UI
 		/// </summary>
 		[
 			Description("The foreground colour of the node being dragged over."),
-			Category("Drag and drop")
-		]
+				Category("Drag and drop")
+			]
 		public Color DragOverNodeForeColor
 		{
-			get
-			{
-				return this._dragOverNodeForeColor;
-			}
-			set
-			{
-				this._dragOverNodeForeColor = value;
-			}
+			get { return _dragOverNodeForeColor; }
+			set { _dragOverNodeForeColor = value; }
 		}
 
 		/// <summary>
@@ -282,18 +254,12 @@ namespace Sloppycode.UI
 		/// </summary>
 		[
 			Description("The drag mode (move,copy etc.)"),
-			Category("Drag and drop")
-		]
+				Category("Drag and drop")
+			]
 		public DragDropEffects DragMode
 		{
-			get
-			{
-				return this._dragMode;
-			}
-			set
-			{
-				this._dragMode = value;
-			}
+			get { return _dragMode; }
+			set { _dragMode = value; }
 		}
 
 		/// <summary>
@@ -306,9 +272,11 @@ namespace Sloppycode.UI
 			get { return disableBackgroundErase; }
 			set { disableBackgroundErase = value; }
 		}
+
 		#endregion
-		
+
 		#region Private members
+
 		private int _dragImageIndex;
 		private DragDropEffects _dragMode = DragDropEffects.Move;
 		private Color _dragOverNodeForeColor = SystemColors.HighlightText;
@@ -320,31 +288,33 @@ namespace Sloppycode.UI
 		private FormDrag _formDrag = new FormDrag();
 		private bool disableBackgroundErase = true;
 
-		
 		#endregion
 
 		#region Constructor
+
 		public TreeViewDragDrop()
 		{
-			base.SetStyle(ControlStyles.DoubleBuffer,true);
-			this.AllowDrop = true;
+			base.SetStyle(ControlStyles.DoubleBuffer, true);
+			AllowDrop = true;
 
 			// Set the drag form to have ambient properties
-			this._formDrag.labelText.Font = this.Font;
-			this._formDrag.BackColor = this.BackColor;
+			_formDrag.labelText.Font = Font;
+			_formDrag.BackColor = BackColor;
 
 			// Custom cursor handling
-			if ( this._dragCursorType == DragCursorType.Custom && this._dragCursor != null )
+			if (_dragCursorType == DragCursorType.Custom && _dragCursor != null)
 			{
-				this.DragCursor = this._dragCursor; 
+				DragCursor = _dragCursor;
 			}
 
-			this._formDrag.Show();
-			this._formDrag.Visible = false;
+			_formDrag.Show();
+			_formDrag.Visible = false;
 		}
+
 		#endregion
 
 		#region Over-ridden methods
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -354,34 +324,34 @@ namespace Sloppycode.UI
 			if (disableBackgroundErase)
 			{
 				// Stop erase background message
-				if (m.Msg == (int)0x0014)
+				if (m.Msg == 0x0014)
 				{
-					m.Msg = (int)0x0000; // Set to null
+					m.Msg = 0x0000; // Set to null
 				}
 			}
-			
+
 			base.WndProc(ref m);
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnGiveFeedback(System.Windows.Forms.GiveFeedbackEventArgs e)
+		protected override void OnGiveFeedback(GiveFeedbackEventArgs e)
 		{
-			if ( e.Effect == this._dragMode )
+			if (e.Effect == _dragMode)
 			{
 				e.UseDefaultCursors = false;
 
-				if ( this._dragCursorType == DragCursorType.Custom && this._dragCursor != null )
+				if (_dragCursorType == DragCursorType.Custom && _dragCursor != null)
 				{
 					// Custom cursor
-					this.Cursor = this._dragCursor;
+					Cursor = _dragCursor;
 				}
-				else if ( this._dragCursorType == DragCursorType.DragIcon )
+				else if (_dragCursorType == DragCursorType.DragIcon)
 				{
 					// This removes the default drag + drop cursor
-					this.Cursor = Cursors.Default;
+					Cursor = Cursors.Default;
 				}
 				else
 				{
@@ -391,134 +361,134 @@ namespace Sloppycode.UI
 			else
 			{
 				e.UseDefaultCursors = true;
-				this.Cursor = Cursors.Default;
+				Cursor = Cursors.Default;
 			}
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnItemDrag(System.Windows.Forms.ItemDragEventArgs e)
+		protected override void OnItemDrag(ItemDragEventArgs e)
 		{
-			this._selectedNode = (TreeNode) e.Item;
+			_selectedNode = (TreeNode) e.Item;
 
 			// Call dragstart event
-			if ( this.DragStart != null )
+			if (DragStart != null)
 			{
 				DragItemEventArgs ea = new DragItemEventArgs();
-				ea.Node = this._selectedNode;
+				ea.Node = _selectedNode;
 
-				this.DragStart(this,ea);
+				DragStart(this, ea);
 			}
 			// Change any previous node back 
-			if ( this._previousNode != null )
+			if (_previousNode != null)
 			{
-				this._previousNode.BackColor = this.BackColor;
-				this._previousNode.ForeColor = this.ForeColor;
+				_previousNode.BackColor = BackColor;
+				_previousNode.ForeColor = ForeColor;
 			}
 
 			// Move the form with the icon/label on it
 			// A better width measurement algo for the form is needed here
 
-			int width = Width  = this._selectedNode.Text.Length * (int) this._formDrag.labelText.Font.Size;
-			if ( this._selectedNode.Text.Length < 5 )
+			int width = Width = _selectedNode.Text.Length*(int) _formDrag.labelText.Font.Size;
+			if (_selectedNode.Text.Length < 5)
 				width += 20;
 
-			this._formDrag.Size = new Size(width,this._formDrag.Height);
+			_formDrag.Size = new Size(width, _formDrag.Height);
 
-			this._formDrag.labelText.Size = new Size(width,this._formDrag.labelText.Size.Height);
-			this._formDrag.labelText.Text = this._selectedNode.Text;
+			_formDrag.labelText.Size = new Size(width, _formDrag.labelText.Size.Height);
+			_formDrag.labelText.Text = _selectedNode.Text;
 
 			// Start drag drop
-			this.DoDragDrop(e.Item,this._dragMode);
+			DoDragDrop(e.Item, _dragMode);
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnDragOver(System.Windows.Forms.DragEventArgs e)
+		protected override void OnDragOver(DragEventArgs e)
 		{
 			// Change any previous node back
-			if ( this._previousNode != null )
+			if (_previousNode != null)
 			{
-				this._previousNode.BackColor = this.BackColor;
-				this._previousNode.ForeColor = this.ForeColor;
+				_previousNode.BackColor = BackColor;
+				_previousNode.ForeColor = ForeColor;
 			}
 
 			// Get the node from the mouse position, colour it
-			Point pt = ((TreeView)this).PointToClient(new Point(e.X, e.Y));
-			TreeNode treeNode = this.GetNodeAt(pt);
-			treeNode.BackColor = this._dragOverNodeBackColor;
-			treeNode.ForeColor = this._dragOverNodeForeColor;
+			Point pt = PointToClient(new Point(e.X, e.Y));
+			TreeNode treeNode = GetNodeAt(pt);
+			treeNode.BackColor = _dragOverNodeBackColor;
+			treeNode.ForeColor = _dragOverNodeForeColor;
 
 			// Move the icon form
-			if ( this._dragCursorType == DragCursorType.DragIcon )
+			if (_dragCursorType == DragCursorType.DragIcon)
 			{
-				this._formDrag.Location = new Point(e.X+5,e.Y -5);
-				this._formDrag.Visible = true;
+				_formDrag.Location = new Point(e.X + 5, e.Y - 5);
+				_formDrag.Visible = true;
 			}
-			
+
 			// Scrolling down/up
-			if ( pt.Y +10 > this.ClientSize.Height )
-				SendMessage( this.Handle,277,(IntPtr) 1,0 );
-			else if ( pt.Y < this.Top +10 )
-				SendMessage( this.Handle,277,(IntPtr) 0,0 );
+			if (pt.Y + 10 > ClientSize.Height)
+				SendMessage(Handle, 277, (IntPtr) 1, 0);
+			else if (pt.Y < Top + 10)
+				SendMessage(Handle, 277, (IntPtr) 0, 0);
 
 			// Remember the target node, so we can set it back
-			this._previousNode = treeNode;
+			_previousNode = treeNode;
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
 		protected override void OnDragLeave(EventArgs e)
 		{
-			if ( this._selectedNode != null )
+			if (_selectedNode != null)
 			{
-				this.SelectedNode = this._selectedNode;
+				SelectedNode = _selectedNode;
 			}
 
-			if ( this._previousNode != null )
+			if (_previousNode != null)
 			{
-				this._previousNode.BackColor = this._dragOverNodeBackColor;
-				this._previousNode.ForeColor = this._dragOverNodeForeColor;
+				_previousNode.BackColor = _dragOverNodeBackColor;
+				_previousNode.ForeColor = _dragOverNodeForeColor;
 			}
 
-			this._formDrag.Visible = false;
-			this.Cursor = Cursors.Default;
+			_formDrag.Visible = false;
+			Cursor = Cursors.Default;
 
 			// Call cancel event
-			if ( this.DragCancel != null )
+			if (DragCancel != null)
 			{
 				DragItemEventArgs ea = new DragItemEventArgs();
-				ea.Node = this._selectedNode;
+				ea.Node = _selectedNode;
 
-				this.DragCancel(this,ea);
+				DragCancel(this, ea);
 			}
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnDragEnter(System.Windows.Forms.DragEventArgs e)
+		protected override void OnDragEnter(DragEventArgs e)
 		{
-			e.Effect = this._dragMode;
+			e.Effect = _dragMode;
 
 			// Reset the previous node var
-			this._previousNode = null;
-			this._selectedNode = null;
-			System.Diagnostics.Debug.WriteLine(this._formDrag.labelText.Size);
+			_previousNode = null;
+			_selectedNode = null;
+			Debug.WriteLine(_formDrag.labelText.Size);
 		}
-	
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="e"></param>
-		protected override void OnDragDrop(System.Windows.Forms.DragEventArgs e)
+		protected override void OnDragDrop(DragEventArgs e)
 		{
 			handleCustomCursor();
 
@@ -546,34 +516,34 @@ namespace Sloppycode.UI
 		protected void moveNodeToNewParent(TreeNode dragNode, TreeNode targetNode)
 		{
 			// Copy the node, add as a child to the destination node
-			TreeNode newTreeNode = (TreeNode)dragNode.Clone();
+			TreeNode newTreeNode = (TreeNode) dragNode.Clone();
 			targetNode.Nodes.Add(newTreeNode);
 			targetNode.Expand();
 
 			// Remove Original Node, set the dragged node as selected
 			dragNode.Remove();
-			this.SelectedNode = newTreeNode;
+			SelectedNode = newTreeNode;
 		}
 
 		protected void doPostDragTasks(TreeNode dragNode, TreeNode targetNode)
 		{
-			this.Cursor = Cursors.Default;
+			Cursor = Cursors.Default;
 
 			// Call drag complete event
-			if (this.DragComplete != null)
+			if (DragComplete != null)
 			{
 				DragCompleteEventArgs ea = new DragCompleteEventArgs();
 				ea.SourceNode = dragNode;
 				ea.TargetNode = targetNode;
 
-				this.DragComplete(this, ea);
+				DragComplete(this, ea);
 			}
 		}
 
 		protected void decolorNode(TreeNode targetNode)
 		{
-			targetNode.BackColor = this.BackColor;
-			targetNode.ForeColor = this.ForeColor;
+			targetNode.BackColor = BackColor;
+			targetNode.ForeColor = ForeColor;
 		}
 
 
@@ -589,14 +559,14 @@ namespace Sloppycode.UI
 		/// <returns></returns>
 		protected bool dragIsValid(TreeNode dragNode, TreeNode targetNode)
 		{
-			return targetNode != dragNode && !targetNode.FullPath.StartsWith(dragNode.FullPath) && 
-				dragNode.Parent != targetNode;
+			return targetNode != dragNode && !targetNode.FullPath.StartsWith(dragNode.FullPath) &&
+			       dragNode.Parent != targetNode;
 		}
 
-		protected TreeNode getTargetNodeFromDragEventArgs(System.Windows.Forms.DragEventArgs e)
+		protected TreeNode getTargetNodeFromDragEventArgs(DragEventArgs e)
 		{
-			Point pt = ((TreeView)this).PointToClient(new Point(e.X, e.Y));
-			TreeNode targetNode = this.GetNodeAt(pt);
+			Point pt = PointToClient(new Point(e.X, e.Y));
+			TreeNode targetNode = GetNodeAt(pt);
 			return targetNode;
 		}
 
@@ -604,7 +574,7 @@ namespace Sloppycode.UI
 		{
 			if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
 			{
-				return (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+				return (TreeNode) e.Data.GetData("System.Windows.Forms.TreeNode");
 			}
 			else
 			{
@@ -614,12 +584,12 @@ namespace Sloppycode.UI
 
 		protected void handleCustomCursor()
 		{
-			if (this._dragCursorType == DragCursorType.DragIcon)
+			if (_dragCursorType == DragCursorType.DragIcon)
 			{
-				this.Cursor = Cursors.Default;
+				Cursor = Cursors.Default;
 			}
 
-			this._formDrag.Visible = false;
+			_formDrag.Visible = false;
 		}
 
 		/// <summary>
@@ -628,47 +598,50 @@ namespace Sloppycode.UI
 		/// <param name="e"></param>
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if ( e.KeyCode == Keys.Escape )
+			if (e.KeyCode == Keys.Escape)
 			{
-				if ( this._selectedNode != null )
+				if (_selectedNode != null)
 				{
-					this.SelectedNode = this._selectedNode;
+					SelectedNode = _selectedNode;
 				}
 
-				if ( this._previousNode != null )
+				if (_previousNode != null)
 				{
-					this._previousNode.BackColor = this.BackColor;
-					this._previousNode.ForeColor = this.ForeColor;
+					_previousNode.BackColor = BackColor;
+					_previousNode.ForeColor = ForeColor;
 				}
 
-				this.Cursor = Cursors.Default;
-				this._formDrag.Visible = false;
+				Cursor = Cursors.Default;
+				_formDrag.Visible = false;
 
 				// Call cancel event
-				if ( this.DragCancel != null )
+				if (DragCancel != null)
 				{
 					DragItemEventArgs ea = new DragItemEventArgs();
-					ea.Node = this._selectedNode;
+					ea.Node = _selectedNode;
 
-					this.DragCancel(this,ea);
+					DragCancel(this, ea);
 				}
 			}
 		}
 
-
 		#endregion
 
 		#region FormDrag form
-		internal class FormDrag : System.Windows.Forms.Form
+
+		internal class FormDrag : Form
 		{
 			#region Components
-			public System.Windows.Forms.Label labelText;
-			public System.Windows.Forms.PictureBox pictureBox1;
-			public System.Windows.Forms.ImageList imageList1;
-			private System.ComponentModel.Container components = null;
+
+			public Label labelText;
+			public PictureBox pictureBox1;
+			public ImageList imageList1;
+			private Container components = null;
+
 			#endregion
 
 			#region Constructor, dispose
+
 			public FormDrag()
 			{
 				InitializeComponent();
@@ -677,69 +650,74 @@ namespace Sloppycode.UI
 			/// <summary>
 			/// Clean up any resources being used.
 			/// </summary>
-			protected override void Dispose( bool disposing )
+			protected override void Dispose(bool disposing)
 			{
-				if( disposing )
+				if (disposing)
 				{
-					if(components != null)
+					if (components != null)
 					{
 						components.Dispose();
 					}
 				}
-				base.Dispose( disposing );
+				base.Dispose(disposing);
 			}
+
 			#endregion
 
 			#region Windows Form Designer generated code
+
 			/// <summary>
 			/// Required method for Designer support - do not modify
 			/// the contents of this method with the code editor.
 			/// </summary>
 			private void InitializeComponent()
 			{
-				this.components = new System.ComponentModel.Container();
-				this.labelText = new System.Windows.Forms.Label();
-				this.pictureBox1 = new System.Windows.Forms.PictureBox();
-				this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-				this.SuspendLayout();
+				components = new System.ComponentModel.Container();
+				labelText = new System.Windows.Forms.Label();
+				pictureBox1 = new System.Windows.Forms.PictureBox();
+				imageList1 = new System.Windows.Forms.ImageList(components);
+				SuspendLayout();
 				// 
 				// labelText
 				// 
-				this.labelText.BackColor = System.Drawing.Color.Transparent;
-				this.labelText.Location = new System.Drawing.Point(16, 2);
-				this.labelText.Name = "labelText";
-				this.labelText.Size = new System.Drawing.Size(100, 16);
-				this.labelText.TabIndex = 0;
+				labelText.BackColor = System.Drawing.Color.Transparent;
+				labelText.Location = new System.Drawing.Point(16, 2);
+				labelText.Name = "labelText";
+				labelText.Size = new System.Drawing.Size(100, 16);
+				labelText.TabIndex = 0;
 				// 
 				// pictureBox1
 				// 
-				this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-				this.pictureBox1.Name = "pictureBox1";
-				this.pictureBox1.Size = new System.Drawing.Size(16, 16);
-				this.pictureBox1.TabIndex = 1;
-				this.pictureBox1.TabStop = false;
+				pictureBox1.Location = new System.Drawing.Point(0, 0);
+				pictureBox1.Name = "pictureBox1";
+				pictureBox1.Size = new System.Drawing.Size(16, 16);
+				pictureBox1.TabIndex = 1;
+				pictureBox1.TabStop = false;
 				// 
 				// Form2
 				// 
-				this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-				this.BackColor = System.Drawing.SystemColors.Control;
-				this.ClientSize = new System.Drawing.Size(100, 16);
-				this.Controls.Add(this.pictureBox1);
-				this.Controls.Add(this.labelText);
-				this.Size = new Size(300,500);
-				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-				this.Opacity = 0.3;
-				this.ShowInTaskbar = false;
-				this.ResumeLayout(false);
-
+				AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+				BackColor = System.Drawing.SystemColors.Control;
+				ClientSize = new System.Drawing.Size(100, 16);
+				Controls.Add(pictureBox1);
+				Controls.Add(labelText);
+				Size = new Size(300, 500);
+				FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+				Opacity = 0.3;
+				ShowInTaskbar = false;
+				ResumeLayout(false);
 			}
+
 			#endregion
 		}
+
 		#endregion
 	}
+
 	#endregion
 
 	#region DragCursorType enum
+
 	[Serializable]
 	public enum DragCursorType
 	{
@@ -747,11 +725,14 @@ namespace Sloppycode.UI
 		DragIcon,
 		Custom
 	}
+
 	#endregion
 
 	#region Event classes/delegates
-	public delegate void DragCompleteEventHandler(object sender,DragCompleteEventArgs e);
-	public delegate void DragItemEventHandler(object sender,DragItemEventArgs e);
+
+	public delegate void DragCompleteEventHandler(object sender, DragCompleteEventArgs e);
+
+	public delegate void DragItemEventHandler(object sender, DragItemEventArgs e);
 
 	public class DragCompleteEventArgs : EventArgs
 	{
@@ -760,14 +741,8 @@ namespace Sloppycode.UI
 		/// </summary>
 		public TreeNode SourceNode
 		{
-			get
-			{
-				return this._sourceNode;
-			}
-			set
-			{
-				this._sourceNode = value;
-			}
+			get { return _sourceNode; }
+			set { _sourceNode = value; }
 		}
 
 		/// <summary>
@@ -775,17 +750,11 @@ namespace Sloppycode.UI
 		/// </summary>
 		public TreeNode TargetNode
 		{
-			get
-			{
-				return this._targetNode;
-			}
-			set
-			{
-				this._targetNode = value;
-			}
+			get { return _targetNode; }
+			set { _targetNode = value; }
 		}
-		
-		private TreeNode _targetNode;		
+
+		private TreeNode _targetNode;
 		private TreeNode _sourceNode;
 	}
 
@@ -796,17 +765,12 @@ namespace Sloppycode.UI
 		/// </summary>
 		public TreeNode Node
 		{
-			get
-			{
-				return this._node;
-			}
-			set
-			{
-				this._node = value;
-			}
+			get { return _node; }
+			set { _node = value; }
 		}
-		
+
 		private TreeNode _node;
 	}
+
 	#endregion
 }

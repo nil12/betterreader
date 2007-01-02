@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+//using System.Text;
+using System.Windows.Forms;
+//using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
-using System.Diagnostics;
+//using System.Diagnostics;
 
 namespace BetterReader.Backend
 {
-
-	[XmlInclude(typeof(FeedFolder))]
-	[XmlInclude(typeof(FeedSubscription))]
-    public class FeedSubscriptionTree : IDisposable
-    {
+	[XmlInclude(typeof (FeedFolder))]
+	[XmlInclude(typeof (FeedSubscription))]
+	public class FeedSubscriptionTree : IDisposable
+	{
 		private List<FeedSubTreeNodeBase> rootLevelNodes;
 
 		public List<FeedSubTreeNodeBase> RootLevelNodes
@@ -26,21 +26,21 @@ namespace BetterReader.Backend
 			rootLevelNodes = new List<FeedSubTreeNodeBase>();
 		}
 
-        public void SaveAsFeedSubscriptionsFile(string filepath)
-        {
+		public void SaveAsFeedSubscriptionsFile(string filepath)
+		{
 			if (File.Exists(filepath))
 			{
 				File.Copy(filepath, filepath.Replace(".xml", ".bak"), true);
 			}
 
-            using (TextWriter tw = new StreamWriter(filepath))
-            {
-				XmlSerializer xs = new XmlSerializer(this.GetType());
+			using (TextWriter tw = new StreamWriter(filepath))
+			{
+				XmlSerializer xs = new XmlSerializer(GetType());
 				xs.Serialize(tw, this);
 				//tw.WriteLine("here");
 				tw.Close();
-            }
-        }
+			}
+		}
 
 		public void ReloadFromTreeView(FeedsTreeView treeView)
 		{
@@ -48,23 +48,23 @@ namespace BetterReader.Backend
 			loadNodesFromTreeNodeCollection(treeView.Nodes, rootLevelNodes);
 		}
 
-		private void loadNodesFromTreeNodeCollection(System.Windows.Forms.TreeNodeCollection treeNodes, List<FeedSubTreeNodeBase> feedSubNodes)
+		private void loadNodesFromTreeNodeCollection(TreeNodeCollection treeNodes, List<FeedSubTreeNodeBase> feedSubNodes)
 		{
-			foreach (System.Windows.Forms.TreeNode treeNode in treeNodes)
+			foreach (TreeNode treeNode in treeNodes)
 			{
 				FeedSubTreeNodeBase fstnb = treeNode.Tag as FeedSubTreeNodeBase;
 				if (fstnb == null)
 				{
-					throw new Exception("Error loading node: " + treeNode.Text + 
-						".  Tag is null or not a FeedSubTreeNodeBase.");
+					throw new Exception("Error loading node: " + treeNode.Text +
+					                    ".  Tag is null or not a FeedSubTreeNodeBase.");
 				}
 
 				feedSubNodes.Add(fstnb);
 
 
-				if (fstnb.GetType() == typeof(FeedFolder))
+				if (fstnb.GetType() == typeof (FeedFolder))
 				{
-					FeedFolder ff = (FeedFolder)fstnb;
+					FeedFolder ff = (FeedFolder) fstnb;
 					ff.ChildNodes.Clear();
 					if (treeNode.Nodes.Count > 0)
 					{
@@ -79,18 +79,18 @@ namespace BetterReader.Backend
 			}
 		}
 
-        public static FeedSubscriptionTree GetFromFeedSubscriptionsFile(string filepath)
-        {
-            FeedSubscriptionTree fsc = null;
-            using (TextReader tr = new StreamReader(filepath))
-            {
-				XmlSerializer xs = new XmlSerializer(typeof(FeedSubscriptionTree));
-                fsc = xs.Deserialize(tr) as FeedSubscriptionTree;
-            }
+		public static FeedSubscriptionTree GetFromFeedSubscriptionsFile(string filepath)
+		{
+			FeedSubscriptionTree fsc;
+			using (TextReader tr = new StreamReader(filepath))
+			{
+				XmlSerializer xs = new XmlSerializer(typeof (FeedSubscriptionTree));
+				fsc = xs.Deserialize(tr) as FeedSubscriptionTree;
+			}
 
 			fsc.setParentInfoOnNodesInList(fsc.rootLevelNodes, null);
-            return fsc;
-        }
+			return fsc;
+		}
 
 		private void setParentInfoOnNodesInList(List<FeedSubTreeNodeBase> nodeList, FeedFolder curParent)
 		{
@@ -98,7 +98,7 @@ namespace BetterReader.Backend
 			{
 				fstnb.ParentFolder = curParent;
 				fstnb.ParentFeedSubTree = this;
-				if (fstnb.GetType() == typeof(FeedFolder))
+				if (fstnb.GetType() == typeof (FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
 					setParentInfoOnNodesInList(ff.ChildNodes, ff);
@@ -106,7 +106,7 @@ namespace BetterReader.Backend
 			}
 		}
 
-		      
+
 		public void BeginReadAllFeeds(FeedSubscriptionReadDelegate callback)
 		{
 			beginReadAllFeedsInNodeList(rootLevelNodes, callback);
@@ -117,12 +117,12 @@ namespace BetterReader.Backend
 			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
 				Type t = fstnb.GetType();
-				if (t == typeof(FeedSubscription))
+				if (t == typeof (FeedSubscription))
 				{
 					FeedSubscription fs = fstnb as FeedSubscription;
 					fs.BeginReadFeed(callback);
 				}
-				else if (t == typeof(FeedFolder))
+				else if (t == typeof (FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
 					beginReadAllFeedsInNodeList(ff.ChildNodes, callback);
@@ -139,7 +139,7 @@ namespace BetterReader.Backend
 			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
 				Type t = fstnb.GetType();
-				if (t == typeof(FeedSubscription))
+				if (t == typeof (FeedSubscription))
 				{
 					FeedSubscription fs = fstnb as FeedSubscription;
 					if (fs != null)
@@ -147,7 +147,7 @@ namespace BetterReader.Backend
 						fs.Dispose();
 					}
 				}
-				else if (t == typeof(FeedFolder))
+				else if (t == typeof (FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
 					disposeAllFeedsInNodeList(ff.ChildNodes);
@@ -165,10 +165,10 @@ namespace BetterReader.Backend
 			foreach (FeedSubTreeNodeBase fstnb in nodeList)
 			{
 				Type t = fstnb.GetType();
-				if (t == typeof(FeedSubscription))
+				if (t == typeof (FeedSubscription))
 				{
 					FeedSubscription fs = fstnb as FeedSubscription;
-					if (fs != null && fs.Feed != null && fs.Feed.FeedItems != null && fs.Feed.ReadSuccess == true)
+					if (fs != null && fs.Feed != null && fs.Feed.FeedItems != null && fs.Feed.ReadSuccess)
 					{
 						foreach (FeedItem fi in fs.Feed.FeedItems)
 						{
@@ -179,7 +179,7 @@ namespace BetterReader.Backend
 						}
 					}
 				}
-				else if (t == typeof(FeedFolder))
+				else if (t == typeof (FeedFolder))
 				{
 					FeedFolder ff = fstnb as FeedFolder;
 					if (ff.ChildNodes != null)
@@ -190,13 +190,12 @@ namespace BetterReader.Backend
 				else
 				{
 					throw new Exception("FeedSubscriptionTree.getUnreadItemCountFromNodeList error: Unsupported type: " +
-						t.ToString());
+					                    t.ToString());
 				}
 			}
 
 			return curCount;
 		}
-
 
 		#region IDisposable Members
 
@@ -221,12 +220,12 @@ namespace BetterReader.Backend
 
 			FeedFolder ff = null;
 
-			if (t == typeof(FeedFolder))
+			if (t == typeof (FeedFolder))
 			{
-				ff = (FeedFolder)destNode;
+				ff = (FeedFolder) destNode;
 				ff.ChildNodes.Add(movedNode);
 			}
-			else if (t == typeof(FeedSubscription))
+			else if (t == typeof (FeedSubscription))
 			{
 				ff = destNode.ParentFolder;
 				ff.ChildNodes.Insert(ff.ChildNodes.IndexOf(destNode), movedNode);
