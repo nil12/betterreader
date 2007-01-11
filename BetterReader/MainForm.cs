@@ -227,6 +227,8 @@ namespace BetterReader
 
 		private void clearWebBrowser()
 		{
+			itemLinkLBL.Text = "";
+			itemTitleLBL.Text = "";
 			if (webBrowser1.DocumentText.Length > 0)
 			{
 				webBrowser1.DocumentText = "";
@@ -807,7 +809,7 @@ namespace BetterReader
 			feedItemsLV.Focus();
 		}
 
-		private void toolStripButton1_Click(object sender, EventArgs e)
+		private void clearBrowserBTN_Click(object sender, EventArgs e)
 		{
 			clearWebBrowser();
 		}
