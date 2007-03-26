@@ -212,7 +212,8 @@ namespace BetterReader.Backend
 			if (guid == null || guid.Length < 1)
 			{
 				//no guid provided by source so calculate our own
-				string allProps = author + linkUrl + pubDate + title;
+				//string allProps = author + linkUrl + pubDate + title;
+				string allProps = linkUrl + title;
 				//a linefeed in the guid causes uniquess issues
 				guid = allProps.Replace("\r\n", "").ToLower().GetHashCode().ToString();
 			}
