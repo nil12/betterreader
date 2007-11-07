@@ -319,7 +319,24 @@ namespace BetterReader.UIManagers
 		{
 			string text;
 
-			if (fs.Feed.ReadSuccess)
+			bool errorCapturedAsItem = false;
+
+			if (fs.Feed.ReadSuccess == false && fs.Feed.ReadException != null)
+			{
+				//text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+				FeedItem fi = new FeedItem();
+				fi.Author = "BetterReader";
+				fi.Description = string.Format("Error during read of feed: {0}", fs.Feed.ReadException);
+				fi.DownloadDate = DateTime.Now;
+				fi.HasBeenRead = false;
+				fi.ParentFeed = fs.Feed;
+				fi.PubDate = DateTime.Now;
+				fi.Title = string.Format("Error reading feed: {0}", fs.Feed.ReadException.Message);
+				fs.Feed.FeedItems.Add(fi);
+				errorCapturedAsItem = true;
+			}
+
+			if (fs.Feed.ReadSuccess || errorCapturedAsItem)
 			{
 				text = fs.ToString();
 				if (fs.Feed.UnreadCount > 0)
@@ -343,14 +360,23 @@ namespace BetterReader.UIManagers
 			}
 			else
 			{
-				if (fs.Feed.ReadException != null)
-				{
-					text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
-				}
-				else
-				{
+				//if (fs.Feed.ReadException != null)
+				//{
+				//    //text = fs.DisplayName + "(" + fs.Feed.ReadException.ToString() + ")";
+				//    FeedItem fi = new FeedItem();
+				//    fi.Author = "BetterReader";
+				//    fi.Description = string.Format("Error during read of feed: {0}", fs.Feed.ReadException);
+				//    fi.DownloadDate = DateTime.Now;
+				//    fi.HasBeenRead = false;
+				//    fi.ParentFeed = fs.Feed;
+				//    fi.PubDate = DateTime.Now;
+				//    fi.Title = string.Format("Error reading feed: {0}", fs.Feed.ReadException.Message);
+
+				//}
+				//else
+				//{
 					text = "Loading . . .";
-				}
+				//}
 			}
 
 			node.Text = text;

@@ -110,7 +110,7 @@ namespace BetterReader.UIManagers
 			listViewItemsByTag = new Dictionary<FeedItem, ListViewItem>();
 			//feedItemsLV.BeginUpdate();
 			feedItemsLV.Clear();
-			if (feedSubscription.Feed.ReadSuccess)
+			if (feedSubscription.Feed.ReadSuccess || feedSubscription.Feed.ReadException != null)
 			{
 				BindFeedItemsToListView(feedSubscription.Feed.FeedItems);
 				feedItemsLV.Enabled = true;
@@ -124,13 +124,13 @@ namespace BetterReader.UIManagers
 					feedItemsLV.Items.Add(lvi);
 					feedItemsLV.Enabled = false;
 				}
-				else
-				{
-					feedItemsLV.Columns.Add("Error");
-					ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
-					feedItemsLV.Items.Add(lvi);
-					feedItemsLV.Enabled = false;
-				}
+				//else
+				//{
+				//    feedItemsLV.Columns.Add("Error");
+				//    ListViewItem lvi = new ListViewItem(feedSubscription.Feed.ReadException.ToString());
+				//    feedItemsLV.Items.Add(lvi);
+				//    feedItemsLV.Enabled = false;
+				//}
 
 				//feedItemsLV.EndUpdate();
 				return;
