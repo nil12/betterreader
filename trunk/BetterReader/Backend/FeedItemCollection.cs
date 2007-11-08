@@ -128,6 +128,9 @@ namespace BetterReader.Backend
 				fi.HasBeenRead = true;
 			}
 
+			this.parentFeed.ReadException = null;
+			this.parentFeed.ReadSuccess = true;
+			
 			unreadCount = 0;
 			ArchiveItems();
 		}
