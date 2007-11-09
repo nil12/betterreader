@@ -207,7 +207,7 @@ namespace BetterReader.Backend
 			return fi;
 		}
 
-		private void SetGuid()
+		public void SetGuid()
 		{
 			if (guid == null || guid.Length < 1)
 			{

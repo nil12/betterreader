@@ -332,7 +332,8 @@ namespace BetterReader.UIManagers
 				fi.ParentFeed = fs.Feed;
 				fi.PubDate = DateTime.Now;
 				fi.Title = string.Format("Error reading feed: {0}", fs.Feed.ReadException.Message);
-				fs.Feed.FeedItems.Add(fi);
+				fi.SetGuid();
+				fs.Feed.FeedItems.AddOrUpdate(fi);
 				errorCapturedAsItem = true;
 			}
 
