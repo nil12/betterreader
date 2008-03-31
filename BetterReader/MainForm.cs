@@ -1,14 +1,10 @@
 using System;
-//using System.Collections.Generic;
 using System.ComponentModel;
-//using System.Data;
 using System.Drawing;
-//using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using BetterReader.Backend;
 using BetterReader.UIManagers;
-//using System.Diagnostics;
 
 namespace BetterReader
 {
@@ -16,25 +12,20 @@ namespace BetterReader
     {
 		
 		private delegate void displayFeedItemsIfSelectedDelegate(TreeNode node, FeedSubscription fs);
-		//private FeedSubscriptionTree fst;
 		private FeedSubTreeManager feedSubManager;
 		private readonly string settingsDirectory = string.Format("{0}\\appSettings\\", Environment.CurrentDirectory);
 		private readonly string feedSubsFilepath;
 		private static string archiveDirectory;
-//		private readonly string graphicsDirectory = Environment.CurrentDirectory + "\\Graphics\\";
-//		private Graphics formGraphics;
 		private Icon redLightIcon;
     	private Icon yellowLightIcon;
     	private Icon greenLightIcon;
     	private TreeNode rightClickedNode;
-//		private readonly string formStateFilepath;
 		private const string newUnreadItemsMessage = "You have new, unread items.";
 		private const string oldUnreadItemsMessage = "You have unread items.";
 		private const string noUnreadItemsMessage = "You have no unread items.";
 		private Color controlBackgroundColor = Color.WhiteSmoke;
 		private FormWindowState stateBeforeMinimize;
 		private FeedItemsListManager feedItemsManager;
-//		private string currentlyDisplayedFeedItemGuid;
 
 		internal static string ArchiveDirectory
 		{
@@ -49,14 +40,11 @@ namespace BetterReader
 			InitializeComponent();
 			feedSubsFilepath = settingsDirectory + "FeedSubscriptions.xml";
 			archiveDirectory = settingsDirectory + "ArchivedItems\\";
-//			formStateFilepath = settingsDirectory + "MainFormState.xml";
-//			currentlyDisplayedFeedItemGuid = "";
 
 			feedsTV.BackColor = feedItemsLV.BackColor = controlBackgroundColor;
 
 			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-//			formGraphics = this.CreateGraphics();
 
 			redLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[2]).GetHicon());
 			yellowLightIcon = Icon.FromHandle(((Bitmap)notifyIconImageList.Images[1]).GetHicon());

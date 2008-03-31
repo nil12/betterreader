@@ -459,6 +459,7 @@ namespace BetterReader
 			// 
 			// webBrowser1
 			// 
+			this.webBrowser1.AllowWebBrowserDrop = false;
 			this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
@@ -466,6 +467,7 @@ namespace BetterReader
 			this.webBrowser1.ScriptErrorsSuppressed = true;
 			this.webBrowser1.Size = new System.Drawing.Size(619, 220);
 			this.webBrowser1.TabIndex = 0;
+			this.webBrowser1.WebBrowserShortcutsEnabled = false;
 			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
 			// 
 			// browserToolStrip
