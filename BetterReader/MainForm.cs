@@ -117,34 +117,34 @@ namespace BetterReader
 		{
 			hideReadFeedsBTN.Checked = Properties.Settings.Default.HideReadFeeds;
 
-			if (Properties.Settings.Default.MySize != null)
-			{
-				this.Size = Properties.Settings.Default.MySize;
-			}
+			//if (Properties.Settings.Default.MySize != null)
+			//{
+			//    this.Size = Properties.Settings.Default.MySize;
+			//}
 
-			if (Properties.Settings.Default.MyLoc != null)
-			{
-				this.Location = Properties.Settings.Default.MyLoc;
-			}
+			//if (Properties.Settings.Default.MyLoc != null)
+			//{
+			//    this.Location = Properties.Settings.Default.MyLoc;
+			//}
 
-			Visible = false;
-			WindowState = FormWindowState.Normal;
+			//Visible = false;
+			//WindowState = FormWindowState.Normal;
 
 			//try
 			//{
-				splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
-				splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
-				splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
-				splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
-				splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
+			splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
+			splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
+			splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
+			splitContainer4.SplitterDistance = Properties.Settings.Default.SplitterDistance4;
+			splitContainer5.SplitterDistance = Properties.Settings.Default.SplitterDistance5;
 			//}
 			//catch { }
 
-			this.WindowState = Properties.Settings.Default.MyState;
-			if (this.WindowState != FormWindowState.Minimized)
-			{
-				Visible = true;
-			}
+			//this.WindowState = Properties.Settings.Default.MyState;
+			//if (this.WindowState != FormWindowState.Minimized)
+			//{
+			//    Visible = true;
+			//}
 		}
 
 
@@ -545,7 +545,7 @@ namespace BetterReader
 
 		private void saveFormSettings()
 		{
-			Properties.Settings.Default.MyState = this.WindowState;
+			//Properties.Settings.Default.MyState = this.WindowState;
 			Properties.Settings.Default.HideReadFeeds = hideReadFeedsBTN.Checked;
 
 			if (this.WindowState == FormWindowState.Normal || this.WindowState == FormWindowState.Maximized)
@@ -555,13 +555,13 @@ namespace BetterReader
 				Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
-				Properties.Settings.Default.MySize = this.Size;
-				Properties.Settings.Default.MyLoc = this.Location;
+				//Properties.Settings.Default.MySize = this.Size;
+				//Properties.Settings.Default.MyLoc = this.Location;
 			}
 			else
 			{
-				Properties.Settings.Default.MySize = this.RestoreBounds.Size;
-				Properties.Settings.Default.MyLoc = this.RestoreBounds.Location;
+				//Properties.Settings.Default.MySize = this.RestoreBounds.Size;
+				//Properties.Settings.Default.MyLoc = this.RestoreBounds.Location;
 			}
 
 			Properties.Settings.Default.Save();
