@@ -329,7 +329,7 @@ namespace BetterReader
 
 		private void hideFormShowNotifyIcon()
 		{
-			if (feedSubManager.GetUnreadItemCount() > 0)
+			if (feedSubManager == null || feedSubManager.GetUnreadItemCount() > 0)
 			//if (fst != null && fst.GetUnreadItemCount() > 0)
 			{
 				notifyIcon1.Icon = yellowLightIcon;
