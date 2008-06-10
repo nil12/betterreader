@@ -132,6 +132,11 @@ namespace BetterReader
 
 			//try
 			//{
+			if (WindowState == FormWindowState.Minimized)
+			{
+				//can't change splitter distances when window is minimized so give up
+				return;
+			}
 			splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
 			splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
 			splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
