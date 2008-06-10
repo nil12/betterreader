@@ -72,10 +72,15 @@ namespace MartinTools
 
     void form_FormClosing(object sender, FormClosingEventArgs e)
     {
-      RememberFormPositionUtils.SaveFormPlacement(Application.UserAppDataRegistry, 
-                                                  sender as Form, 
-                                                  UseFormName ? (sender as Form).Name : StorageName);
+		SavePosition(sender);
     }
+
+	public void SavePosition(object sender)
+	{
+		RememberFormPositionUtils.SaveFormPlacement(Application.UserAppDataRegistry,
+													sender as Form,
+													UseFormName ? (sender as Form).Name : StorageName);
+	}
 
 
     #region ISupportInitialize Members
@@ -86,11 +91,16 @@ namespace MartinTools
 
     public void EndInit()
     {
-      _form.StartPosition = FormStartPosition.Manual;
-      RememberFormPositionUtils.RestoreFormPlacement(Application.UserAppDataRegistry,
-                                                        _form,
-                                                        UseFormName ? _form.Name : StorageName);
+		RestorePosition();
     }
+
+	private void RestorePosition()
+	{
+		_form.StartPosition = FormStartPosition.Manual;
+		RememberFormPositionUtils.RestoreFormPlacement(Application.UserAppDataRegistry,
+														  _form,
+														  UseFormName ? _form.Name : StorageName);
+	}
 
     #endregion
 
