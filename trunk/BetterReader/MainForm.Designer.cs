@@ -657,8 +657,10 @@ namespace BetterReader
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.mainMenuStrip;
 			this.Name = "MainForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "BetterReader";
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.ResizeBegin += new System.EventHandler(this.MainForm_ResizeBegin);
 			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);

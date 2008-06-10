@@ -137,6 +137,7 @@ namespace BetterReader
 				//can't change splitter distances when window is minimized so give up
 				return;
 			}
+
 			splitContainer1.SplitterDistance = Properties.Settings.Default.SplitterDistance1;
 			splitContainer2.SplitterDistance = Properties.Settings.Default.SplitterDistance2;
 			splitContainer3.SplitterDistance = Properties.Settings.Default.SplitterDistance3;
@@ -560,6 +561,7 @@ namespace BetterReader
 				Properties.Settings.Default.SplitterDistance3 = splitContainer3.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance4 = splitContainer4.SplitterDistance;
 				Properties.Settings.Default.SplitterDistance5 = splitContainer5.SplitterDistance;
+				rememberFormPosition1.SavePosition(this);
 				//Properties.Settings.Default.MySize = this.Size;
 				//Properties.Settings.Default.MyLoc = this.Location;
 			}
@@ -581,6 +583,7 @@ namespace BetterReader
 			else
 			{
 				stateBeforeMinimize = WindowState;
+				restoreWindowSettings();
 			}
 
 		}
@@ -816,6 +819,14 @@ namespace BetterReader
 				string[] cmdLine = new string[e.CommandLine.Count];
 				e.CommandLine.CopyTo(cmdLine, 0);
 				processCommandLineArgs(cmdLine);
+			}
+		}
+
+		private void MainForm_ResizeBegin(object sender, EventArgs e)
+		{
+			if (WindowState != FormWindowState.Minimized)
+			{
+				saveFormSettings();
 			}
 		}
 
