@@ -183,10 +183,20 @@
   <metadata name="feedsToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>754, 54</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="hideReadFeedsBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAALFJREFUOE+VksEN
+        xCAMBLka6JFSKCfXAgXwpxLe3C3SWIbkQZAsMPF4N8CntTbCy9F7D0GgotY655O8lDIMFJBznpFSWkJ7
+        vrHWYfzHdX1HjNFAGmjfN1KOuwkK8kXKCdRprtkU5dkX72vB3pGB2lQCgAty1KhbFD24K+obruwfOX51
+        1cAWsADVYHUBsSZIDQiuiMND5PEeUfQH4h/Gzaq3jCI29xc1D2fvdpIv4Nu3+gOU8Qg0yixGNgAAAABJ
+        RU5ErkJggg==
+</value>
+  </data>
   <metadata name="feedItemsToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 91</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="markAllReadBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -206,19 +216,6 @@
         eBnZ9g8fPuANEZBaDNfj8w6h8B01EBxCeCOFrmEISgEkR8qbN29wOvLKlSvEGSgiIgJP3FOmTMFpYE1N
         zX8NDQ3C6TAhIQFuIAsLy3+QRpBrYADELikp+Q+Sa2lpIWzgixcv/hsYGODM17Cc5OPj8x+UBQnmFJAC
         kMIZM2b89/Dw+C8hIQE3HMQOCAj4v2HDBpxBQbvii1CaI1ae6i4EAJr/Cqq35PtJAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <metadata name="browserToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>163, 91</value>
-  </metadata>
-  <data name="hideReadFeedsBTN.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAALFJREFUOE+VksEN
-        xCAMBLka6JFSKCfXAgXwpxLe3C3SWIbkQZAsMPF4N8CntTbCy9F7D0GgotY655O8lDIMFJBznpFSWkJ7
-        vrHWYfzHdX1HjNFAGmjfN1KOuwkK8kXKCdRprtkU5dkX72vB3pGB2lQCgAty1KhbFD24K+obruwfOX51
-        1cAWsADVYHUBsSZIDQiuiMND5PEeUfQH4h/Gzaq3jCI29xc1D2fvdpIv4Nu3+gOU8Qg0yixGNgAAAABJ
-        RU5ErkJggg==
 </value>
   </data>
   <metadata name="feedItemsImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -275,6 +272,9 @@
         AcABAwYAAcABBwYAAcABDwIAAYABAQGAAQEC/wIACw==
 </value>
   </data>
+  <metadata name="browserToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>163, 91</value>
+  </metadata>
   <data name="toolStripButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
