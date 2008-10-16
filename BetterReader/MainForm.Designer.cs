@@ -87,7 +87,6 @@ namespace BetterReader
 			this.newFeedSubscriptionToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.rememberFormPosition1 = new MartinTools.RememberFormPosition(this.components);
-			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -297,7 +296,6 @@ namespace BetterReader
             this.lastDownloadLBL,
             this.toolStripSeparator1,
             this.markAllReadBTN,
-            this.toolStripSeparator3,
             this.showUnreadFirstBTN});
 			this.feedItemsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.feedItemsToolStrip.Name = "feedItemsToolStrip";
@@ -325,7 +323,7 @@ namespace BetterReader
 			this.showUnreadFirstBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.showUnreadFirstBTN.Image = ((System.Drawing.Image)(resources.GetObject("showUnreadFirstBTN.Image")));
 			this.showUnreadFirstBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.showUnreadFirstBTN.Margin = new System.Windows.Forms.Padding(15, 1, 0, 2);
+			this.showUnreadFirstBTN.Margin = new System.Windows.Forms.Padding(20, 1, 0, 2);
 			this.showUnreadFirstBTN.Name = "showUnreadFirstBTN";
 			this.showUnreadFirstBTN.Size = new System.Drawing.Size(23, 22);
 			this.showUnreadFirstBTN.Text = "Show Unread First";
@@ -649,11 +647,6 @@ namespace BetterReader
 			this.rememberFormPosition1.Form = this;
 			this.rememberFormPosition1.StorageName = null;
 			// 
-			// toolStripSeparator3
-			// 
-			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -766,7 +759,6 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStrip browserToolStrip;
 		private System.Windows.Forms.ToolStripButton toolStripButton1;
 		private MartinTools.RememberFormPosition rememberFormPosition1;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 
     }
 }
