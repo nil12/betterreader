@@ -52,8 +52,8 @@ namespace BetterReader
 			this.feedItemsToolStrip = new System.Windows.Forms.ToolStrip();
 			this.lastDownloadLBL = new System.Windows.Forms.ToolStripLabel();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.showUnreadFirstBTN = new System.Windows.Forms.ToolStripButton();
 			this.markAllReadBTN = new System.Windows.Forms.ToolStripButton();
+			this.showUnreadFirstBTN = new System.Windows.Forms.ToolStripButton();
 			this.feedTitleLBL = new System.Windows.Forms.Label();
 			this.splitContainer3 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -315,8 +315,21 @@ namespace BetterReader
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
+			// markAllReadBTN
+			// 
+			this.markAllReadBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.markAllReadBTN.Image = ((System.Drawing.Image)(resources.GetObject("markAllReadBTN.Image")));
+			this.markAllReadBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.markAllReadBTN.Name = "markAllReadBTN";
+			this.markAllReadBTN.Size = new System.Drawing.Size(23, 22);
+			this.markAllReadBTN.Text = "toolStripButton1";
+			this.markAllReadBTN.ToolTipText = "Mark All Read (hotkey R)";
+			this.markAllReadBTN.Visible = false;
+			this.markAllReadBTN.Click += new System.EventHandler(this.markFeedReadButton1_Click);
+			// 
 			// showUnreadFirstBTN
 			// 
+			this.showUnreadFirstBTN.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.showUnreadFirstBTN.Checked = true;
 			this.showUnreadFirstBTN.CheckOnClick = true;
 			this.showUnreadFirstBTN.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -329,18 +342,6 @@ namespace BetterReader
 			this.showUnreadFirstBTN.Text = "Show Unread First";
 			this.showUnreadFirstBTN.Visible = false;
 			this.showUnreadFirstBTN.Click += new System.EventHandler(this.showUnreadFirstBTN_Click);
-			// 
-			// markAllReadBTN
-			// 
-			this.markAllReadBTN.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.markAllReadBTN.Image = ((System.Drawing.Image)(resources.GetObject("markAllReadBTN.Image")));
-			this.markAllReadBTN.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.markAllReadBTN.Name = "markAllReadBTN";
-			this.markAllReadBTN.Size = new System.Drawing.Size(23, 22);
-			this.markAllReadBTN.Text = "toolStripButton1";
-			this.markAllReadBTN.ToolTipText = "Mark All Read (hotkey R)";
-			this.markAllReadBTN.Visible = false;
-			this.markAllReadBTN.Click += new System.EventHandler(this.markFeedReadButton1_Click);
 			// 
 			// feedTitleLBL
 			// 
