@@ -3,6 +3,9 @@ using System;
 //using System.Text;
 using System.Xml;
 using System.IO;
+using System.Xml.Linq;
+using System.Collections.Generic;
+
 
 namespace BetterReader.Backend
 {
@@ -40,8 +43,48 @@ namespace BetterReader.Backend
 
 		public static void ExportAsOpml(FeedSubscriptionTree fst, string filepath)
 		{
-			throw new Exception("Error.  ExportAsOpml not implemented yet.");
+			XElement root = new XElement("opml",
+				new XElement("head"));
+
+			XElement body = new XElement("body");
+			root.Add(body);
+
+			addNodesToParentNode(fst.RootLevelNodes, body);
+
+			root.Save(filepath);
 		}
+
+		private static void addNodesToParentNode(List<FeedSubTreeNodeBase> list, XElement parent)
+		{
+			XElement xe = null;
+			foreach (FeedSubTreeNodeBase fstnb in list)
+			{
+				Type t = fstnb.GetType();
+				if (t == typeof(FeedFolder))
+				{
+					FeedFolder ff = fstnb as FeedFolder;
+					xe = new XElement("outline", new XAttribute("text", ff.Name));
+					parent.Add(xe);
+					addNodesToParentNode(ff.ChildNodes, xe);
+					continue;
+				}
+				else if (t == typeof(FeedSubscription))
+				{
+					FeedSubscription fs = fstnb as FeedSubscription;
+					xe = new XElement("outline",
+						new XAttribute("title", fs.DisplayName),
+						new XAttribute("xmlUrl", fs.FeedUrl));
+					parent.Add(xe);
+				}
+				else
+				{
+					throw new ApplicationException(string.Format("Error.  Expected type of either FeedFolder or FeedSubscription but got type {0}", t));
+				}
+
+			}
+		}
+
+		
 
 		private static void processOpmlNode(FeedSubscriptionTree fst, XmlNode node, FeedFolder currentParentFolder)
 		{

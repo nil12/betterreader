@@ -830,6 +830,11 @@ namespace BetterReader
 			}
 		}
 
+		private void exportOpmlToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Opml.ExportAsOpml(this.feedSubManager.FeedSubscriptionTree, "exportedSubsOPML.xml");
+		}
+
 
 
     }

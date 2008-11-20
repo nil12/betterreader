@@ -87,6 +87,7 @@ namespace BetterReader
 			this.newFeedSubscriptionToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.notifyIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this.rememberFormPosition1 = new MartinTools.RememberFormPosition(this.components);
+			this.exportOpmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -130,6 +131,7 @@ namespace BetterReader
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.importOpmlToolStripMenuItem,
+            this.exportOpmlToolStripMenuItem,
             this.newFeedSubscriptionToolStripMenuItem,
             this.newFolderToolStripMenuItem1});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -648,6 +650,13 @@ namespace BetterReader
 			this.rememberFormPosition1.Form = this;
 			this.rememberFormPosition1.StorageName = null;
 			// 
+			// exportOpmlToolStripMenuItem
+			// 
+			this.exportOpmlToolStripMenuItem.Name = "exportOpmlToolStripMenuItem";
+			this.exportOpmlToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+			this.exportOpmlToolStripMenuItem.Text = "Export Opml";
+			this.exportOpmlToolStripMenuItem.Click += new System.EventHandler(this.exportOpmlToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -760,6 +769,7 @@ namespace BetterReader
 		private System.Windows.Forms.ToolStrip browserToolStrip;
 		private System.Windows.Forms.ToolStripButton toolStripButton1;
 		private MartinTools.RememberFormPosition rememberFormPosition1;
+		private System.Windows.Forms.ToolStripMenuItem exportOpmlToolStripMenuItem;
 
     }
 }
